@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">MonitorandPerformance</string>
+    <string name="title_activity_indicator">Activity Indicator</string>
+    <string name="evaluation">PENILAIAN</string>
+    <string name="indicator">INDIKATOR</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
