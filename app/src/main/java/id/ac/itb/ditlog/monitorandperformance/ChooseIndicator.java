@@ -1,8 +1,12 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.TextView;
 
 
 /**
@@ -22,6 +28,7 @@ public class ChooseIndicator extends Fragment {
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
     private static final int DATASET_COUNT = 60; // menampilkan data sebanyak value
+    private FloatingActionButton fab;
 
     private enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,
@@ -47,6 +54,33 @@ public class ChooseIndicator extends Fragment {
         initDataset();
     }
 
+    protected void showInputDialog() {
+
+        // get prompts.xml view
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        View promptView = layoutInflater.inflate(R.layout.new_indicator_dialog, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setView(promptView);
+
+        final EditText editText = (EditText) promptView.findViewById(R.id.edittext);
+        // setup a dialog window
+        alertDialogBuilder.setCancelable(false)
+                .setPositiveButton("TAMBAH", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                })
+                .setNegativeButton("BATAL",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create an alert dialog
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,6 +89,15 @@ public class ChooseIndicator extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_choose_indicator, container, false);
 
         rootView.setTag(TAG);
+        //fab tambah indikator baru
+        fab = (FloatingActionButton) rootView.findViewById(R.id.tambah);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Click action
+                showInputDialog();
+            }
+        });
 
         // BEGIN_INCLUDE(initializeRecyclerView)
         recyclerViewIndicator = (RecyclerView) rootView.findViewById(R.id.recyclerViewIndicator);
@@ -146,4 +189,5 @@ public class ChooseIndicator extends Fragment {
 
         }
     }
+
 }
