@@ -2,8 +2,10 @@ package id.ac.itb.ditlog.monitorandperformance;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -38,7 +40,6 @@ public class Login extends AppCompatActivity {
                 username = (EditText) findViewById(R.id.username);
                 password = (EditText) findViewById(R.id.password);
                 if (validate(username.getText().toString(), password.getText().toString())) {
-//                    login(username.getText().toString(), password.getText().toString());
                     LoginTask task = new LoginTask();
                     task.execute();
                 }
@@ -58,30 +59,6 @@ public class Login extends AppCompatActivity {
         }
         return true;
     }
-
-//    public void login(String username, String password) {
-////        String url = "";
-////        RestTemplate restTemplate = new RestTemplate();
-////        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-////        LoginInfo logininfo = restTemplate.getForObject(url, LoginInfo.class);
-////        new HttpRequestTask().execute();
-//
-//
-//        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
-//
-//        dlgAlert.setMessage("Incorrect username or password");
-//        dlgAlert.setTitle("Try Again");
-//        dlgAlert.setPositiveButton("OK", null);
-//        dlgAlert.setCancelable(true);
-//        dlgAlert.create().show();
-//
-//        dlgAlert.setPositiveButton("Ok",
-//                new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//
-//                    }
-//                });
-//    }
 
     private class LoginTask extends AsyncTask<Void, Void, LoginResponse> {
         @Override
@@ -112,13 +89,18 @@ public class Login extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e("LoginActivity", e.getMessage(), e);
             }
-
             return null;
         }
 
         @Override
         protected void onPostExecute(LoginResponse loginresponse) {
-            if (loginresponse.getSuccess() == "true"){
+            if (loginresponse.getSuccess().equals("true")){
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("userid", loginresponse.getUserID());
+                editor.putString("token", loginresponse.getToken());
+                editor.commit();
+
                 Intent intent_name = new Intent();
                 intent_name.setClass(getApplicationContext(), MainActivity.class);
                 startActivity(intent_name);

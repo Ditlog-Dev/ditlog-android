@@ -20,7 +20,7 @@
     <TextView
         android:id="@+id/textView"
         android:layout_width="251dp"
-        android:layout_height="42dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/imageView3"
         android:layout_centerHorizontal="true"
         android:text="Direktorat Logistik ITB"
@@ -40,29 +40,17 @@
         android:layout_marginBottom="17dp"
         android:background="#ffffff"
         android:orientation="vertical">
-
         <ImageView
-            android:id="@+id/imageView2"
-            android:layout_below="@+id/imageView"
+            android:id="@+id/imageUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
+            android:layout_alignBottom="@+id/username"
             android:layout_marginLeft="21dp"
             android:layout_marginStart="21dp"
-            app:srcCompat="@android:drawable/ic_lock_lock"
+            android:layout_above="@id/imagePassword"
+            android:layout_alignRight="@id/imagePassword"
+            app:srcCompat="@drawable/ic_account_circle_black_18dp"
             android:tint="#2e9de1"/>
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/imageView2"
-            android:layout_alignStart="@+id/imageView2"
-            android:layout_alignTop="@+id/username"
-            android:tint="#2e9de1"
-            app:srcCompat="@android:drawable/ic_lock_lock" />
 
         <EditText
             android:id="@+id/username"
@@ -75,6 +63,16 @@
             android:hint="Username"
             android:inputType="textEmailAddress" />
 
+        <ImageView
+            android:id="@+id/imagePassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/password"
+            android:layout_marginLeft="21dp"
+            android:layout_marginStart="21dp"
+            app:srcCompat="@android:drawable/ic_lock_lock"
+            android:tint="#2e9de1" />
+
         <EditText
             android:id="@+id/password"
             android:layout_width="wrap_content"
@@ -82,10 +80,9 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
-            android:layout_toEndOf="@+id/imageView"
-            android:layout_toRightOf="@+id/imageView"
             android:ems="10"
             android:hint="Password"
+            android:layout_toRightOf="@id/imagePassword"
             android:inputType="textPassword" />
 
         <Button
@@ -93,6 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/password"
+            android:layout_centerInParent="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="26dp"
             android:background="#2e9de1"
