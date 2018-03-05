@@ -18,8 +18,23 @@ public class MainActivity extends AppCompatActivity {
         if (userID.equals("-1")){
             Intent myIntent = new Intent(this, Login.class);
             startActivity(myIntent);
+            finish();
         }
-        else
+        else {
+            Toast.makeText(MainActivity.this, "Welcome " + sharedPreferences.getString("username", "-1"), Toast.LENGTH_SHORT).show();
             Toast.makeText(MainActivity.this, "userid: " + userID, Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "token: " + sharedPreferences.getString("token", "-1"), Toast.LENGTH_SHORT).show();
+        }
     }
+
+    //Logout setiap keluar dari aplikasi
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
 }

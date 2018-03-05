@@ -32,25 +32,27 @@
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
-        android:layout_width="302dp"
-        android:layout_height="261dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/textView2"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="17dp"
+        android:layout_marginTop="26dp"
         android:background="#ffffff"
         android:orientation="vertical">
+
         <ImageView
             android:id="@+id/imageUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_above="@id/imagePassword"
             android:layout_alignBottom="@+id/username"
+            android:layout_alignRight="@id/imagePassword"
             android:layout_marginLeft="21dp"
             android:layout_marginStart="21dp"
-            android:layout_above="@id/imagePassword"
-            android:layout_alignRight="@id/imagePassword"
-            app:srcCompat="@drawable/ic_account_circle_black_18dp"
-            android:tint="#2e9de1"/>
+            android:tint="#2e9de1"
+            app:srcCompat="@drawable/ic_account_circle_black_18dp" />
 
         <EditText
             android:id="@+id/username"
@@ -59,6 +61,8 @@
             android:layout_above="@+id/password"
             android:layout_alignLeft="@+id/password"
             android:layout_alignStart="@+id/password"
+            android:layout_marginRight="21dp"
+            android:layout_marginEnd="21dp"
             android:ems="10"
             android:hint="Username"
             android:inputType="textEmailAddress" />
@@ -70,8 +74,8 @@
             android:layout_alignBottom="@+id/password"
             android:layout_marginLeft="21dp"
             android:layout_marginStart="21dp"
-            app:srcCompat="@android:drawable/ic_lock_lock"
-            android:tint="#2e9de1" />
+            android:tint="#2e9de1"
+            app:srcCompat="@android:drawable/ic_lock_lock" />
 
         <EditText
             android:id="@+id/password"
@@ -80,9 +84,11 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
+            android:layout_toRightOf="@id/imagePassword"
+            android:layout_marginRight="21dp"
+            android:layout_marginEnd="21dp"
             android:ems="10"
             android:hint="Password"
-            android:layout_toRightOf="@id/imagePassword"
             android:inputType="textPassword" />
 
         <Button
@@ -90,8 +96,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/password"
-            android:layout_centerInParent="true"
             android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
             android:layout_marginTop="26dp"
             android:background="#2e9de1"
             android:text="Login"
@@ -107,7 +113,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
-        android:text="2018"
+        android:text="© 2018"
         android:textAlignment="center"
         android:textColor="#ffffff"
         tools:layout_editor_absoluteX="176dp"

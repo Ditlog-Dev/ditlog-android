@@ -1,5 +1,6 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,10 +9,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.app.AlertDialog;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -33,6 +36,17 @@ public class Login extends AppCompatActivity {
         }
         setContentView(R.layout.activity_login);
         button = (Button) findViewById(R.id.button);
+        password = (EditText) findViewById(R.id.password);
+
+        password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    //do what you want on the press of 'done'
+                    button.performClick();
+                }
+                return false;
+            }
+        });
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,9 +74,14 @@ public class Login extends AppCompatActivity {
         return true;
     }
 
-    private class LoginTask extends AsyncTask<Void, Void, LoginResponse> {
+    private class LoginTask extends AsyncTask<Void, Void, LoginWrapper> {
         @Override
-        protected LoginResponse doInBackground(Void... params) {
+        protected void onPreExecute() {
+            Toast.makeText(Login.this, "wait a minute....", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected LoginWrapper doInBackground(Void... voids) {
             try {
                 EditText username = (EditText) findViewById(R.id.username);
                 EditText password = (EditText) findViewById(R.id.password);
@@ -84,8 +103,18 @@ public class Login extends AppCompatActivity {
                 LoginInfo logininfo = new LoginInfo();
                 logininfo.setUsername(username.getText().toString());
                 logininfo.setPassword(sb.toString());
-                LoginResponse loginresponse = restTemplate.postForObject(url, logininfo, LoginResponse.class);
-                return loginresponse;
+//                LoginResponse loginresponse = restTemplate.postForObject(url, logininfo, LoginResponse.class);
+//                return loginresponse;
+
+                //testdummy
+                LoginResponse loginresponsedummy = new LoginResponse();
+                loginresponsedummy.setSuccess("true");
+                loginresponsedummy.setUserID("10");
+                loginresponsedummy.setToken(sb.toString());
+
+                LoginWrapper loginWrapper = new LoginWrapper(logininfo, loginresponsedummy);
+                return loginWrapper;
+
             } catch (Exception e) {
                 Log.e("LoginActivity", e.getMessage(), e);
             }
@@ -93,17 +122,19 @@ public class Login extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(LoginResponse loginresponse) {
-            if (loginresponse.getSuccess().equals("true")){
+        protected void onPostExecute(LoginWrapper loginresponse) {
+            if (loginresponse.getLoginResponse().getSuccess().equals("true")){
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("userid", loginresponse.getUserID());
-                editor.putString("token", loginresponse.getToken());
-                editor.commit();
+                editor.putString("userid", loginresponse.getLoginResponse().getUserID());
+                editor.putString("token", loginresponse.getLoginResponse().getToken());
+                editor.putString("username", loginresponse.getLoginInfo().getUsername());
+                editor.apply();
 
                 Intent intent_name = new Intent();
                 intent_name.setClass(getApplicationContext(), MainActivity.class);
                 startActivity(intent_name);
+                finish();
             }
             else{
                 AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(Login.this);

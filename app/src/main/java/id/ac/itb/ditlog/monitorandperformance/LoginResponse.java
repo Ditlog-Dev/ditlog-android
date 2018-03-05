@@ -13,7 +13,7 @@ public class LoginResponse {
     public LoginResponse() {
         success = "";
         statusCode = "";
-        payload = null;
+        payload = new Payload();
     }
 
     public String getSuccess(){
@@ -31,4 +31,20 @@ public class LoginResponse {
     public String getToken(){
         return payload.getToken();
     }
+
+
+    //test
+    public void setSuccess(String s){
+        success = s;
+    }
+
+    public void setUserID(String s){
+        payload.setUserID(s);
+    }
+    public void setToken(String s){
+        payload.setToken(s);
+    }
+
+
+
 }

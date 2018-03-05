@@ -20,4 +20,12 @@ public class Payload {
     public String getToken(){
         return token;
     }
+
+    //test
+    public void setUserID(String s){
+        userID = s;
+    }
+    public void setToken(String s){
+        token = s;
+    }
 }
