@@ -3,6 +3,7 @@ package id.ac.itb.ditlog.monitorandperformance;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -10,12 +11,22 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.JsonReader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -51,7 +62,7 @@ public class ChooseIndicator extends Fragment {
 
         // Initialize dataset, this data would usually come from a local content provider or
         // remote server.
-        initDataset();
+        //initDataset();
     }
 
     protected void showInputDialog() {
@@ -116,10 +127,8 @@ public class ChooseIndicator extends Fragment {
         }
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
-        indicatorAdapter = new RecyclerChooseIndicator(mParam);
 
-        // Set CustomAdapter as the adapter for RecyclerView.
-        recyclerViewIndicator.setAdapter(indicatorAdapter);
+        new indicatorGetter().execute();
 
         // END_INCLUDE(initializeRecyclerView)
 
@@ -166,10 +175,12 @@ public class ChooseIndicator extends Fragment {
      * from a local content provider or remote server.
      */
     private void initDataset() {
+
         mParam = new String[param_indicator.length];
         for (int i = 0; i < param_indicator.length; i++) {
             mParam[i] = param_indicator[i];
         }
+
     }
 
     public void onCheckboxClicked(View view) {
@@ -190,4 +201,71 @@ public class ChooseIndicator extends Fragment {
         }
     }
 
+    public class indicatorGetter extends AsyncTask<Void, Void, String[]>{
+
+        public static final String SERVER_URL = "192.168.43.126:8080";
+        public static final int READ_TIMEOUT = 15000;
+        public static final int CONNECTION_TIMEOUT = 15000;
+
+        @Override
+        protected String[] doInBackground(Void... voids) {
+            List<String> params = new ArrayList<>();
+            String method = "GET";
+            try {
+                URL url = new URL("http://" + SERVER_URL + "/indicators");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod(method);
+                connection.setReadTimeout(READ_TIMEOUT);
+                connection.setConnectTimeout(CONNECTION_TIMEOUT);
+
+                connection.connect();
+
+                InputStream is = connection.getInputStream();
+
+                InputStreamReader isReader = new InputStreamReader(is);
+                JsonReader jsReader = new JsonReader(isReader);
+
+                boolean status = true;
+                jsReader.beginObject();
+                while(jsReader.hasNext() && status){
+                    String buff = jsReader.nextName();
+                    if (buff.equals("status")){
+                        status = jsReader.nextBoolean();
+                    }
+                    else if (buff.equals("payload")){
+                        jsReader.beginObject();
+                        while (jsReader.hasNext()){
+                            buff = jsReader.nextName();
+                            if(buff.equals("name")){
+                                String eq = jsReader.nextString();
+                                params.add(eq);
+                            }
+                        }
+                        jsReader.endObject();
+                    }
+                }
+                jsReader.endObject();
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+                return params.toArray(new String[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String[] mParam) {
+            super.onPostExecute(mParam);
+
+            indicatorAdapter = new RecyclerChooseIndicator(mParam);
+
+            // Set CustomAdapter as the adapter for RecyclerView.
+            recyclerViewIndicator.setAdapter(indicatorAdapter);
+        }
+    }
 }
