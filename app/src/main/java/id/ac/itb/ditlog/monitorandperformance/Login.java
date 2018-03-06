@@ -77,7 +77,7 @@ public class Login extends AppCompatActivity {
     private class LoginTask extends AsyncTask<Void, Void, LoginWrapper> {
         @Override
         protected void onPreExecute() {
-            Toast.makeText(Login.this, "wait a minute....", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Login.this, "Please wait", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -97,20 +97,23 @@ public class Login extends AppCompatActivity {
                     sb.append(Character.forDigit(a[i] & 0x0f, 16));
                 }
 
-                String url = "";
+                String url = "167.205.50.48";
                 RestTemplate restTemplate = new RestTemplate();
                 restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
                 LoginInfo logininfo = new LoginInfo();
                 logininfo.setUsername(username.getText().toString());
                 logininfo.setPassword(sb.toString());
 //                LoginResponse loginresponse = restTemplate.postForObject(url, logininfo, LoginResponse.class);
-//                return loginresponse;
 
                 //testdummy
                 LoginResponse loginresponsedummy = new LoginResponse();
-                loginresponsedummy.setSuccess("true");
-                loginresponsedummy.setUserID("10");
-                loginresponsedummy.setToken(sb.toString());
+                if (logininfo.getUsername().equals("aep") && password.getText().toString().equals("123")) {
+                    loginresponsedummy.setSuccess("true");
+                    loginresponsedummy.setUserID("1");
+                    loginresponsedummy.setToken(sb.toString());
+                }
+                else
+                    loginresponsedummy.setSuccess("false");
 
                 LoginWrapper loginWrapper = new LoginWrapper(logininfo, loginresponsedummy);
                 return loginWrapper;
