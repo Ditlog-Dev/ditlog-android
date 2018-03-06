@@ -3,11 +3,11 @@ package id.ac.itb.ditlog.monitorandperformance;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+//@JsonIgnoreProperties(ignoreUnknown = true)
 public class LoginInfo {
-    @JsonProperty("username")
+//    @JsonProperty("username")
     private String username;
-    @JsonProperty("password")
+//    @JsonProperty("password")
     private String password;
 
     public LoginInfo() {

@@ -18,8 +18,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String userID = sharedPreferences.getString("userid", "-1");
-        if (userID.equals("-1")){
+        Long userID = sharedPreferences.getLong("userid", -1);
+        if (userID == -1){
             Intent myIntent = new Intent(this, Login.class);
             startActivity(myIntent);
             finish();

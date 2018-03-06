@@ -97,7 +97,7 @@ public class Login extends AppCompatActivity {
                     sb.append(Character.forDigit(a[i] & 0x0f, 16));
                 }
 
-                String url = "167.205.50.48";
+                String url = "";
                 RestTemplate restTemplate = new RestTemplate();
                 restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
                 LoginInfo logininfo = new LoginInfo();
@@ -108,12 +108,12 @@ public class Login extends AppCompatActivity {
                 //testdummy
                 LoginResponse loginresponsedummy = new LoginResponse();
                 if (logininfo.getUsername().equals("aep") && password.getText().toString().equals("123")) {
-                    loginresponsedummy.setSuccess("true");
-                    loginresponsedummy.setUserID("1");
-                    loginresponsedummy.setToken(sb.toString());
+                    loginresponsedummy.setSuccess(true);
+                    Payload payloaddummy = new Payload((long) 1, sb.toString());
+                    loginresponsedummy.setPayload(payloaddummy);
                 }
                 else
-                    loginresponsedummy.setSuccess("false");
+                    loginresponsedummy.setSuccess(false);
 
                 LoginWrapper loginWrapper = new LoginWrapper(logininfo, loginresponsedummy);
                 return loginWrapper;
@@ -129,8 +129,9 @@ public class Login extends AppCompatActivity {
             if (loginresponse.getLoginResponse().getSuccess().equals("true")){
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("userid", loginresponse.getLoginResponse().getUserID());
-                editor.putString("token", loginresponse.getLoginResponse().getToken());
+                Payload p = (Payload) loginresponse.getLoginResponse().getPayload();
+                editor.putLong("userid", p.getUserID());
+                editor.putString("token", p.getToken());
                 editor.putString("username", loginresponse.getLoginInfo().getUsername());
                 editor.apply();
 
