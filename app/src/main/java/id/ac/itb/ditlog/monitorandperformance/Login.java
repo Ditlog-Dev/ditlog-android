@@ -126,7 +126,7 @@ public class Login extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(LoginWrapper loginresponse) {
-            if (loginresponse.getLoginResponse().getSuccess().equals("true")){
+            if (loginresponse.getLoginResponse().getSuccess()){
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 Payload p = (Payload) loginresponse.getLoginResponse().getPayload();
