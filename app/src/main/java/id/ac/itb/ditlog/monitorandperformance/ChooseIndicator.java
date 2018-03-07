@@ -2,7 +2,6 @@ package id.ac.itb.ditlog.monitorandperformance;
 
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -203,7 +201,7 @@ public class ChooseIndicator extends Fragment {
 
     public class indicatorGetter extends AsyncTask<Void, Void, String[]>{
 
-        public static final String SERVER_URL = "192.168.43.126:8080";
+        public static final String SERVER_URL = "LOCAL_URL:8080";
         public static final int READ_TIMEOUT = 15000;
         public static final int CONNECTION_TIMEOUT = 15000;
 
@@ -222,30 +220,69 @@ public class ChooseIndicator extends Fragment {
                 connection.connect();
 
                 InputStream is = connection.getInputStream();
+                if(String.valueOf(connection.getResponseCode()).startsWith("2")){
+                    InputStreamReader isReader = new InputStreamReader(is,"UTF-8");
 
-                InputStreamReader isReader = new InputStreamReader(is);
-                JsonReader jsReader = new JsonReader(isReader);
+                    JsonReader jsReader = new JsonReader(isReader);
 
-                boolean status = true;
-                jsReader.beginObject();
-                while(jsReader.hasNext() && status){
-                    String buff = jsReader.nextName();
-                    if (buff.equals("status")){
-                        status = jsReader.nextBoolean();
+                    jsReader.beginObject();
+                    jsReader.nextName();
+                    boolean status = jsReader.nextBoolean();
+                    jsReader.nextName();
+                    int code = jsReader.nextInt();
+                    jsReader.nextName();
+                    try{
+                        jsReader.nextString();
                     }
-                    else if (buff.equals("payload")){
+                    catch (Exception e){
+                        jsReader.nextNull();
+                    }
+                    jsReader.nextName();
+                    jsReader.beginObject();
+                    jsReader.nextName();
+                    jsReader.beginArray();
+                    while(jsReader.hasNext()){
                         jsReader.beginObject();
-                        while (jsReader.hasNext()){
-                            buff = jsReader.nextName();
-                            if(buff.equals("name")){
-                                String eq = jsReader.nextString();
-                                params.add(eq);
-                            }
+                        jsReader.nextName();
+                        int id = jsReader.nextInt();
+                        jsReader.nextName();
+                        String name = jsReader.nextString();
+                        params.add(name);
+                        jsReader.nextName();
+                        try{
+                            jsReader.nextInt();
+                        }
+                        catch (Exception e){
+                            jsReader.nextNull();
                         }
                         jsReader.endObject();
                     }
+                    jsReader.endArray();
+                    jsReader.nextName();
+                    boolean last = jsReader.nextBoolean();
+                    jsReader.nextName();
+                    int totalElements = jsReader.nextInt();
+                    jsReader.nextName();
+                    int totalPages = jsReader.nextInt();
+                    jsReader.nextName();
+                    int totalsize = jsReader.nextInt();
+                    jsReader.nextName();
+                    int totalnumber = jsReader.nextInt();
+                    jsReader.nextName();
+                    String sort = null;
+                    try {
+                        sort = jsReader.nextString();
+                    }
+                    catch(Exception e){
+                        jsReader.nextNull();
+                    }
+                    jsReader.nextName();
+                    boolean first = jsReader.nextBoolean();
+                    jsReader.nextName();
+                    int numberOfElements = jsReader.nextInt();
+                    jsReader.endObject();
+                    jsReader.endObject();
                 }
-                jsReader.endObject();
 
 
             } catch (MalformedURLException e) {
