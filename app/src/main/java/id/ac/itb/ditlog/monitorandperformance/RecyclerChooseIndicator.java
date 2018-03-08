@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChooseIndicator.ViewHolder> {
     private static final String TAG = "RecyclerChooseIndicator";
 
-    private String[] mParam;
+    private ArrayList<IndicatorEntity> mParam;
 
     private Context mContext;
 
@@ -55,7 +55,7 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
      *
      * @param dataSet String[] containing the data to populate views to be used by RecyclerView.
      */
-    public RecyclerChooseIndicator(String[] dataSet) {
+    public RecyclerChooseIndicator(ArrayList<IndicatorEntity> dataSet) {
         this.mParam = dataSet;
     }
 
@@ -79,7 +79,7 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
 
         // Get element from your dataset at this position and replace the contents of the view
         // with that element
-        viewHolder.getParamIndicator().setText(mParam[position]);
+        viewHolder.getParamIndicator().setText(mParam.get(position).name);
 
 
         //final ObjectIncome objIncome = myItems.get(position);
@@ -139,6 +139,6 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mParam.length;
+        return mParam.size();
     }
 }

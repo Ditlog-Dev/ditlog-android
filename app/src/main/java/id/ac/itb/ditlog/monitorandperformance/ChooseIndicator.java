@@ -11,6 +11,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.JsonReader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +50,7 @@ public class ChooseIndicator extends Fragment {
     protected RecyclerView recyclerViewIndicator;
     protected RecyclerChooseIndicator indicatorAdapter;
     protected RecyclerView.LayoutManager indicatorLayoutManager;
-    protected String[] mParam;
+    protected ArrayList<IndicatorEntity> mParam = new ArrayList<>();
 
     String[] param_indicator = {"Kedisiplinan", "Ketepatan Waktu", "Kelengkapan", "Terdokumentasi"};
 
@@ -175,10 +176,12 @@ public class ChooseIndicator extends Fragment {
      */
     private void initDataset() {
 
+        /*
         mParam = new String[param_indicator.length];
         for (int i = 0; i < param_indicator.length; i++) {
             mParam[i] = param_indicator[i];
         }
+        */
 
     }
 
@@ -200,18 +203,33 @@ public class ChooseIndicator extends Fragment {
         }
     }
 
-    public class indicatorGetter extends AsyncTask<Void, Void, String[]>{
+    public class indicatorGetter extends AsyncTask<Void, Void, ArrayList<IndicatorEntity>>{
 
-        public static final String SERVER_URL = "LOCAL_URL:8080";
+        public static final String SERVER_URL = "159.65.131.168:8080";
         public static final int READ_TIMEOUT = 15000;
         public static final int CONNECTION_TIMEOUT = 15000;
 
+        public int pageNumber=0;
+        public int itemLimit=12;
+        public String direction="asc";
+        public String sortingKey="id";
+
+        ArrayList<IndicatorEntity> params = new ArrayList<>();
+        int totalPages=-1;
+        int totalElements=-1;
+        int numberOfElements=-1;
+        int number=-1;
+
         @Override
-        protected String[] doInBackground(Void... voids) {
-            List<String> params = new ArrayList<>();
+        protected ArrayList<IndicatorEntity> doInBackground(Void... voids) {
             String method = "GET";
             try {
-                URL url = new URL("http://" + SERVER_URL + "/indicators");
+                String rawUrl = "http://" + SERVER_URL + "/indicators";
+                rawUrl += "?page=" + String.valueOf(pageNumber);
+                rawUrl += "&limit=" + String.valueOf(itemLimit);
+                rawUrl +="&dir=" + direction;
+                rawUrl +="&sort=" + sortingKey;
+                URL url = new URL(rawUrl);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                 connection.setRequestMethod(method);
@@ -227,65 +245,17 @@ public class ChooseIndicator extends Fragment {
                     JsonReader jsReader = new JsonReader(isReader);
 
                     jsReader.beginObject();
-                    jsReader.nextName();
-                    boolean status = jsReader.nextBoolean();
-                    jsReader.nextName();
-                    int code = jsReader.nextInt();
-                    jsReader.nextName();
-                    try{
-                        jsReader.nextString();
-                    }
-                    catch (Exception e){
-                        jsReader.nextNull();
-                    }
-                    jsReader.nextName();
-                    jsReader.beginObject();
-                    jsReader.nextName();
-                    jsReader.beginArray();
                     while(jsReader.hasNext()){
-                        jsReader.beginObject();
-                        jsReader.nextName();
-                        int id = jsReader.nextInt();
-                        jsReader.nextName();
-                        String name = jsReader.nextString();
-                        params.add(name);
-                        jsReader.nextName();
-                        try{
-                            jsReader.nextInt();
+                        String name = jsReader.nextName();
+                        if(name.equals("payload")){
+                            parsePayload(jsReader);
                         }
-                        catch (Exception e){
-                            jsReader.nextNull();
+                        else{
+                            jsReader.skipValue();
                         }
-                        jsReader.endObject();
                     }
-                    jsReader.endArray();
-                    jsReader.nextName();
-                    boolean last = jsReader.nextBoolean();
-                    jsReader.nextName();
-                    int totalElements = jsReader.nextInt();
-                    jsReader.nextName();
-                    int totalPages = jsReader.nextInt();
-                    jsReader.nextName();
-                    int totalsize = jsReader.nextInt();
-                    jsReader.nextName();
-                    int totalnumber = jsReader.nextInt();
-                    jsReader.nextName();
-                    String sort = null;
-                    try {
-                        sort = jsReader.nextString();
-                    }
-                    catch(Exception e){
-                        jsReader.nextNull();
-                    }
-                    jsReader.nextName();
-                    boolean first = jsReader.nextBoolean();
-                    jsReader.nextName();
-                    int numberOfElements = jsReader.nextInt();
-                    jsReader.endObject();
                     jsReader.endObject();
                 }
-
-
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -293,11 +263,81 @@ public class ChooseIndicator extends Fragment {
             }
 
 
-            return params.toArray(new String[0]);
+            return params;
+        }
+
+        protected void parsePayload(JsonReader jsReader) throws IOException{
+
+            String name;
+            jsReader.beginObject();
+            while(jsReader.hasNext()) {
+                name = jsReader.nextName();
+                if(name.equals("content")) {
+                    parseContent(jsReader);
+                }
+                else if(name.equals("totalPages")){
+                    totalPages = jsReader.nextInt();
+                }
+                else if(name.equals("totalElements")){
+                    totalElements = jsReader.nextInt();
+                }
+                else if(name.equals("numberOfElements")){
+                    numberOfElements = jsReader.nextInt();
+                }
+                else if(name.equals("number")){
+                    number = jsReader.nextInt();
+                }
+                else{
+                    jsReader.skipValue();
+                }
+            }
+            jsReader.endObject();
+
+            Log.d("totalPages", String.valueOf(totalPages));
+            Log.d("totalElements", String.valueOf(totalElements));
+            Log.d("numberOfElements", String.valueOf(numberOfElements));
+            Log.d("number", String.valueOf(number));
+        }
+
+
+        protected void parseContent(JsonReader jsReader)throws IOException{
+            String name;
+            jsReader.beginArray();
+            while (jsReader.hasNext()) {
+                jsReader.beginObject();
+                int id=-1;
+                String indName="";
+                int idUser=-1;
+
+                while (jsReader.hasNext()) {
+                    name = jsReader.nextName();
+                    switch (name){
+                        case "id":
+                            id = jsReader.nextInt();
+                            break;
+                        case "name":
+                            indName = jsReader.nextString();
+                            break;
+                        case "idUser":
+                            try {
+                                idUser = jsReader.nextInt();
+                            } catch (RuntimeException e) {
+                                jsReader.skipValue();
+                            }
+                            break;
+                        default:
+                            jsReader.skipValue();
+                    }
+                }
+                params.add(new IndicatorEntity(id,indName,idUser));
+                jsReader.endObject();
+            }
+            jsReader.endArray();
+
         }
 
         @Override
-        protected void onPostExecute(String[] mParam) {
+        protected void onPostExecute(ArrayList<IndicatorEntity> mParam) {
             super.onPostExecute(mParam);
 
             indicatorAdapter = new RecyclerChooseIndicator(mParam);
