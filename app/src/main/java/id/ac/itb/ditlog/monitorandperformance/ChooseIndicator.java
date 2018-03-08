@@ -202,7 +202,7 @@ public class ChooseIndicator extends Fragment {
 
     public class indicatorGetter extends AsyncTask<Void, Void, String[]>{
 
-        public static final String SERVER_URL = "LOCAL_URL:8080";
+        public static final String SERVER_URL = "159.65.131.168:8080";
         public static final int READ_TIMEOUT = 15000;
         public static final int CONNECTION_TIMEOUT = 15000;
 
