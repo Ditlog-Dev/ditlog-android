@@ -2,9 +2,7 @@ package id.ac.itb.ditlog.monitorandperformance;
 
 
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -12,13 +10,21 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.util.JsonReader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -32,8 +38,7 @@ public class ChooseIndicator extends Fragment {
     private static final int SPAN_COUNT = 2;
     private static final int DATASET_COUNT = 60; // menampilkan data sebanyak value
     private FloatingActionButton fab;
-    private EditText editText = null;
-    
+
     private enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,
         LINEAR_LAYOUT_MANAGER
@@ -45,16 +50,17 @@ public class ChooseIndicator extends Fragment {
     protected RecyclerChooseIndicator indicatorAdapter;
     protected RecyclerView.LayoutManager indicatorLayoutManager;
     protected String[] mParam;
-    
+
     String[] param_indicator = {"Kedisiplinan", "Ketepatan Waktu", "Kelengkapan", "Terdokumentasi"};
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         // Initialize dataset, this data would usually come from a local content provider or
         // remote server.
-        initDataset();
+        //initDataset();
     }
 
     protected void showInputDialog() {
@@ -65,7 +71,7 @@ public class ChooseIndicator extends Fragment {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setView(promptView);
 
-        editText = (EditText) promptView.findViewById(R.id.edittext);
+        final EditText editText = (EditText) promptView.findViewById(R.id.edittext);
         // setup a dialog window
         alertDialogBuilder.setCancelable(false)
                 .setPositiveButton("TAMBAH", new DialogInterface.OnClickListener() {
@@ -120,10 +126,8 @@ public class ChooseIndicator extends Fragment {
         }
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
-        indicatorAdapter = new RecyclerChooseIndicator(mParam);
 
-        // Set CustomAdapter as the adapter for RecyclerView.
-        recyclerViewIndicator.setAdapter(indicatorAdapter);
+        new indicatorGetter().execute();
 
         // END_INCLUDE(initializeRecyclerView)
 
@@ -170,10 +174,12 @@ public class ChooseIndicator extends Fragment {
      * from a local content provider or remote server.
      */
     private void initDataset() {
+
         mParam = new String[param_indicator.length];
         for (int i = 0; i < param_indicator.length; i++) {
             mParam[i] = param_indicator[i];
         }
+
     }
 
     public void onCheckboxClicked(View view) {
@@ -194,4 +200,110 @@ public class ChooseIndicator extends Fragment {
         }
     }
 
+    public class indicatorGetter extends AsyncTask<Void, Void, String[]>{
+
+        public static final String SERVER_URL = "LOCAL_URL:8080";
+        public static final int READ_TIMEOUT = 15000;
+        public static final int CONNECTION_TIMEOUT = 15000;
+
+        @Override
+        protected String[] doInBackground(Void... voids) {
+            List<String> params = new ArrayList<>();
+            String method = "GET";
+            try {
+                URL url = new URL("http://" + SERVER_URL + "/indicators");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod(method);
+                connection.setReadTimeout(READ_TIMEOUT);
+                connection.setConnectTimeout(CONNECTION_TIMEOUT);
+
+                connection.connect();
+
+                InputStream is = connection.getInputStream();
+                if(String.valueOf(connection.getResponseCode()).startsWith("2")){
+                    InputStreamReader isReader = new InputStreamReader(is,"UTF-8");
+
+                    JsonReader jsReader = new JsonReader(isReader);
+
+                    jsReader.beginObject();
+                    jsReader.nextName();
+                    boolean status = jsReader.nextBoolean();
+                    jsReader.nextName();
+                    int code = jsReader.nextInt();
+                    jsReader.nextName();
+                    try{
+                        jsReader.nextString();
+                    }
+                    catch (Exception e){
+                        jsReader.nextNull();
+                    }
+                    jsReader.nextName();
+                    jsReader.beginObject();
+                    jsReader.nextName();
+                    jsReader.beginArray();
+                    while(jsReader.hasNext()){
+                        jsReader.beginObject();
+                        jsReader.nextName();
+                        int id = jsReader.nextInt();
+                        jsReader.nextName();
+                        String name = jsReader.nextString();
+                        params.add(name);
+                        jsReader.nextName();
+                        try{
+                            jsReader.nextInt();
+                        }
+                        catch (Exception e){
+                            jsReader.nextNull();
+                        }
+                        jsReader.endObject();
+                    }
+                    jsReader.endArray();
+                    jsReader.nextName();
+                    boolean last = jsReader.nextBoolean();
+                    jsReader.nextName();
+                    int totalElements = jsReader.nextInt();
+                    jsReader.nextName();
+                    int totalPages = jsReader.nextInt();
+                    jsReader.nextName();
+                    int totalsize = jsReader.nextInt();
+                    jsReader.nextName();
+                    int totalnumber = jsReader.nextInt();
+                    jsReader.nextName();
+                    String sort = null;
+                    try {
+                        sort = jsReader.nextString();
+                    }
+                    catch(Exception e){
+                        jsReader.nextNull();
+                    }
+                    jsReader.nextName();
+                    boolean first = jsReader.nextBoolean();
+                    jsReader.nextName();
+                    int numberOfElements = jsReader.nextInt();
+                    jsReader.endObject();
+                    jsReader.endObject();
+                }
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            return params.toArray(new String[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String[] mParam) {
+            super.onPostExecute(mParam);
+
+            indicatorAdapter = new RecyclerChooseIndicator(mParam);
+
+            // Set CustomAdapter as the adapter for RecyclerView.
+            recyclerViewIndicator.setAdapter(indicatorAdapter);
+        }
+    }
 }
