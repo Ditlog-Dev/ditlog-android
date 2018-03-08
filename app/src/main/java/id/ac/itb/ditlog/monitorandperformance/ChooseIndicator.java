@@ -3,6 +3,8 @@ package id.ac.itb.ditlog.monitorandperformance;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -10,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +32,8 @@ public class ChooseIndicator extends Fragment {
     private static final int SPAN_COUNT = 2;
     private static final int DATASET_COUNT = 60; // menampilkan data sebanyak value
     private FloatingActionButton fab;
-
+    private EditText editText = null;
+    
     private enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,
         LINEAR_LAYOUT_MANAGER
@@ -41,14 +45,13 @@ public class ChooseIndicator extends Fragment {
     protected RecyclerChooseIndicator indicatorAdapter;
     protected RecyclerView.LayoutManager indicatorLayoutManager;
     protected String[] mParam;
-
+    
     String[] param_indicator = {"Kedisiplinan", "Ketepatan Waktu", "Kelengkapan", "Terdokumentasi"};
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // Initialize dataset, this data would usually come from a local content provider or
         // remote server.
         initDataset();
@@ -62,12 +65,13 @@ public class ChooseIndicator extends Fragment {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setView(promptView);
 
-        final EditText editText = (EditText) promptView.findViewById(R.id.edittext);
+        editText = (EditText) promptView.findViewById(R.id.edittext);
         // setup a dialog window
         alertDialogBuilder.setCancelable(false)
                 .setPositiveButton("TAMBAH", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
+                        String indicator = editText.getText().toString();
+                        new AsyncAddIndicator(indicator, getContext()).execute(indicator);
                     }
                 })
                 .setNegativeButton("BATAL",
