@@ -2,8 +2,6 @@ package id.ac.itb.ditlog.monitorandperformance;
 
 
 import android.content.DialogInterface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,25 +17,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Toast;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
+import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ChooseIndicator extends Fragment {
 
+
     private static final String TAG = "RecyclerViewFragment";
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
+    private static final int DATASET_COUNT = 60; // menampilkan data sebanyak value
     private FloatingActionButton fab;
-    private HttpURLConnection connection = null;
 
     private enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,
@@ -51,9 +52,16 @@ public class ChooseIndicator extends Fragment {
     protected RecyclerView.LayoutManager indicatorLayoutManager;
     protected ArrayList<IndicatorEntity> mParam = new ArrayList<>();
 
+    String[] param_indicator = {"Kedisiplinan", "Ketepatan Waktu", "Kelengkapan", "Terdokumentasi"};
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize dataset, this data would usually come from a local content provider or
+        // remote server.
+        //initDataset();
     }
 
     protected void showInputDialog() {
@@ -70,17 +78,7 @@ public class ChooseIndicator extends Fragment {
                 .setPositiveButton("TAMBAH", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         String indicator = editText.getText().toString();
-                        String status = "fail";
-                        try {
-                            status = new AsyncAddIndicator(indicator, getContext(), getActivity()).execute(indicator).get();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                        if (status.equals("Indikator berhasil ditambahkan")) {
-                            new indicatorGetter().execute();
-                        }
+                        new AsyncAddIndicator(indicator, getContext()).execute(indicator);
                     }
                 })
                 .setNegativeButton("BATAL",
@@ -102,7 +100,6 @@ public class ChooseIndicator extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_choose_indicator, container, false);
 
         rootView.setTag(TAG);
-
         //fab tambah indikator baru
         fab = (FloatingActionButton) rootView.findViewById(R.id.tambah);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -130,13 +127,10 @@ public class ChooseIndicator extends Fragment {
         }
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
+
         new indicatorGetter().execute();
 
         // END_INCLUDE(initializeRecyclerView)
-
-        if (!haveNetworkConnection()) {
-            Toast.makeText(getContext(), "Tidak ada koneksi internet", Toast.LENGTH_LONG).show();
-        }
 
         return rootView;
     }
@@ -176,6 +170,21 @@ public class ChooseIndicator extends Fragment {
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    /**
+     * Generates Strings for RecyclerView's adapter. This data would usually come
+     * from a local content provider or remote server.
+     */
+    private void initDataset() {
+
+        /*
+        mParam = new String[param_indicator.length];
+        for (int i = 0; i < param_indicator.length; i++) {
+            mParam[i] = param_indicator[i];
+        }
+        */
+
+    }
+
     public void onCheckboxClicked(View view) {
         // Is the view now checked?
         boolean checked = ((CheckBox) view).isChecked();
@@ -201,7 +210,7 @@ public class ChooseIndicator extends Fragment {
         public static final int CONNECTION_TIMEOUT = 15000;
 
         public int pageNumber=0;
-        public int itemLimit=20;
+        public int itemLimit=12;
         public String direction="asc";
         public String sortingKey="id";
 
@@ -221,7 +230,7 @@ public class ChooseIndicator extends Fragment {
                 rawUrl +="&dir=" + direction;
                 rawUrl +="&sort=" + sortingKey;
                 URL url = new URL(rawUrl);
-                connection = (HttpURLConnection) url.openConnection();
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                 connection.setRequestMethod(method);
                 connection.setReadTimeout(READ_TIMEOUT);
@@ -247,15 +256,14 @@ public class ChooseIndicator extends Fragment {
                     }
                     jsReader.endObject();
                 }
-            } catch (Exception e) {
+            } catch (MalformedURLException e) {
                 e.printStackTrace();
-                Toast.makeText(getContext(), "Server tidak tersedia", Toast.LENGTH_LONG).show();
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-                return params;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
+
+            return params;
         }
 
         protected void parsePayload(JsonReader jsReader) throws IOException{
@@ -337,22 +345,5 @@ public class ChooseIndicator extends Fragment {
             // Set CustomAdapter as the adapter for RecyclerView.
             recyclerViewIndicator.setAdapter(indicatorAdapter);
         }
-    }
-
-    private boolean haveNetworkConnection() {
-        boolean haveConnectedWifi = false;
-        boolean haveConnectedMobile = false;
-
-        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(getContext().CONNECTIVITY_SERVICE);
-        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-        for (NetworkInfo ni : netInfo) {
-            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-                if (ni.isConnected())
-                    haveConnectedWifi = true;
-            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-                if (ni.isConnected())
-                    haveConnectedMobile = true;
-        }
-        return haveConnectedWifi || haveConnectedMobile;
     }
 }
