@@ -16,7 +16,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerViewIndicator"
             android:layout_width="match_parent"
-            android:layout_height="486dp" />
+            android:layout_height="486dp"/>
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
@@ -31,7 +31,8 @@
         android:layout_marginEnd="19dp"
         android:layout_marginRight="19dp"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="@android:color/holo_blue_bright" />
+        android:tint="#303F9F"
+        app:backgroundTint="#2E9DE2" />
 
     <TextView
         android:id="@+id/result"
@@ -43,5 +44,6 @@
         android:layout_marginEnd="84dp"
         android:layout_marginRight="84dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#141515"
         tools:ignore="NotSibling" />
 </RelativeLayout>

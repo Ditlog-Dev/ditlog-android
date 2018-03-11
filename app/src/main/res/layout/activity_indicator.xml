@@ -15,6 +15,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
+        android:textColor="#141515"
         android:text="Nomor Kontrak" />
 
     <TextView
@@ -25,6 +26,7 @@
         android:layout_alignStart="@+id/noKontrak"
         android:layout_below="@+id/noKontrak"
         android:layout_marginTop="10dp"
+        android:textColor="#141515"
         android:text="Judul Kontrak" />
 
     <TextView
@@ -35,6 +37,7 @@
         android:layout_alignStart="@+id/judulKontrak"
         android:layout_below="@+id/judulKontrak"
         android:layout_marginTop="10dp"
+        android:textColor="#141515"
         android:text="Nama Vendor" />
 
     <TextView
@@ -45,6 +48,7 @@
         android:layout_alignStart="@+id/namaVendor"
         android:layout_below="@+id/namaVendor"
         android:layout_marginTop="10dp"
+        android:textColor="#141515"
         android:text="Tanggal Kontrak" />
 
     <android.support.design.widget.TabLayout

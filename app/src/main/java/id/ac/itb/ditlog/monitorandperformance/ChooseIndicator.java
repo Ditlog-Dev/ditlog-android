@@ -50,12 +50,6 @@ public class ChooseIndicator extends Fragment {
     protected RecyclerChooseIndicator indicatorAdapter;
     protected RecyclerView.LayoutManager indicatorLayoutManager;
     protected ArrayList<IndicatorEntity> mParam = new ArrayList<>();
-<<<<<<< HEAD
-=======
-
-    String[] param_indicator = {"Kedisiplinan", "Ketepatan Waktu", "Kelengkapan", "Terdokumentasi"};
-
->>>>>>> 645ba6201575862cdff4305a0a32b43ce8148fa1
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -182,24 +176,6 @@ public class ChooseIndicator extends Fragment {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-<<<<<<< HEAD
-=======
-    /**
-     * Generates Strings for RecyclerView's adapter. This data would usually come
-     * from a local content provider or remote server.
-     */
-    private void initDataset() {
-
-        /*
-        mParam = new String[param_indicator.length];
-        for (int i = 0; i < param_indicator.length; i++) {
-            mParam[i] = param_indicator[i];
-        }
-        */
-
-    }
-
->>>>>>> 645ba6201575862cdff4305a0a32b43ce8148fa1
     public void onCheckboxClicked(View view) {
         // Is the view now checked?
         boolean checked = ((CheckBox) view).isChecked();
@@ -225,11 +201,7 @@ public class ChooseIndicator extends Fragment {
         public static final int CONNECTION_TIMEOUT = 15000;
 
         public int pageNumber=0;
-<<<<<<< HEAD
         public int itemLimit=20;
-=======
-        public int itemLimit=12;
->>>>>>> 645ba6201575862cdff4305a0a32b43ce8148fa1
         public String direction="asc";
         public String sortingKey="id";
 
@@ -249,12 +221,8 @@ public class ChooseIndicator extends Fragment {
                 rawUrl +="&dir=" + direction;
                 rawUrl +="&sort=" + sortingKey;
                 URL url = new URL(rawUrl);
-<<<<<<< HEAD
-                connection = (HttpURLConnection) url.openConnection();
-=======
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
->>>>>>> 645ba6201575862cdff4305a0a32b43ce8148fa1
 
+                connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod(method);
                 connection.setReadTimeout(READ_TIMEOUT);
                 connection.setConnectTimeout(CONNECTION_TIMEOUT);
@@ -279,7 +247,6 @@ public class ChooseIndicator extends Fragment {
                     }
                     jsReader.endObject();
                 }
-<<<<<<< HEAD
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(getContext(), "Server tidak tersedia", Toast.LENGTH_LONG).show();
@@ -315,12 +282,6 @@ public class ChooseIndicator extends Fragment {
                 else{
                     jsReader.skipValue();
                 }
-=======
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
->>>>>>> 645ba6201575862cdff4305a0a32b43ce8148fa1
             }
             jsReader.endObject();
 
@@ -330,47 +291,6 @@ public class ChooseIndicator extends Fragment {
             Log.d("number", String.valueOf(number));
         }
 
-
-<<<<<<< HEAD
-=======
-            return params;
-        }
-
-        protected void parsePayload(JsonReader jsReader) throws IOException{
-
-            String name;
-            jsReader.beginObject();
-            while(jsReader.hasNext()) {
-                name = jsReader.nextName();
-                if(name.equals("content")) {
-                    parseContent(jsReader);
-                }
-                else if(name.equals("totalPages")){
-                    totalPages = jsReader.nextInt();
-                }
-                else if(name.equals("totalElements")){
-                    totalElements = jsReader.nextInt();
-                }
-                else if(name.equals("numberOfElements")){
-                    numberOfElements = jsReader.nextInt();
-                }
-                else if(name.equals("number")){
-                    number = jsReader.nextInt();
-                }
-                else{
-                    jsReader.skipValue();
-                }
-            }
-            jsReader.endObject();
-
-            Log.d("totalPages", String.valueOf(totalPages));
-            Log.d("totalElements", String.valueOf(totalElements));
-            Log.d("numberOfElements", String.valueOf(numberOfElements));
-            Log.d("number", String.valueOf(number));
-        }
-
-
->>>>>>> 645ba6201575862cdff4305a0a32b43ce8148fa1
         protected void parseContent(JsonReader jsReader)throws IOException{
             String name;
             jsReader.beginArray();
