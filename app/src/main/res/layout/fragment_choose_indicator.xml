@@ -13,10 +13,12 @@
         android:layout_margin="16dp"
         tools:context="id.ac.itb.ditlog.monitorandperformance.ChooseIndicator">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerViewIndicator"
-            android:layout_width="match_parent"
-            android:layout_height="486dp"/>
+                <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerViewIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="486dp"
+                android:paddingBottom="125dp"
+                android:clipToPadding="false"/>
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
