@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,13 +32,18 @@ import java.util.concurrent.ExecutionException;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChooseIndicator extends Fragment {
+public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = "RecyclerViewFragment";
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
     private FloatingActionButton fab;
     private HttpURLConnection connection = null;
+
+    @Override
+    public void onRefresh() {
+        new indicatorGetter().execute();
+    }
 
     private enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,
@@ -50,6 +56,7 @@ public class ChooseIndicator extends Fragment {
     protected RecyclerChooseIndicator indicatorAdapter;
     protected RecyclerView.LayoutManager indicatorLayoutManager;
     protected ArrayList<IndicatorEntity> mParam = new ArrayList<>();
+    protected SwipeRefreshLayout swipeContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -130,7 +137,15 @@ public class ChooseIndicator extends Fragment {
         }
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
-        new indicatorGetter().execute();
+        swipeContainer = rootView.findViewById(R.id.Swipe_container);
+        swipeContainer.setOnRefreshListener(this);
+        swipeContainer.setColorSchemeResources(R.color.colorPrimary,R.color.colorPrimaryDark,R.color.colorAccent,R.color.colorPrimary);
+        swipeContainer.post(new Runnable() {
+            @Override
+            public void run() {
+                new indicatorGetter().execute();
+            }
+        });
 
         // END_INCLUDE(initializeRecyclerView)
 
@@ -328,6 +343,12 @@ public class ChooseIndicator extends Fragment {
         }
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            swipeContainer.setRefreshing(true);
+        }
+
+        @Override
         protected void onPostExecute(ArrayList<IndicatorEntity> mParam) {
             super.onPostExecute(mParam);
 
@@ -335,6 +356,7 @@ public class ChooseIndicator extends Fragment {
 
             // Set CustomAdapter as the adapter for RecyclerView.
             recyclerViewIndicator.setAdapter(indicatorAdapter);
+            swipeContainer.setRefreshing(false);
         }
     }
 

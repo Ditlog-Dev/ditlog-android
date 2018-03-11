@@ -12,6 +12,10 @@
         android:orientation="vertical"
         android:layout_margin="16dp"
         tools:context="id.ac.itb.ditlog.monitorandperformance.ChooseIndicator">
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/Swipe_container">
 
                 <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerViewIndicator"
@@ -19,6 +23,7 @@
                 android:layout_height="486dp"
                 android:paddingBottom="125dp"
                 android:clipToPadding="false"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
