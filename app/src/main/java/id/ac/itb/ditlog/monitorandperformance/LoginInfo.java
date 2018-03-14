@@ -3,11 +3,8 @@ package id.ac.itb.ditlog.monitorandperformance;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-//@JsonIgnoreProperties(ignoreUnknown = true)
 public class LoginInfo {
-//    @JsonProperty("username")
     private String username;
-//    @JsonProperty("password")
     private String password;
 
     public LoginInfo() {
@@ -19,11 +16,15 @@ public class LoginInfo {
         username = u;
     }
 
+    public void setPassword(String p){
+        password = p;
+    }
+
     String getUsername(){
         return username;
     }
 
-    public void setPassword(String p){
-        password = p;
+    String getPassword(){
+        return password;
     }
 }

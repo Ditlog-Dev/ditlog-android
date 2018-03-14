@@ -25,9 +25,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         else {
-            Toast.makeText(MainActivity.this, "Welcome " + sharedPreferences.getString("username", "-1"), Toast.LENGTH_SHORT).show();
-//            Toast.makeText(MainActivity.this, "userid: " + userID, Toast.LENGTH_SHORT).show();
-//            Toast.makeText(MainActivity.this, "token: " + sharedPreferences.getString("token", "-1"), Toast.LENGTH_SHORT).show();
             TextView hello = (TextView) findViewById(R.id.hello);
             hello.setText("Hello " + sharedPreferences.getString("username", "-1"));
             Button logout = (Button) findViewById(R.id.logout);

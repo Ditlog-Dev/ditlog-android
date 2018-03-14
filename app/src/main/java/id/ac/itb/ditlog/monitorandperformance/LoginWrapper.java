@@ -2,23 +2,23 @@ package id.ac.itb.ditlog.monitorandperformance;
 
 public class LoginWrapper{
     private LoginInfo loginInfo;
-    private LoginResponse loginResponse;
+    private UserPayload payload;
 
     public LoginWrapper() {
         loginInfo = new LoginInfo();
-        loginResponse = new LoginResponse();
+        payload = new UserPayload();
     }
 
-    public LoginWrapper(LoginInfo i, LoginResponse r) {
+    public LoginWrapper(LoginInfo i, UserPayload r) {
         loginInfo = i;
-        loginResponse = r;
+        payload = r;
     }
 
     public LoginInfo getLoginInfo(){
         return loginInfo;
     }
 
-    public LoginResponse getLoginResponse() {
-        return loginResponse;
+    public UserPayload getPayload(){
+        return payload;
     }
 }
