@@ -1,23 +1,34 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
+import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.JsonReader;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class ViewContractPerformance extends AppCompatActivity {
     private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle drawerToggle;
     private RecyclerView contractList;
     private RecyclerView.Adapter contractAdapter;
     private RecyclerView.LayoutManager contractLayoutManager;
@@ -33,10 +44,11 @@ public class ViewContractPerformance extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
-        NavigationView navigationView = findViewById(R.id.navigation_menu);
+        NavigationView navigationView = findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -78,4 +90,27 @@ public class ViewContractPerformance extends AppCompatActivity {
         contracts.add(new ContractEntity("contract 2","vendor2",new Date(1997,8,27),0.19f));
         contracts.add(new ContractEntity("contract 3","vendor3",new Date(1997,5,5),0.67f));
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+
+        MenuItem item = menu.findItem(R.id.action_search);
+        MaterialSearchView searchView = findViewById(R.id.search_view);
+        searchView.setMenuItem(item);
+
+        getMenuInflater().inflate(R.menu.year_spinner, menu);
+
+        MenuItem spn = menu.findItem(R.id.spinner);
+        Spinner spinner = (Spinner) MenuItemCompat.getActionView(spn);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.spinner_list_year, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(adapter);
+
+        return true;
+    }
+
 }

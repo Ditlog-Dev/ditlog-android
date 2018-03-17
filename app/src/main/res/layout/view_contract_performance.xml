@@ -17,7 +17,13 @@ android:fitsSystemWindows="true">
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
+            android:theme="@style/AppTheme" />
+
+        <com.miguelcatalan.materialsearchview.MaterialSearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible" />
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
@@ -32,11 +38,12 @@ android:fitsSystemWindows="true">
 
     <!-- Container for contents of drawer -->
     <android.support.design.widget.NavigationView
-        android:id="@+id/navigation_menu"
+        android:id="@+id/navigation"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true" />
+        android:fitsSystemWindows="true"
+        app:menu="@menu/navigation_menu"/>
 
 
 </android.support.v4.widget.DrawerLayout>
