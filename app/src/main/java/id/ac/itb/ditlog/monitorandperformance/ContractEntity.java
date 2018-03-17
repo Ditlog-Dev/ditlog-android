@@ -17,17 +17,20 @@ public class ContractEntity {
     public String name;
     public String vendor;
     public Date date;
+    public float grade;
 
     public ContractEntity(){
         name="";
         vendor = "";
         date = new Date();
+        grade = 0;
     }
 
-    public ContractEntity(String name, String vendor, Date date){
+    public ContractEntity(String name, String vendor, Date date, float grade){
         this.name = name;
         this.vendor = vendor;
         this.date = date;
+        this.grade = grade;
     }
 
     public ConstraintLayout inflate(View parent, Context activity){
