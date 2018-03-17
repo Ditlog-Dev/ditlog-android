@@ -27,7 +27,6 @@ import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.MessageDigest;
 
 public class Login extends AppCompatActivity {
     Button button;
@@ -105,7 +104,7 @@ public class Login extends AppCompatActivity {
             try {
                 EditText username = findViewById(R.id.username);
                 EditText password = findViewById(R.id.password);
-
+                /*
                 MessageDigest digest = MessageDigest.getInstance("MD5");
                 digest.reset();
                 digest.update(password.getText().toString().getBytes());
@@ -115,18 +114,18 @@ public class Login extends AppCompatActivity {
                 for (byte thisByte : bytes) {
                     sb.append(Character.forDigit((thisByte & 0xf0) >> 4, 16));
                     sb.append(Character.forDigit(thisByte & 0x0f, 16));
-                }
+                }*/
 
                 LoginInfo logininfo = new LoginInfo();
                 logininfo.setUsername(username.getText().toString());
-                logininfo.setPassword(sb.toString());
+                logininfo.setPassword(password.getText().toString());
 
                 JSONObject request= new JSONObject();
                 request.put("username", logininfo.getUsername());
                 request.put("password", logininfo.getPassword());
 
 
-                URL url = new URL(BuildConfig.WEBSERVICE_URL + "/user");
+                URL url = new URL(BuildConfig.WEBSERVICE_URL + "/login");
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("POST");
@@ -141,23 +140,33 @@ public class Login extends AppCompatActivity {
                 wr.flush();
                 wr.close();
 
-                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
-                JSONObject response = new JSONObject(result);
+                int responseStatusCode = urlConnection.getResponseCode();
+                if (responseStatusCode == HttpURLConnection.HTTP_OK){
+                  InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                  String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+                  JSONObject response = new JSONObject(result);
 
-                int statusCode = response.getInt("code");
+                  int statusCode = response.getInt("code");
 
-                if (statusCode == 200) {
-                    JSONObject payload = response.getJSONObject("payload");
-                    long userid = payload.getLong("idUser");
-                    String token = payload.getString("jwtToken");
-                    UserPayload userpayload = new UserPayload(userid, token);
-                    return new LoginWrapper(logininfo, userpayload);
-                } else if (statusCode == 400){
+                  if (statusCode == 202) {
+                      JSONObject payload = response.getJSONObject("payload");
+                      long userid = payload.getLong("idUser");
+                      long roleid = payload.getLong("roleId");
+                      String token = payload.getString("jwtToken");
+                      UserPayload userpayload = new UserPayload(userid,roleid, token);
+                      return new LoginWrapper(logininfo, userpayload);
+                  } else if (statusCode == 400){
+                      return new LoginWrapper();
+                  }
+                  else{
+                      return null;
+                  }
+                } else {
+                  System.out.println("WEBSERVICE_ERROR : " + urlConnection.getResponseCode());
+                    InputStream in = new BufferedInputStream(urlConnection.getErrorStream());
+                    String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+                  System.out.println("WEBSERVICE_ERROR : " + result);
                     return new LoginWrapper();
-                }
-                else{
-                    return null;
                 }
 
             } catch (Exception e) {
@@ -182,6 +191,7 @@ public class Login extends AppCompatActivity {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     UserPayload p = loginresponse.getPayload();
                     editor.putLong("userid", p.idUser);
+                    editor.putLong("roleid", p.roleId);
                     editor.putString("token", p.jwtToken);
                     editor.putString("username", loginresponse.getLoginInfo().getUsername());
                     editor.apply();

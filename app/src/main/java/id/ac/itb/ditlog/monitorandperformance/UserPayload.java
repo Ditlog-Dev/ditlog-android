@@ -1,19 +1,19 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class UserPayload {
     public long idUser;
+    public long roleId;
     public String jwtToken;
 
     public UserPayload() {
         idUser = -1;
+        roleId = -1;
         jwtToken = "";
     }
 
-    public UserPayload(Long id, String t) {
-        idUser = id;
-        jwtToken = t;
+    public UserPayload(Long idUser, Long roleId, String jwtToken) {
+        this.idUser = idUser;
+        this.roleId = roleId;
+        this.jwtToken = jwtToken;
     }
 }
