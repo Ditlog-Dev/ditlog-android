@@ -40,10 +40,11 @@ public class Login extends AppCompatActivity {
         try {
             this.getSupportActionBar().hide();
         } catch (NullPointerException e) {
+            e.printStackTrace();
         }
         setContentView(R.layout.activity_login);
-        button = (Button) findViewById(R.id.button);
-        password = (EditText) findViewById(R.id.password);
+        button = findViewById(R.id.button);
+        password = findViewById(R.id.password);
 
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -58,9 +59,9 @@ public class Login extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                username = (EditText) findViewById(R.id.username);
-                password = (EditText) findViewById(R.id.password);
-                if (haveconnection()) {
+                username = findViewById(R.id.username);
+                password = findViewById(R.id.password);
+                if (haveConnection()) {
                     if (validate(username.getText().toString(), password.getText().toString())) {
                         LoginTask task = new LoginTask();
                         task.execute();
@@ -85,13 +86,12 @@ public class Login extends AppCompatActivity {
         return true;
     }
 
-    private boolean haveconnection() {
+    private boolean haveConnection() {
         final ConnectivityManager connMgr = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         final android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        if (wifi.isConnectedOrConnecting () || mobile.isConnectedOrConnecting ())
-            return true;
-        return false;
+        return (wifi.isConnectedOrConnecting () || mobile.isConnectedOrConnecting ());
+
     }
 
     private class LoginTask extends AsyncTask<Void, Void, LoginWrapper> {
@@ -103,18 +103,18 @@ public class Login extends AppCompatActivity {
         @Override
         protected LoginWrapper doInBackground(Void... voids) {
             try {
-                EditText username = (EditText) findViewById(R.id.username);
-                EditText password = (EditText) findViewById(R.id.password);
+                EditText username = findViewById(R.id.username);
+                EditText password = findViewById(R.id.password);
 
                 MessageDigest digest = MessageDigest.getInstance("MD5");
                 digest.reset();
                 digest.update(password.getText().toString().getBytes());
-                byte[] a = digest.digest();
-                int len = a.length;
+                byte[] bytes = digest.digest();
+                int len = bytes.length;
                 StringBuilder sb = new StringBuilder(len << 1);
-                for(int i=0;i<len;i++) {
-                    sb.append(Character.forDigit((a[i] & 0xf0) >> 4, 16));
-                    sb.append(Character.forDigit(a[i] & 0x0f, 16));
+                for (byte thisByte : bytes) {
+                    sb.append(Character.forDigit((thisByte & 0xf0) >> 4, 16));
+                    sb.append(Character.forDigit(thisByte & 0x0f, 16));
                 }
 
                 LoginInfo logininfo = new LoginInfo();
@@ -126,7 +126,7 @@ public class Login extends AppCompatActivity {
                 request.put("password", logininfo.getPassword());
 
 
-                URL url = new URL("http://159.65.131.168:8080/user");
+                URL url = new URL(BuildConfig.WEBSERVICE_URL + "/user");
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("POST");
