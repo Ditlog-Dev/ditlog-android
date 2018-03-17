@@ -7,12 +7,21 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 public class ViewContractPerformance extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
+    private RecyclerView contractList;
+    private RecyclerView.Adapter contractAdapter;
+    private RecyclerView.LayoutManager contractLayoutManager;
+    private ArrayList<ContractEntity> contracts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +52,14 @@ public class ViewContractPerformance extends AppCompatActivity {
                         return true;
                     }
                 });
+
+        contractList = findViewById(R.id.contract_list);
+        contractList.setHasFixedSize(false);
+        contractLayoutManager = new LinearLayoutManager(this);
+        contractList.setLayoutManager(contractLayoutManager);
+        initContracts();
+        contractAdapter = new ContractAdapter(contracts);
+        contractList.setAdapter(contractAdapter);
     }
 
     @Override
@@ -53,5 +70,12 @@ public class ViewContractPerformance extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void initContracts(){
+        contracts = new ArrayList<>();
+        contracts.add(new ContractEntity("contract 1","vendor1",new Date(1997,4,18),1.36f));
+        contracts.add(new ContractEntity("contract 2","vendor2",new Date(1997,8,27),0.19f));
+        contracts.add(new ContractEntity("contract 3","vendor3",new Date(1997,5,5),0.67f));
     }
 }
