@@ -32,7 +32,7 @@ public class ViewContractPerformance extends AppCompatActivity {
     private RecyclerView contractList;
     private RecyclerView.Adapter contractAdapter;
     private RecyclerView.LayoutManager contractLayoutManager;
-    private ArrayList<ContractEntity> contracts;
+    private ArrayList<ContractEntity> contracts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +70,7 @@ public class ViewContractPerformance extends AppCompatActivity {
         contractLayoutManager = new LinearLayoutManager(this);
         contractList.setLayoutManager(contractLayoutManager);
         initContracts();
-        contractAdapter = new ContractAdapter(contracts);
+        contractAdapter = new ContractAdapter(contracts,this);
         contractList.setAdapter(contractAdapter);
     }
 
@@ -85,10 +85,13 @@ public class ViewContractPerformance extends AppCompatActivity {
     }
 
     public void initContracts(){
-        contracts = new ArrayList<>();
-        contracts.add(new ContractEntity("contract 1","vendor1",new Date(1997,4,18),1.36f));
-        contracts.add(new ContractEntity("contract 2","vendor2",new Date(1997,8,27),0.19f));
-        contracts.add(new ContractEntity("contract 3","vendor3",new Date(1997,5,5),0.67f));
+        contracts.add(new ContractEntity("Pengadaan test","Tetran, CV","01/12/2017",80));
+        contracts.add(new ContractEntity("Pengadaan tinta 2018","CV. LOMBOK ABADI","30/10/2017",80));
+        contracts.add(new ContractEntity("Pengadaan jasa desain seragam batik","RUMAH BATIK KOMAR","20/04/2018",0));
+    }
+
+    public void addContract(String title, String vendor, String date, Float eval) {
+        contracts.add(new ContractEntity(title,vendor,date,eval));
     }
 
     @Override

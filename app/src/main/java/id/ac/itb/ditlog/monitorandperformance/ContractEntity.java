@@ -16,17 +16,17 @@ import java.util.Date;
 public class ContractEntity {
     public String name;
     public String vendor;
-    public Date date;
+    public String date;
     public float grade;
 
     public ContractEntity(){
         name="";
         vendor = "";
-        date = new Date();
+        date = "";
         grade = 0;
     }
 
-    public ContractEntity(String name, String vendor, Date date, float grade){
+    public ContractEntity(String name, String vendor, String date, float grade){
         this.name = name;
         this.vendor = vendor;
         this.date = date;
