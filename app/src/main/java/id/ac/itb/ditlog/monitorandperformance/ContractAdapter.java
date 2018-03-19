@@ -31,6 +31,7 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.number.setText(contracts.get(position).number);
         holder.name.setText(contracts.get(position).name);
         holder.vendor.setText(contracts.get(position).vendor);
         holder.date.setText(contracts.get(position).date);
@@ -43,6 +44,7 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.ViewHo
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        public TextView number;
         public TextView name;
         public TextView vendor;
         public TextView date;
@@ -53,6 +55,7 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.ViewHo
         public ViewHolder(View view, Activity act, ContractPerformancePreference performancePreference, ArrayList<ContractEntity> contracts){
             super(view);
             view.setOnClickListener(this);
+            number = view.findViewById(R.id.number);
             name = view.findViewById(R.id.name);
             vendor = view.findViewById(R.id.vendor);
             date = view.findViewById(R.id.date);
@@ -65,6 +68,7 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.ViewHo
         @Override
         public void onClick(View view) {
             int pos = getAdapterPosition();
+            performancePreference.setNumber(view.getContext(), contracts.get(pos).number);
             performancePreference.setTitle(view.getContext(), contracts.get(pos).name);
             performancePreference.setVendor(view.getContext(), contracts.get(pos).vendor);
             performancePreference.setDate(view.getContext(), contracts.get(pos).date);

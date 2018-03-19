@@ -85,13 +85,13 @@ public class ViewContractPerformance extends AppCompatActivity {
     }
 
     public void initContracts(){
-        contracts.add(new ContractEntity("Pengadaan test","Tetran, CV","01/12/2017",80));
-        contracts.add(new ContractEntity("Pengadaan tinta 2018","CV. LOMBOK ABADI","30/10/2017",80));
-        contracts.add(new ContractEntity("Pengadaan jasa desain seragam batik","RUMAH BATIK KOMAR","20/04/2018",0));
+        contracts.add(new ContractEntity("45/kontrak","Pengadaan test","Tetran, CV","01/12/2017",80));
+        contracts.add(new ContractEntity("35/spk-tinta/2018","Pengadaan tinta 2018","CV. LOMBOK ABADI","30/10/2017",80));
+        contracts.add(new ContractEntity("43/kontrak/2018", "Pengadaan jasa desain seragam batik","RUMAH BATIK KOMAR","20/04/2018",0));
     }
 
-    public void addContract(String title, String vendor, String date, Float eval) {
-        contracts.add(new ContractEntity(title,vendor,date,eval));
+    public void addContract(String number, String title, String vendor, String date, Float eval) {
+        contracts.add(new ContractEntity(number,title,vendor,date,eval));
     }
 
     @Override

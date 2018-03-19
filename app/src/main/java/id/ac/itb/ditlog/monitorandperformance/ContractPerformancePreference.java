@@ -11,10 +11,28 @@ import java.util.Date;
 
 public class ContractPerformancePreference {
     public static final String contractPerformance = "contract_performance";
+    public static final String number = "number_performance";
     public static final String title = "title_performance";
     public static final String vendor = "vendor_performance";
     public static final String date = "date_performance";
     public static final String eval = "eval_performance";
+
+    public void setNumber(Context context, String contractNumber) {
+        SharedPreferences sharedPref;
+        SharedPreferences.Editor editor;
+        sharedPref = context.getSharedPreferences(contractPerformance, Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
+        editor.putString(number,contractNumber);
+        editor.commit();
+    }
+
+    public String getNumber(Context context) {
+        SharedPreferences sharedPref;
+        String contractNumber;
+        sharedPref = context.getSharedPreferences(contractPerformance, Context.MODE_PRIVATE);
+        contractNumber = sharedPref.getString(number, "-");
+        return contractNumber;
+    }
 
     public void setTitle(Context context, String contractTitle) {
         SharedPreferences sharedPref;

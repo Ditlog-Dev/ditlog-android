@@ -14,6 +14,7 @@ import java.util.Date;
  */
 
 public class ContractEntity {
+    public String number;
     public String name;
     public String vendor;
     public String date;
@@ -26,7 +27,8 @@ public class ContractEntity {
         grade = 0;
     }
 
-    public ContractEntity(String name, String vendor, String date, float grade){
+    public ContractEntity(String number, String name, String vendor, String date, float grade){
+        this.number = number;
         this.name = name;
         this.vendor = vendor;
         this.date = date;
@@ -39,6 +41,8 @@ public class ContractEntity {
         LayoutInflater inflater = LayoutInflater.from(activity);
         contract = (ConstraintLayout) inflater.inflate(R.layout.item_contract_details, (ViewGroup) parent,false);
 
+        TextView number = contract.findViewById(R.id.number);
+        number.setText((CharSequence) number);
         TextView name = contract.findViewById(R.id.name);
         name.setText((CharSequence) name);
         TextView vendor = contract.findViewById(R.id.vendor);

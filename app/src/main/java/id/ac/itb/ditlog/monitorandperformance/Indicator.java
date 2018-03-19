@@ -13,9 +13,11 @@ public class Indicator extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_indicator);
 
+        TextView number = findViewById(R.id.noKontrak);
         TextView title = findViewById(R.id.judulKontrak);
         TextView vendor = findViewById(R.id.namaVendor);
         TextView date = findViewById(R.id.tglKontrak);
+        number.setText(performancePreference.getNumber(this));
         title.setText(performancePreference.getTitle(this));
         vendor.setText(performancePreference.getVendor(this));
         date.setText(performancePreference.getDate(this));
