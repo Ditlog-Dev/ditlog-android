@@ -20,6 +20,8 @@ import android.util.JsonReader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -37,12 +39,11 @@ import java.util.Date;
 public class ViewContractPerformance extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private DrawerLayout drawerLayout;
     private RecyclerView contractList;
-    //private RecyclerView.Adapter contractAdapter;
     private RecyclerView.LayoutManager contractLayoutManager;
-    private ArrayList<ContractEntity> contracts = new ArrayList<>();
     private HttpURLConnection connection;
-    protected SwipeRefreshLayout swipeContainer;
     protected ContractAdapter contractAdapter;
+    Context context = this;
+    Activity act = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +80,6 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         contractList.setHasFixedSize(false);
         contractLayoutManager = new LinearLayoutManager(this);
         contractList.setLayoutManager(contractLayoutManager);
-        /*initContracts();
-        contractAdapter = new ContractAdapter(contracts,this);
-        contractList.setAdapter(contractAdapter);*/
 
         if (!haveNetworkConnection()) {
             Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_LONG).show();
@@ -105,12 +103,6 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         return super.onOptionsItemSelected(item);
     }
 
-    public void initContracts(){
-        contracts.add(new ContractEntity("45/kontrak","Pengadaan test","Tetran, CV","01/12/2017",80));
-        contracts.add(new ContractEntity("35/spk-tinta/2018","Pengadaan tinta 2018","CV. LOMBOK ABADI","30/10/2017",80));
-        contracts.add(new ContractEntity("43/kontrak/2018", "Pengadaan jasa desain seragam batik","RUMAH BATIK KOMAR","20/04/2018",0));
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_menu, menu);
@@ -122,14 +114,27 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         getMenuInflater().inflate(R.menu.year_spinner, menu);
 
         MenuItem spn = menu.findItem(R.id.spinner);
-        Spinner spinner = (Spinner) MenuItemCompat.getActionView(spn);
+        final Spinner spinner = (Spinner) MenuItemCompat.getActionView(spn);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.spinner_list_year, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        String year = (parent.getItemAtPosition(position)).toString();
+                        Log.d("udah", "udah " + year);
+                        new AsyncGetContracts(year, context, act);
+                        //spinner.setOnItemSelectedListener(this);
+                    }
 
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        //showToast("Spinner1: unselected");
+                    }
+                });
         return true;
     }
 
@@ -153,7 +158,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         protected ArrayList<ContractEntity> doInBackground(Void... voids) {
             String method = "GET";
             try {
-                String rawUrl = "http://" + SERVER_URL + "/?tahun=" + year;
+                String rawUrl = "http://" + SERVER_URL + "/contracts?tahun=" + year;
                 URL url = new URL(rawUrl);
 
                 connection = (HttpURLConnection) url.openConnection();
@@ -234,7 +239,6 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //swipeContainer.setRefreshing(true);
         }
 
         @Override
@@ -245,7 +249,6 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
 
             // Set CustomAdapter as the adapter for RecyclerView.
             contractList.setAdapter(contractAdapter);
-            //swipeContainer.setRefreshing(false);
         }
     }
 

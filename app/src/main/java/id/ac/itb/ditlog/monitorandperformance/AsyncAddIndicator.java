@@ -17,6 +17,7 @@ import java.net.URL;
  */
 
 public class AsyncAddIndicator extends AsyncTask<String,Void,String> {
+    public String auth = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZXAiLCJyb2xlSWQiOjQyMiwiZXhwIjoxNTIyMzM2Mzg1fQ.3nai_tQNWLObap18t8YjZ-RrtisOhlPLq7kI_zDgy1Gq99VNdWTicQ5o-c8BPTh2ZPRxBOhIqumAaCc-8F9-2A";
     public static final String SERVER_URL = "159.65.131.168:8080";
     public static final int READ_TIMEOUT = 1500;
     public static final int CONNECTION_TIMEOUT = 1500;
@@ -45,6 +46,7 @@ public class AsyncAddIndicator extends AsyncTask<String,Void,String> {
 
                 URL url = new URL("http://" + SERVER_URL + "/indicators");
                 urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestProperty("Authorization", auth);
                 // read response
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setReadTimeout(READ_TIMEOUT);
@@ -59,8 +61,10 @@ public class AsyncAddIndicator extends AsyncTask<String,Void,String> {
                 wr.close();
                 // try to get response
                 int statusCode = urlConnection.getResponseCode();
-                if (statusCode == 200) {
+                if(String.valueOf(urlConnection.getResponseCode()).startsWith("2")) {
                     status = "Indikator berhasil ditambahkan";
+                } else if (String.valueOf(urlConnection.getResponseCode()).startsWith("4")){
+                    status = "Akses tidak diotorisasi";
                 } else {
                     status = "Server tidak tersedia";
                 }

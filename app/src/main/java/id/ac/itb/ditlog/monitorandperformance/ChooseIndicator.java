@@ -211,6 +211,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
 
     public class indicatorGetter extends AsyncTask<Void, Void, ArrayList<IndicatorEntity>>{
 
+        public String auth = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZXAiLCJyb2xlSWQiOjQyMiwiZXhwIjoxNTIyMzM2Mzg1fQ.3nai_tQNWLObap18t8YjZ-RrtisOhlPLq7kI_zDgy1Gq99VNdWTicQ5o-c8BPTh2ZPRxBOhIqumAaCc-8F9-2A";
         public static final String SERVER_URL = "159.65.131.168:8080";
         public static final int READ_TIMEOUT = 15000;
         public static final int CONNECTION_TIMEOUT = 15000;
@@ -238,6 +239,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
                 URL url = new URL(rawUrl);
 
                 connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestProperty("Authorization", auth);
                 connection.setRequestMethod(method);
                 connection.setReadTimeout(READ_TIMEOUT);
                 connection.setConnectTimeout(CONNECTION_TIMEOUT);
