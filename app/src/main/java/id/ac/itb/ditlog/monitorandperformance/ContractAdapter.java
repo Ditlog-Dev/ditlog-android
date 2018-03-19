@@ -34,7 +34,6 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.ViewHo
         holder.number.setText(contracts.get(position).number);
         holder.name.setText(contracts.get(position).name);
         holder.vendor.setText(contracts.get(position).vendor);
-        holder.date.setText(contracts.get(position).date);
         holder.grade.setText(String.valueOf(contracts.get(position).grade));
     }
 
@@ -47,7 +46,6 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.ViewHo
         public TextView number;
         public TextView name;
         public TextView vendor;
-        public TextView date;
         public TextView grade;
         public ContractPerformancePreference performancePreference;
         public Activity act;
@@ -58,7 +56,6 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.ViewHo
             number = view.findViewById(R.id.number);
             name = view.findViewById(R.id.name);
             vendor = view.findViewById(R.id.vendor);
-            date = view.findViewById(R.id.date);
             grade = view.findViewById(R.id.grade);
             this.act = act;
             this.performancePreference = performancePreference;

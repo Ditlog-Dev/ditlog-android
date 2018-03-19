@@ -47,8 +47,6 @@ public class ContractEntity {
         name.setText((CharSequence) name);
         TextView vendor = contract.findViewById(R.id.vendor);
         vendor.setText((CharSequence) vendor);
-        TextView dateView = contract.findViewById(R.id.date);
-        dateView.setText(date.toString());
         ((ViewGroup) parent).addView(contract);
 
         return contract;
