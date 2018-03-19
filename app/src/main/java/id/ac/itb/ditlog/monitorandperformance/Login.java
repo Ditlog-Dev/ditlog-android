@@ -148,7 +148,7 @@ public class Login extends AppCompatActivity {
 
                   int statusCode = response.getInt("code");
 
-                  if (statusCode == 202) {
+                  if (statusCode == 200) {
                       JSONObject payload = response.getJSONObject("payload");
                       long userid = payload.getLong("idUser");
                       long roleid = payload.getLong("roleId");
