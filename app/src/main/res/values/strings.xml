@@ -13,6 +13,11 @@
     <string name="navigation_drawer_open">Navigation Drawer Open</string>
     <string name="navigation_drawer_close">Navigation Drawer Close</string>
 
+    <string name="company">ITB</string>
+    <string name="division">Direktorat Logistik</string>
+
+    <string name="preparing">Preparing .......</string>
+
     <!-- Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_titles">
         <item>Realisasi</item>
