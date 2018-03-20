@@ -127,7 +127,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
                             AdapterView<?> parent, View view, int position, long id) {
                         String year = (parent.getItemAtPosition(position)).toString();
                         Log.d("udah", "udah " + year);
-                        new AsyncGetContracts(year, context, act);
+                        new AsyncGetContracts(year, context, act).execute();
                         //spinner.setOnItemSelectedListener(this);
                     }
 
