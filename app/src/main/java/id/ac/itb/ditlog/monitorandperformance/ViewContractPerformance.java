@@ -41,6 +41,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
     private RecyclerView contractList;
     private RecyclerView.LayoutManager contractLayoutManager;
     private HttpURLConnection connection;
+    private SwipeRefreshLayout swipeContainer;
     protected ContractAdapter contractAdapter;
     Context context = this;
     Activity act = this;
@@ -81,10 +82,18 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         contractLayoutManager = new LinearLayoutManager(this);
         contractList.setLayoutManager(contractLayoutManager);
 
+        swipeContainer = findViewById(R.id.Swipe_container);
+        swipeContainer.setOnRefreshListener(this);
+        swipeContainer.setColorSchemeResources(R.color.colorPrimary,R.color.colorPrimaryDark,R.color.colorAccent,R.color.colorPrimary);
+        swipeContainer.post(new Runnable() {
+            @Override
+            public void run() {
+                new AsyncGetContracts("2018", getParent(), getParent()).execute();
+            }
+        });
+
         if (!haveNetworkConnection()) {
             Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_LONG).show();
-        } else {
-            new AsyncGetContracts("2018", this, this).execute();
         }
     }
 
@@ -239,6 +248,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            swipeContainer.setRefreshing(true);
         }
 
         @Override
@@ -249,6 +259,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
 
             // Set CustomAdapter as the adapter for RecyclerView.
             contractList.setAdapter(contractAdapter);
+            swipeContainer.setRefreshing(false);
         }
     }
 
