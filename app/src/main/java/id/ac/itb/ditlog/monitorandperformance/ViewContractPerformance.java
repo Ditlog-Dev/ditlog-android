@@ -2,15 +2,18 @@ package id.ac.itb.ditlog.monitorandperformance;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,6 +40,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class ViewContractPerformance extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+    private NavigationView navigationView;
+    private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private RecyclerView contractList;
     private RecyclerView.LayoutManager contractLayoutManager;
@@ -45,6 +50,20 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
     Context context = this;
     Activity act = this;
 
+    // index to identify current nav menu item
+    public static int navItemIndex = 2;
+
+    // tags used to attach the activities
+    private static final String TAG_WELCOME = "welcome";
+
+    public static String CURRENT_TAG = TAG_WELCOME;
+
+    // toolbar titles respected to selected nav menu item
+    private String[] activityTitles = {"Home", "Realisasi", "Penilaian"};
+
+    // flag to load home fragment when user presses back key
+    private boolean shouldLoadHomeFragOnBackPress = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,29 +71,19 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar actionbar = getSupportActionBar();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
-        NavigationView navigationView = findViewById(R.id.navigation);
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
-                        menuItem.setChecked(true);
-                        // close drawer when item is tapped
-                        drawerLayout.closeDrawers();
+        navigationView = findViewById(R.id.navigation);
 
-                        // Add code here to update the UI based on the item selected
-                        // For example, swap UI fragments here
+        // initializing navigation menu
+        setUpNavigationView();
 
-                        return true;
-                    }
-                });
+        if (savedInstanceState == null) {
+            navItemIndex = 2;
+            CURRENT_TAG = TAG_WELCOME;
+            loadHomeFragment();
+        }
 
         contractList = findViewById(R.id.contract_list);
         contractList.setHasFixedSize(false);
@@ -86,6 +95,135 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         } else {
             new AsyncGetContracts("2018", this, this).execute();
         }
+    }
+
+    /***
+     * Returns respected fragment that user
+     * selected from navigation menu
+     */
+    private void loadHomeFragment() {
+        // selecting appropriate nav menu item
+        selectNavMenu();
+
+        // set toolbar title
+        setToolbarTitle();
+
+        // if user select the current navigation menu again, don't do anything
+        // just close the navigation drawer
+        if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
+            drawerLayout.closeDrawers();
+            return;
+        }
+
+        //Closing drawer on item click
+        drawerLayout.closeDrawers();
+
+        // refresh toolbar menu
+        invalidateOptionsMenu();
+    }
+
+    private void setToolbarTitle() {
+        getSupportActionBar().setTitle(activityTitles[navItemIndex]);
+    }
+
+    private void selectNavMenu() {
+        navigationView.getMenu().getItem(navItemIndex).setChecked(true);
+    }
+
+    private void setUpNavigationView() {
+        //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
+            // This method will trigger on item Click of navigation menu
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+
+                //Check to see which item was being clicked and perform appropriate action
+                switch (menuItem.getItemId()) {
+                    //Replacing the main content with ContentFragment Which is our Inbox View;
+                    case R.id.rumah:
+                        navItemIndex = 0;
+
+                        startActivity(new Intent(ViewContractPerformance.this, HomeActivity.class));
+                        drawerLayout.closeDrawers();
+
+                        return true;
+                    case R.id.realisasi:
+                        navItemIndex = 1;
+                        startActivity(new Intent(ViewContractPerformance.this, MonitorActivity.class));
+                        drawerLayout.closeDrawers();
+
+                        return true;
+
+                    case R.id.penilaian:
+                        navItemIndex = 2;
+                        drawerLayout.closeDrawers();
+
+                        return true;
+
+                    default:
+                        navItemIndex = 0;
+                        drawerLayout.closeDrawers();
+                }
+
+                //Checking if the item is in checked state or not, if not make it in checked state
+                if (menuItem.isChecked()) {
+                    menuItem.setChecked(false);
+                } else {
+                    menuItem.setChecked(true);
+                }
+                menuItem.setChecked(true);
+
+                loadHomeFragment();
+
+                return true;
+            }
+        });
+
+
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        //Setting the actionbarToggle to drawer layout
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+
+        //calling sync state is necessary or else your hamburger icon wont show up
+        actionBarDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawers();
+            return;
+        }
+
+        // This code loads home fragment when back key is pressed
+        // when user is in other fragment than home
+        if (shouldLoadHomeFragOnBackPress) {
+            // checking if user is on other navigation menu
+            // rather than home
+            if (navItemIndex != 0) {
+                navItemIndex = 0;
+                CURRENT_TAG = TAG_WELCOME;
+                loadHomeFragment();
+                return;
+            }
+        }
+
+        super.onBackPressed();
     }
 
     @Override
@@ -127,7 +265,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
                             AdapterView<?> parent, View view, int position, long id) {
                         String year = (parent.getItemAtPosition(position)).toString();
                         Log.d("udah", "udah " + year);
-                        new AsyncGetContracts(year, context, act);
+                        new AsyncGetContracts(year, context, act).execute();
                         //spinner.setOnItemSelectedListener(this);
                     }
 

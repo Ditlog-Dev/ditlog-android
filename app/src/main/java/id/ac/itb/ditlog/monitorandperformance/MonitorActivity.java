@@ -20,13 +20,13 @@ import android.widget.Toast;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
-public class HomeActivity extends AppCompatActivity {
+public class MonitorActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private DrawerLayout drawer;
     private Toolbar toolbar;
 
     // index to identify current nav menu item
-    public static int navItemIndex = 0;
+    public static int navItemIndex = 1;
 
     // tags used to attach the activities
     private static final String TAG_WELCOME = "fhome";
@@ -55,7 +55,7 @@ public class HomeActivity extends AppCompatActivity {
         setUpNavigationView();
 
         if (savedInstanceState == null) {
-            navItemIndex = 0;
+            navItemIndex = 1;
             CURRENT_TAG = TAG_WELCOME;
             loadHomeFragment();
         }
@@ -107,19 +107,20 @@ public class HomeActivity extends AppCompatActivity {
                     //Replacing the main content with ContentFragment Which is our Inbox View;
                     case R.id.rumah:
                         navItemIndex = 0;
+
+                        startActivity(new Intent(MonitorActivity.this, HomeActivity.class));
                         drawer.closeDrawers();
 
                         return true;
                     case R.id.realisasi:
                         navItemIndex = 1;
-                        startActivity(new Intent(HomeActivity.this, MonitorActivity.class));
                         drawer.closeDrawers();
 
                         return true;
 
                     case R.id.penilaian:
                         navItemIndex = 2;
-                        startActivity(new Intent(HomeActivity.this, ViewContractPerformance.class));
+                        startActivity(new Intent(MonitorActivity.this, ViewContractPerformance.class));
                         drawer.closeDrawers();
 
                         return true;

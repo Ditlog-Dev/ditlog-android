@@ -9,12 +9,28 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <include
-         layout="@layout/app_bar_main"
-         android:layout_width="match_parent"
-         android:layout_height="match_parent" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-     <!-- Container for contents of drawer -->
+        <include
+            android:id="@+id/top_bar"
+            layout="@layout/app_bar_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toBottomOf="@id/app_bar"
+            android:layout_marginTop="100dp"
+            android:layout_marginLeft="50dp"
+            android:text="Selamat datang di Aplikasi Direktorat Logistik Monitor dan Performance"
+            android:textSize="20sp"/>
+    </RelativeLayout>
+
+    <!-- Container for contents of drawer -->
     <android.support.design.widget.NavigationView
         android:id="@+id/navigation"
         android:layout_width="wrap_content"
