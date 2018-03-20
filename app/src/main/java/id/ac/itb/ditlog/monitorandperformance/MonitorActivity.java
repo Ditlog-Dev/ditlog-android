@@ -1,24 +1,15 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-
-import android.os.Handler;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 
 public class MonitorActivity extends AppCompatActivity {
     private NavigationView navigationView;
@@ -42,7 +33,7 @@ public class MonitorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_monitor);
 
         // load toolbar titles from string resources
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -172,19 +163,6 @@ public class MonitorActivity extends AppCompatActivity {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawers();
             return;
-        }
-
-        // This code loads home fragment when back key is pressed
-        // when user is in other fragment than home
-        if (shouldLoadHomeFragOnBackPress) {
-            // checking if user is on other navigation menu
-            // rather than home
-            if (navItemIndex != 0) {
-                navItemIndex = 0;
-                CURRENT_TAG = TAG_WELCOME;
-                loadHomeFragment();
-                return;
-            }
         }
 
         super.onBackPressed();

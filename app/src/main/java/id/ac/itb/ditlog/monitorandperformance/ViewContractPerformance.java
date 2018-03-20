@@ -6,16 +6,14 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Handler;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -37,7 +35,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class ViewContractPerformance extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private NavigationView navigationView;
@@ -46,6 +43,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
     private RecyclerView contractList;
     private RecyclerView.LayoutManager contractLayoutManager;
     private HttpURLConnection connection;
+    private SwipeRefreshLayout swipeContainer;
     protected ContractAdapter contractAdapter;
     Context context = this;
     Activity act = this;
@@ -90,10 +88,18 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         contractLayoutManager = new LinearLayoutManager(this);
         contractList.setLayoutManager(contractLayoutManager);
 
+        swipeContainer = findViewById(R.id.Swipe_container);
+        swipeContainer.setOnRefreshListener(this);
+        swipeContainer.setColorSchemeResources(R.color.colorPrimary,R.color.colorPrimaryDark,R.color.colorAccent,R.color.colorPrimary);
+        swipeContainer.post(new Runnable() {
+            @Override
+            public void run() {
+                new AsyncGetContracts("2018", getParent(), getParent()).execute();
+            }
+        });
+
         if (!haveNetworkConnection()) {
             Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_LONG).show();
-        } else {
-            new AsyncGetContracts("2018", this, this).execute();
         }
     }
 
@@ -208,19 +214,6 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawers();
             return;
-        }
-
-        // This code loads home fragment when back key is pressed
-        // when user is in other fragment than home
-        if (shouldLoadHomeFragOnBackPress) {
-            // checking if user is on other navigation menu
-            // rather than home
-            if (navItemIndex != 0) {
-                navItemIndex = 0;
-                CURRENT_TAG = TAG_WELCOME;
-                loadHomeFragment();
-                return;
-            }
         }
 
         super.onBackPressed();
@@ -377,6 +370,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            swipeContainer.setRefreshing(true);
         }
 
         @Override
@@ -387,6 +381,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
 
             // Set CustomAdapter as the adapter for RecyclerView.
             contractList.setAdapter(contractAdapter);
+            swipeContainer.setRefreshing(false);
         }
     }
 
