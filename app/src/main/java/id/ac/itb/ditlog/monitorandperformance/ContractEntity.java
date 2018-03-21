@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.Date;
-
 /**
  * Created by root on 17/03/18.
  */
@@ -19,13 +17,6 @@ public class ContractEntity {
     public String vendor;
     public String date;
     public float grade;
-
-    public ContractEntity(){
-        name="";
-        vendor = "";
-        date = "";
-        grade = 0;
-    }
 
     public ContractEntity(String number, String name, String vendor, String date, float grade){
         this.number = number;

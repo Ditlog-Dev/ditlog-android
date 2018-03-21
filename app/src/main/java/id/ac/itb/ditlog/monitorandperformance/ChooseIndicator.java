@@ -218,7 +218,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
 
         public int pageNumber=0;
         public int itemLimit=20;
-        public String direction="asc";
+        public String direction="dsc";
         public String sortingKey="id";
 
         ArrayList<IndicatorEntity> params = new ArrayList<>();

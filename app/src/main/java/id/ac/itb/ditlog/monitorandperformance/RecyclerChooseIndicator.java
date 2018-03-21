@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -81,14 +80,8 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
         // with that element
         viewHolder.getParamIndicator().setText(mParam.get(position).name);
 
-
-        //final ObjectIncome objIncome = myItems.get(position);
-
         //in some cases, it will prevent unwanted situations
         viewHolder.mCheckBox.setOnCheckedChangeListener(null);
-
-        //if true, your checkbox will be selected, else unselected
-        //viewHolder.mCheckBox.setChecked(viewHolder.getParamIndicator().setText(mParam[position]).isSelected());
 
         viewHolder.mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -109,11 +102,6 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
                 }
             }
 
-            /*@Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            //set your object's last status
-                            //objIncome.setSelected(isChecked);
-                        }*/
             public void onCheckboxClicked(CompoundButton view, boolean isChecked) {
                 // Is the view now checked?
                 boolean checked = ((CheckBox) view).isChecked();

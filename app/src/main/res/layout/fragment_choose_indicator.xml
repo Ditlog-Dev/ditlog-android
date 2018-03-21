@@ -38,7 +38,7 @@
         android:layout_marginEnd="19dp"
         android:layout_marginRight="19dp"
         android:src="@android:drawable/ic_input_add"
-        android:tint="#303F9F"
+        android:tint="#FFFFFF"
         app:backgroundTint="#2E9DE2" />
 
     <TextView

@@ -25,7 +25,7 @@ public class MonitorActivity extends AppCompatActivity {
     public static String CURRENT_TAG = TAG_WELCOME;
 
     // toolbar titles respected to selected nav menu item
-    private String[] activityTitles = {"Home", "Realisasi", "Penilaian"};
+    private String[] activityTitles = {"Home", "Monitor", "Kinerja"};
 
     // flag to load home fragment when user presses back key
     private boolean shouldLoadHomeFragOnBackPress = true;
@@ -100,7 +100,9 @@ public class MonitorActivity extends AppCompatActivity {
                         navItemIndex = 0;
 
                         startActivity(new Intent(MonitorActivity.this, HomeActivity.class));
+                        overridePendingTransition(0,0);
                         drawer.closeDrawers();
+                        finish();
 
                         return true;
                     case R.id.realisasi:
@@ -112,6 +114,9 @@ public class MonitorActivity extends AppCompatActivity {
                     case R.id.penilaian:
                         navItemIndex = 2;
                         startActivity(new Intent(MonitorActivity.this, ViewContractPerformance.class));
+                        overridePendingTransition(0,0);
+                        finish();
+
                         drawer.closeDrawers();
 
                         return true;
@@ -164,7 +169,9 @@ public class MonitorActivity extends AppCompatActivity {
             drawer.closeDrawers();
             return;
         }
-
+        startActivity(new Intent(MonitorActivity.this, HomeActivity.class));
+        overridePendingTransition(0,0);
+        finish();
         super.onBackPressed();
     }
 

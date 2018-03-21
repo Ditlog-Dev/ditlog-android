@@ -1,24 +1,14 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-
-import android.os.Handler;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 
 public class HomeActivity extends AppCompatActivity {
     private NavigationView navigationView;
@@ -34,7 +24,7 @@ public class HomeActivity extends AppCompatActivity {
     public static String CURRENT_TAG = TAG_WELCOME;
 
     // toolbar titles respected to selected nav menu item
-    private String[] activityTitles = {"Home", "Realisasi", "Penilaian"};
+    private String[] activityTitles = {"Home", "Monitor", "Kinerja"};
 
     // flag to load home fragment when user presses back key
     private boolean shouldLoadHomeFragOnBackPress = true;
@@ -113,14 +103,17 @@ public class HomeActivity extends AppCompatActivity {
                     case R.id.realisasi:
                         navItemIndex = 1;
                         startActivity(new Intent(HomeActivity.this, MonitorActivity.class));
+                        overridePendingTransition(0,0);
                         drawer.closeDrawers();
-
+                        finish();
                         return true;
 
                     case R.id.penilaian:
                         navItemIndex = 2;
                         startActivity(new Intent(HomeActivity.this, ViewContractPerformance.class));
+                        overridePendingTransition(0,0);
                         drawer.closeDrawers();
+                        finish();
 
                         return true;
 
@@ -168,25 +161,10 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawers();
-            return;
-        }
-
-        // This code loads home fragment when back key is pressed
-        // when user is in other fragment than home
-        if (shouldLoadHomeFragOnBackPress) {
-            // checking if user is on other navigation menu
-            // rather than home
-            if (navItemIndex != 0) {
-                navItemIndex = 0;
-                CURRENT_TAG = TAG_WELCOME;
-                loadHomeFragment();
-                return;
-            }
-        }
-
-        super.onBackPressed();
+        Intent a = new Intent(Intent.ACTION_MAIN);
+        a.addCategory(Intent.CATEGORY_HOME);
+        a.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(a);
     }
 
     @Override

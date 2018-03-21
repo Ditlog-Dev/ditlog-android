@@ -57,7 +57,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
     public static String CURRENT_TAG = TAG_WELCOME;
 
     // toolbar titles respected to selected nav menu item
-    private String[] activityTitles = {"Home", "Realisasi", "Penilaian"};
+    private String[] activityTitles = {"Home", "Monitor", "Kinerja"};
 
     // flag to load home fragment when user presses back key
     private boolean shouldLoadHomeFragOnBackPress = true;
@@ -151,13 +151,17 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
                         navItemIndex = 0;
 
                         startActivity(new Intent(ViewContractPerformance.this, HomeActivity.class));
+                        overridePendingTransition(0,0);
                         drawerLayout.closeDrawers();
+                        finish();
 
                         return true;
                     case R.id.realisasi:
                         navItemIndex = 1;
                         startActivity(new Intent(ViewContractPerformance.this, MonitorActivity.class));
+                        overridePendingTransition(0,0);
                         drawerLayout.closeDrawers();
+                        finish();
 
                         return true;
 
@@ -215,7 +219,9 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
             drawerLayout.closeDrawers();
             return;
         }
-
+        startActivity(new Intent(ViewContractPerformance.this, HomeActivity.class));
+        overridePendingTransition(0,0);
+        finish();
         super.onBackPressed();
     }
 
@@ -257,7 +263,6 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
                         String year = (parent.getItemAtPosition(position)).toString();
-                        Log.d("udah", "udah " + year);
                         new AsyncGetContracts(year, context, act).execute();
                         //spinner.setOnItemSelectedListener(this);
                     }

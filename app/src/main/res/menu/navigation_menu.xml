@@ -4,9 +4,9 @@
         android:title="Home"></item>
 
     <item android:id="@+id/realisasi"
-        android:title="Realisasi"></item>
+        android:title="Monitor"></item>
         <!--android:icon="@drawable/ic_menu_slideshow" (for icon) -->
 
     <item android:id="@+id/penilaian"
-        android:title="Penilaian"></item>
+        android:title="Kinerja"></item>
 </menu>

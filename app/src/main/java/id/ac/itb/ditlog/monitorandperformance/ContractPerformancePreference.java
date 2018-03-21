@@ -3,8 +3,6 @@ package id.ac.itb.ditlog.monitorandperformance;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.util.Date;
-
 /**
  * Created by User on 18/03/2018.
  */
