@@ -17,20 +17,20 @@ public class Approval extends AppCompatActivity {
 
         inflater = LayoutInflater.from(getApplicationContext());
 
-        LinearLayout linearLayoutRencana = (LinearLayout) findViewById(R.id.layoutRencana);
+        LinearLayout linearLayoutRencana = (LinearLayout) findViewById(R.id.layoutApproval);
         LinearLayout linearLayout1 = (LinearLayout) inflater.inflate(R.layout.date_percentage_approval, null);
-        TextView date1 = (TextView) linearLayout1.findViewById(R.id.date);
+        TextView date1 = (TextView) linearLayout1.findViewById(R.id.dateApproval);
         date1.setText("25/3/2018");
 
-        TextView percentage1 = (TextView) linearLayout1.findViewById(R.id.percentage);
+        TextView percentage1 = (TextView) linearLayout1.findViewById(R.id.percentageApproval);
         percentage1.setText("10%");
         linearLayoutRencana.addView(linearLayout1);
 
         LinearLayout linearLayout2 = (LinearLayout) inflater.inflate(R.layout.date_percentage_approval, null);
-        TextView date2 = (TextView) linearLayout2.findViewById(R.id.date);
+        TextView date2 = (TextView) linearLayout2.findViewById(R.id.dateApproval);
         date2.setText("27/3/2018");
 
-        TextView percentage2 = (TextView) linearLayout2.findViewById(R.id.percentage);
+        TextView percentage2 = (TextView) linearLayout2.findViewById(R.id.percentageApproval);
         percentage2.setText("50%");
         linearLayoutRencana.addView(linearLayout2);
 

@@ -33,7 +33,7 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/layoutRencana"
+                android:id="@+id/layoutApproval"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -99,7 +99,7 @@
     </ScrollView>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/acceptButtonApproval"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -110,7 +110,7 @@
         android:layout_marginTop="30dp"/>
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/rejectButtonApproval"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
