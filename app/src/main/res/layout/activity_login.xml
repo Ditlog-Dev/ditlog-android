@@ -7,23 +7,24 @@
     android:background="#2e9de1">
 
     <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="57dp"
-        app:srcCompat="@drawable/itb"
-        tools:layout_editor_absoluteX="117dp"
-        tools:layout_editor_absoluteY="0dp" />
+      android:id="@+id/logo_itb"
+      android:layout_width="150dp"
+      android:layout_height="150dp"
+      android:layout_marginTop="57dp"
+      android:layout_alignParentTop="true"
+      android:layout_centerHorizontal="true"
+      android:contentDescription="@string/logo_itb"
+      app:srcCompat="@drawable/itb"
+      tools:layout_editor_absoluteX="117dp"
+      tools:layout_editor_absoluteY="0dp"/>
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="251dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView3"
+        android:layout_below="@+id/logo_itb"
         android:layout_centerHorizontal="true"
-        android:text="Direktorat Logistik ITB"
+        android:text="@string/direktorat_logistik_itb"
         android:textAlignment="center"
         android:textColor="#ffffff"
         android:textSize="24sp"
@@ -43,16 +44,17 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/imageUsername"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/imagePassword"
-            android:layout_alignBottom="@+id/username"
-            android:layout_alignRight="@id/imagePassword"
-            android:layout_marginLeft="21dp"
-            android:layout_marginStart="21dp"
-            android:tint="#2e9de1"
-            app:srcCompat="@drawable/ic_account_circle_black_18dp" />
+          android:id="@+id/imageUsername"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="21dp"
+          android:layout_marginLeft="21dp"
+          android:layout_above="@id/imagePassword"
+          android:layout_alignBottom="@+id/username"
+          android:layout_alignRight="@id/imagePassword"
+          android:contentDescription="@string/logo_username"
+          android:tint="#2e9de1"
+          app:srcCompat="@drawable/ic_account_circle_black_18dp" android:layout_alignEnd="@id/imagePassword"/>
 
         <EditText
             android:id="@+id/username"
@@ -64,18 +66,19 @@
             android:layout_marginRight="21dp"
             android:layout_marginEnd="21dp"
             android:ems="10"
-            android:hint="Username"
+            android:hint="@string/username"
             android:singleLine="true"/>
 
         <ImageView
-            android:id="@+id/imagePassword"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/password"
-            android:layout_marginLeft="21dp"
-            android:layout_marginStart="21dp"
-            android:tint="#2e9de1"
-            app:srcCompat="@android:drawable/ic_lock_lock" />
+          android:id="@+id/imagePassword"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="21dp"
+          android:layout_marginLeft="21dp"
+          android:layout_alignBottom="@+id/password"
+          android:contentDescription="@string/logo_password"
+          android:tint="#2e9de1"
+          app:srcCompat="@android:drawable/ic_lock_lock"/>
 
         <EditText
             android:id="@+id/password"
@@ -88,8 +91,8 @@
             android:layout_marginRight="21dp"
             android:layout_marginEnd="21dp"
             android:ems="10"
-            android:hint="Password"
-            android:inputType="textPassword" />
+            android:hint="@string/password"
+            android:inputType="textPassword" android:layout_toEndOf="@id/imagePassword"/>
 
         <Button
             android:id="@+id/button"
@@ -100,7 +103,7 @@
             android:layout_centerInParent="true"
             android:layout_marginTop="26dp"
             android:background="#2e9de1"
-            android:text="Login"
+            android:text="@string/login"
             android:textAlignment="center"
             android:textColor="#ffffff" />
 
@@ -113,7 +116,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
-        android:text="© 2018"
+        android:text="@string/copyright_2018"
         android:textAlignment="center"
         android:textColor="#ffffff"
         tools:layout_editor_absoluteX="176dp"
