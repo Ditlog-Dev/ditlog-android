@@ -13,7 +13,7 @@
 
         android:textAlignment="center"
         android:layout_weight="0.5"
-        />
+        android:inputType="date" />
 
     <EditText
         android:id="@+id/editPercentage"
@@ -23,6 +23,8 @@
 
         android:textAlignment="center"
         android:layout_weight="0.5"
+        android:inputType="number"
+        android:autofillHints="0-100 %"
         />
 
 </LinearLayout>

@@ -29,11 +29,19 @@ public class Rencana extends AppCompatActivity {
 
         LinearLayout linearLayout2 = (LinearLayout) inflater.inflate(R.layout.date_percentage_rencana, null);
         EditText date2 = (EditText) linearLayout2.findViewById(R.id.editDate);
-        date2.setText("27/3/2018");
+        date2.setText("27/4/2018");
 
         EditText percentage2 = (EditText) linearLayout2.findViewById(R.id.editPercentage);
         percentage2.setText("50%");
         linearLayoutRencana.addView(linearLayout2);
+
+        LinearLayout linearLayout3 = (LinearLayout) inflater.inflate(R.layout.date_percentage_rencana, null);
+        EditText date3 = (EditText) linearLayout3.findViewById(R.id.editDate);
+        date3.setText("27/6/2018");
+
+        EditText percentage3 = (EditText) linearLayout3.findViewById(R.id.editPercentage);
+        percentage3.setText("100%");
+        linearLayoutRencana.addView(linearLayout3);
 
 
     }
