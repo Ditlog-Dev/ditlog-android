@@ -4,27 +4,28 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class LoginInfo {
-    private String username;
-    private String password;
 
-    public LoginInfo() {
-        username = "";
-        password = "";
-    }
+  private String username;
+  private String password;
 
-    public void setUsername(String u){
-        username = u;
-    }
+  public LoginInfo() {
+    username = "";
+    password = "";
+  }
 
-    public void setPassword(String p){
-        password = p;
-    }
+  public void setUsername(String u) {
+    username = u;
+  }
 
-    String getUsername(){
-        return username;
-    }
+  public void setPassword(String p) {
+    password = p;
+  }
 
-    String getPassword(){
-        return password;
-    }
+  String getUsername() {
+    return username;
+  }
+
+  String getPassword() {
+    return password;
+  }
 }

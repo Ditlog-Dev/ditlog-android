@@ -29,195 +29,187 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Login extends AppCompatActivity {
-    Button button;
-    EditText username;
-    EditText password;
+
+  Button button;
+  EditText username;
+  EditText password;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    try {
+      this.getSupportActionBar().hide();
+    } catch (NullPointerException e) {
+      e.printStackTrace();
+    }
+    setContentView(R.layout.activity_login);
+    button = findViewById(R.id.button);
+    password = findViewById(R.id.password);
+
+    password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+      public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId
+            == EditorInfo.IME_ACTION_DONE)) {
+          //do what you want on the press of 'done'
+          button.performClick();
+        }
+        return false;
+      }
+    });
+
+    button.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        username = findViewById(R.id.username);
+        password = findViewById(R.id.password);
+        if (haveConnection()) {
+          if (validate(username.getText().toString(), password.getText().toString())) {
+            LoginTask task = new LoginTask();
+            task.execute();
+          }
+        } else {
+          Toast.makeText(getApplicationContext(), "No connection", Toast.LENGTH_SHORT).show();
+        }
+
+      }
+    });
+  }
+
+  private boolean validate(String username, String password) {
+    if (username == null || username.trim().length() == 0) {
+      Toast.makeText(this, "Username is required", Toast.LENGTH_SHORT).show();
+      return false;
+    }
+    if (password == null || password.trim().length() == 0) {
+      Toast.makeText(this, "Password is required", Toast.LENGTH_SHORT).show();
+      return false;
+    }
+    return true;
+  }
+
+  private boolean haveConnection() {
+    final ConnectivityManager connMgr = (ConnectivityManager) this
+        .getSystemService(Context.CONNECTIVITY_SERVICE);
+    final android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+    final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+    return (wifi.isConnectedOrConnecting() || mobile.isConnectedOrConnecting());
+
+  }
+
+  private class LoginTask extends AsyncTask<Void, Void, LoginWrapper> {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        try {
-            this.getSupportActionBar().hide();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        setContentView(R.layout.activity_login);
-        button = findViewById(R.id.button);
-        password = findViewById(R.id.password);
-
-        password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                    //do what you want on the press of 'done'
-                    button.performClick();
-                }
-                return false;
-            }
-        });
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                username = findViewById(R.id.username);
-                password = findViewById(R.id.password);
-                if (haveConnection()) {
-                    if (validate(username.getText().toString(), password.getText().toString())) {
-                        LoginTask task = new LoginTask();
-                        task.execute();
-                    }
-                }
-                else
-                    Toast.makeText(getApplicationContext(), "No connection", Toast.LENGTH_SHORT).show();
-
-            }
-        });
+    protected void onPreExecute() {
+      Toast.makeText(Login.this, "Please wait", Toast.LENGTH_SHORT).show();
     }
 
-    private boolean validate(String username, String password) {
-        if (username == null || username.trim().length() == 0) {
-            Toast.makeText(this, "Username is required", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (password == null || password.trim().length() == 0) {
-            Toast.makeText(this, "Password is required", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return true;
-    }
+    @Override
+    protected LoginWrapper doInBackground(Void... voids) {
+      try {
+        EditText username = findViewById(R.id.username);
+        EditText password = findViewById(R.id.password);
 
-    private boolean haveConnection() {
-        final ConnectivityManager connMgr = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        final android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        return (wifi.isConnectedOrConnecting () || mobile.isConnectedOrConnecting ());
+        LoginInfo logininfo = new LoginInfo();
+        logininfo.setUsername(username.getText().toString());
+        logininfo.setPassword(password.getText().toString());
 
-    }
+        JSONObject request = new JSONObject();
+        request.put("username", logininfo.getUsername());
+        request.put("password", logininfo.getPassword());
 
-    private class LoginTask extends AsyncTask<Void, Void, LoginWrapper> {
-        @Override
-        protected void onPreExecute() {
-            Toast.makeText(Login.this, "Please wait", Toast.LENGTH_SHORT).show();
-        }
+        URL url = new URL(BuildConfig.WEBSERVICE_URL + "/login");
 
-        @Override
-        protected LoginWrapper doInBackground(Void... voids) {
-            try {
-                EditText username = findViewById(R.id.username);
-                EditText password = findViewById(R.id.password);
-                /*
-                MessageDigest digest = MessageDigest.getInstance("MD5");
-                digest.reset();
-                digest.update(password.getText().toString().getBytes());
-                byte[] bytes = digest.digest();
-                int len = bytes.length;
-                StringBuilder sb = new StringBuilder(len << 1);
-                for (byte thisByte : bytes) {
-                    sb.append(Character.forDigit((thisByte & 0xf0) >> 4, 16));
-                    sb.append(Character.forDigit(thisByte & 0x0f, 16));
-                }*/
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        urlConnection.setRequestMethod("POST");
+        urlConnection.setReadTimeout(1500);
+        urlConnection.setConnectTimeout(1500);
+        urlConnection.setDoOutput(true);
+        urlConnection.setDoInput(true);
+        urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 
-                LoginInfo logininfo = new LoginInfo();
-                logininfo.setUsername(username.getText().toString());
-                logininfo.setPassword(password.getText().toString());
+        DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
+        wr.writeBytes(request.toString());
+        wr.flush();
+        wr.close();
 
-                JSONObject request= new JSONObject();
-                request.put("username", logininfo.getUsername());
-                request.put("password", logininfo.getPassword());
+        int responseStatusCode = urlConnection.getResponseCode();
+        if (responseStatusCode == HttpURLConnection.HTTP_OK) {
+          InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+          String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+          JSONObject response = new JSONObject(result);
 
+          int statusCode = response.getInt("code");
 
-                URL url = new URL(BuildConfig.WEBSERVICE_URL + "/login");
-
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setReadTimeout(1500);
-                urlConnection.setConnectTimeout(1500);
-                urlConnection.setDoOutput(true);
-                urlConnection.setDoInput(true);
-                urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-
-                DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
-                wr.writeBytes(request.toString());
-                wr.flush();
-                wr.close();
-
-                int responseStatusCode = urlConnection.getResponseCode();
-                if (responseStatusCode == HttpURLConnection.HTTP_OK){
-                  InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                  String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
-                  JSONObject response = new JSONObject(result);
-
-                  int statusCode = response.getInt("code");
-
-                  if (statusCode == 200) {
-                      JSONObject payload = response.getJSONObject("payload");
-                      long userid = payload.getLong("idUser");
-                      long roleid = payload.getLong("roleId");
-                      String token = payload.getString("jwtToken");
-                      UserPayload userpayload = new UserPayload(userid,roleid, token);
-                      return new LoginWrapper(logininfo, userpayload);
-                  } else if (statusCode == 400){
-                      return new LoginWrapper();
-                  }
-                  else{
-                      return null;
-                  }
-                } else {
-                  System.out.println("WEBSERVICE_ERROR : " + urlConnection.getResponseCode());
-                    InputStream in = new BufferedInputStream(urlConnection.getErrorStream());
-                    String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
-                  System.out.println("WEBSERVICE_ERROR : " + result);
-                    return new LoginWrapper();
-                }
-
-            } catch (Exception e) {
-                Log.e("LoginActivity", e.getMessage(), e);
-            }
+          if (statusCode == 200) {
+            JSONObject payload = response.getJSONObject("payload");
+            long userid = payload.getLong("idUser");
+            long roleid = payload.getLong("roleId");
+            String token = payload.getString("jwtToken");
+            UserPayload userpayload = new UserPayload(userid, roleid, token);
+            return new LoginWrapper(logininfo, userpayload);
+          } else if (statusCode == 400) {
+            return new LoginWrapper();
+          } else {
             return null;
+          }
+        } else {
+          System.out.println("WEBSERVICE_ERROR : " + urlConnection.getResponseCode());
+          InputStream in = new BufferedInputStream(urlConnection.getErrorStream());
+          String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+          System.out.println("WEBSERVICE_ERROR : " + result);
+          return new LoginWrapper();
         }
 
-        @Override
-        protected void onPostExecute(LoginWrapper loginresponse) {
-            if (loginresponse == null){
-                Handler error = new Handler(getApplicationContext().getMainLooper());
-                error.post( new Runnable(){
-                    public void run(){
-                        Toast.makeText(getApplicationContext(), "Can't connect to server", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                return;
-            }
-            if (loginresponse.getPayload().idUser != -1) {
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    UserPayload p = loginresponse.getPayload();
-                    editor.putLong("userid", p.idUser);
-                    editor.putLong("roleid", p.roleId);
-                    editor.putString("token", p.jwtToken);
-                    editor.putString("username", loginresponse.getLoginInfo().getUsername());
-                    editor.apply();
-
-                    Intent intent_name = new Intent();
-                    intent_name.setClass(getApplicationContext(), MainActivity.class);
-                    startActivity(intent_name);
-                    finish();
-//                }
-            }
-            else{
-                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(Login.this);
-
-                dlgAlert.setMessage("Incorrect username or password");
-                dlgAlert.setTitle("Try Again");
-                dlgAlert.setPositiveButton("OK", null);
-                dlgAlert.setCancelable(true);
-                dlgAlert.create().show();
-
-                dlgAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                  public void onClick(DialogInterface dialog, int which) {
-
-                  }
-                });
-           }
-        }
-
+      } catch (Exception e) {
+        Log.e("LoginActivity", e.getMessage(), e);
+      }
+      return null;
     }
+
+    @Override
+    protected void onPostExecute(LoginWrapper loginresponse) {
+      if (loginresponse == null) {
+        Handler error = new Handler(getApplicationContext().getMainLooper());
+        error.post(new Runnable() {
+          public void run() {
+            Toast.makeText(getApplicationContext(), "Can't connect to server", Toast.LENGTH_SHORT)
+                .show();
+          }
+        });
+        return;
+      }
+      if (loginresponse.getPayload().idUser != -1) {
+        SharedPreferences sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        UserPayload p = loginresponse.getPayload();
+        editor.putLong("userid", p.idUser);
+        editor.putLong("roleid", p.roleId);
+        editor.putString("token", p.jwtToken);
+        editor.putString("username", loginresponse.getLoginInfo().getUsername());
+        editor.apply();
+
+        Intent intent_name = new Intent();
+        intent_name.setClass(getApplicationContext(), MainActivity.class);
+        startActivity(intent_name);
+        finish();
+//                }
+      } else {
+        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(Login.this);
+
+        dlgAlert.setMessage("Incorrect username or password");
+        dlgAlert.setTitle("Try Again");
+        dlgAlert.setPositiveButton("OK", null);
+        dlgAlert.setCancelable(true);
+        dlgAlert.create().show();
+
+        dlgAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int which) {
+
+          }
+        });
+      }
+    }
+
+  }
 }
