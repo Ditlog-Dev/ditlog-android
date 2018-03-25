@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -12,7 +12,7 @@
         android:textColor="#000000"
 
         android:textAlignment="center"
-        android:layout_weight="0.5"
+        android:layout_weight="0.3"
         android:inputType="date" />
 
     <EditText
@@ -20,11 +20,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#000000"
-
         android:textAlignment="center"
-        android:layout_weight="0.5"
+        android:layout_weight="0.2"
         android:inputType="number"
-        android:autofillHints="0-100 %"
+       />
+
+    <EditText
+        android:id="@+id/editKeterangan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textAlignment="center"
+        android:layout_weight="0.444449"
+        android:inputType="text"
         />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.000001"
+        app:srcCompat="@android:drawable/ic_delete" />
+
 
 </LinearLayout>
