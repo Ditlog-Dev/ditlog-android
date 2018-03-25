@@ -39,6 +39,12 @@ captures/
 .idea/gradle.xml
 .idea/dictionaries
 .idea/libraries
+.idea/
+.idea/*
+
+
+#VSCode
+.vscode
 
 # Keystore files
 # Uncomment the following line if you do not want to check your keystore files in.
@@ -68,3 +74,4 @@ fastlane/readme.md
 .settings/
 .classpath
 .sts4-cache
+
