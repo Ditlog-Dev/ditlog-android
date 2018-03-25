@@ -45,6 +45,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
     private HttpURLConnection connection;
     private SwipeRefreshLayout swipeContainer;
     protected ContractAdapter contractAdapter;
+    private String chosenYear="2018";
     Context context = this;
     Activity act = this;
 
@@ -94,7 +95,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         swipeContainer.post(new Runnable() {
             @Override
             public void run() {
-                new AsyncGetContracts("2018", getParent(), getParent()).execute();
+                new AsyncGetContracts(chosenYear, getParent(), getParent()).execute();
             }
         });
 
@@ -227,7 +228,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
 
     @Override
     public void onRefresh() {
-        new AsyncGetContracts("2018", this, this).execute();
+        new AsyncGetContracts(chosenYear, this, this).execute();
     }
 
     @Override
@@ -262,8 +263,8 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
                 new AdapterView.OnItemSelectedListener() {
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
-                        String year = (parent.getItemAtPosition(position)).toString();
-                        new AsyncGetContracts(year, context, act).execute();
+                        chosenYear = (parent.getItemAtPosition(position)).toString();
+                        new AsyncGetContracts(chosenYear, context, act).execute();
                         //spinner.setOnItemSelectedListener(this);
                     }
 
