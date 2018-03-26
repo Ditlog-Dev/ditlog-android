@@ -26,8 +26,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+<<<<<<< HEAD
         <activity android:name=".Approval">
         </activity>
+=======
+        <activity android:name=".Login"></activity>
+>>>>>>> master
     </application>
 
 </manifest>

@@ -7,4 +7,12 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+  <string name="direktorat_logistik_itb">Direktorat Logistik ITB</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="copyright_2018">© 2018</string>
+    <string name="logo_itb">Logo ITB</string>
+    <string name="login">Login</string>
+    <string name="logo_password">Logo Password</string>
+    <string name="logo_username">Logo Username</string>
 </resources>
