@@ -3,9 +3,11 @@ package id.ac.itb.ditlog.monitorandperformance;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,13 +33,18 @@ public class Approval extends AppCompatActivity {
     private LayoutInflater inflater;
     String keterangan = "";
 
-    //dummy token
-    String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJva2kiLCJpZFVzZXIiOjEwNDAyLCJpZFJlc3BvbnNpYmlsaXR5Ijo3OSwiaWRWZW5kb3IiOjAsImV4cCI6MTUyMjc2OTU4N30.p_5dMPljD493mkqOrz6IFg5QDpwyjDikP241dsI5cuyuTQHHeg6G6KR3l9ALL7hpR0Gh7ArunvzC1k2TiQL94A";
+    String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_approval);
+
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(getApplicationContext());
+        token = sharedPreferences.getString("token", "");
+
+        /*----------------------*/
 
         inflater = LayoutInflater.from(getApplicationContext());
 
@@ -64,6 +71,7 @@ public class Approval extends AppCompatActivity {
 
         //-----------------------------------------------------
         //Click Button
+
         Button approve = findViewById(R.id.acceptButtonApproval);
         Button reject = findViewById(R.id.rejectButtonApproval);
         approve.setOnClickListener(new View.OnClickListener() {
@@ -93,7 +101,6 @@ public class Approval extends AppCompatActivity {
 
     void reject(){
         final EditText inputketerangan = new EditText(this);
-//        keterangan = ((EditText) findViewById(R.id.keteranganReject)).getText().toString();
         final AlertDialog.Builder dlgAlert = new AlertDialog.Builder(Approval.this);
         dlgAlert.setView(inputketerangan);
         dlgAlert.setTitle("Enter Keterangan");
@@ -142,7 +149,6 @@ public class Approval extends AppCompatActivity {
             try {
                 String status;
                 JSONObject request= new JSONObject();
-                request.put("idSkpm", 1);
                 if (approved) {
                     status ="1";
                 }
@@ -153,8 +159,8 @@ public class Approval extends AppCompatActivity {
                 //dummy spmk
                 String spmkid = "632";
 
-//                URL url = new URL(BuildConfig.WEBSERVICE_URL + "/rencana/" + spmkid +"/" + status);
-                URL url = new URL("http://192.168.43.51:8080" + "/rencana/" + spmkid +"/" + status);
+                URL url = new URL(BuildConfig.WEBSERVICE_URL + "/rencana/" + spmkid +"/" + status);
+//                URL url = new URL("http://192.168.43.51:8080" + "/rencana/" + spmkid +"/" + status);
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("PUT");

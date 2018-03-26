@@ -1,34 +1,10 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
 import android.content.Intent;
-<<<<<<< HEAD
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-
-public class MainActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Button approval = findViewById(R.id.button);
-
-        approval.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent_name = new Intent();
-                intent_name.setClass(getApplicationContext(), Approval.class);
-                startActivity(intent_name);
-            }
-        });
-=======
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -63,20 +39,17 @@ public class MainActivity extends AppCompatActivity {
           finish();
         }
       });
->>>>>>> master
+
+      Button approval = findViewById(R.id.button);
+
+      approval.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent_name = new Intent();
+            intent_name.setClass(getApplicationContext(), Approval.class);
+            startActivity(intent_name);
+        }
+      });
     }
-
-
   }
-
-  //Logout setiap keluar dari aplikasi
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.clear();
-//        editor.apply();
-//    }
-
 }
