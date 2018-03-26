@@ -11,6 +11,8 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -30,7 +33,10 @@ import java.net.URL;
 
 public class Approval extends AppCompatActivity {
 
-    private LayoutInflater inflater;
+    private RecyclerView mRecyclerView;
+    private ApprovalListAdapter mAdapter;
+    private JSONArray mMilestoneList = new JSONArray();
+    //private LayoutInflater inflater;
     String keterangan = "";
 
     String token;
@@ -44,7 +50,7 @@ public class Approval extends AppCompatActivity {
                 .getDefaultSharedPreferences(getApplicationContext());
         token = sharedPreferences.getString("token", "");
 
-        /*----------------------*/
+        /*----------------------
 
         inflater = LayoutInflater.from(getApplicationContext());
 
@@ -68,6 +74,15 @@ public class Approval extends AppCompatActivity {
         TextView keterangan2 = (TextView) linearLayout1.findViewById(R.id.keteranganApproval);
         keterangan2.setText("-");
         linearLayoutRencana.addView(linearLayout2);
+        */
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerviewApproval);
+        // Create an adapter and supply the data to be displayed.
+        mAdapter = new ApprovalListAdapter(this, mMilestoneList);
+        // Connect the adapter with the recycler view.
+        mRecyclerView.setAdapter(mAdapter);
+        // Give the recycler view a default layout manager.
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //-----------------------------------------------------
         //Click Button
@@ -241,5 +256,57 @@ public class Approval extends AppCompatActivity {
                 finish();
             }
         }
+
+
+        private void loadData(){
+
+            try {
+                String spmkid = "632";
+                URL url = new URL(BuildConfig.WEBSERVICE_URL+"/rencana/" + spmkid);
+
+                //URL url = new URL("http://localhost:8080" +"/rencana/" + "632");
+
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setReadTimeout(1500);
+                urlConnection.setConnectTimeout(1500);
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJva2kiLCJpZFVzZXIiOjEwNDAyLCJpZFJlc3BvbnNpYmlsaXR5Ijo3OSwiaWRWZW5kb3IiOjAsImV4cCI6MTUyMjc2OTU4N30.p_5dMPljD493mkqOrz6IFg5QDpwyjDikP241dsI5cuyuTQHHeg6G6KR3l9ALL7hpR0Gh7ArunvzC1k2TiQL94A";
+                urlConnection.setRequestProperty("Authorization", "Bearer "+token);
+
+                int responseStatusCode = urlConnection.getResponseCode();
+                if (responseStatusCode == HttpURLConnection.HTTP_OK) {
+                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                    String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+                    JSONObject response = new JSONObject(result);
+
+                    int statusCode = response.getInt("code");
+
+                    if (statusCode == 200) {
+
+                        mMilestoneList = response.getJSONArray("payload");
+
+                    } else {
+
+                    }
+                } else {
+                    System.out.println("WEBSERVICE_ERROR : " + urlConnection.getResponseCode());
+                    InputStream in = new BufferedInputStream(urlConnection.getErrorStream());
+                    String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+                    System.out.println("WEBSERVICE_ERROR : " + result);
+
+                }
+
+
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
     }
 }
