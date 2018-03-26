@@ -1,13 +1,22 @@
 <resources>
-    <string name="app_name">MonitorandPerformance</string>
+    <string name="app_name"></string>
     <string name="title_activity_indicator">Activity Indicator</string>
     <string name="evaluation">PENILAIAN</string>
     <string name="indicator">INDIKATOR</string>
     <string name="save">SAVE</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="home">Welcome to Ditlog</string>
+    <string name="title_activity_view_contract_performance">ViewContractPerformance</string>
+    <string name="hello_world">Hello World!</string>
+    <string name="action_settings">Settings</string>
+    <string name="navigation_drawer_open">Navigation Drawer Open</string>
+    <string name="navigation_drawer_close">Navigation Drawer Close</string>
+    <string name="company">ITB</string>
+    <string name="division">Direktorat Logistik</string>
+    <string name="preparing">Preparing .......</string>
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
-  <string name="direktorat_logistik_itb">Direktorat Logistik ITB</string>
+    <string name="direktorat_logistik_itb">Direktorat Logistik ITB</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="copyright_2018">© 2018</string>
@@ -15,4 +24,5 @@
     <string name="login">Login</string>
     <string name="logo_password">Logo Password</string>
     <string name="logo_username">Logo Username</string>
+
 </resources>

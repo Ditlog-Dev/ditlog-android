@@ -1,18 +1,26 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 
 public class Indicator extends AppCompatActivity {
-
+    private ContractPerformancePreference performancePreference = new ContractPerformancePreference();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_indicator);
 
+        TextView number = findViewById(R.id.noKontrak);
+        TextView title = findViewById(R.id.judulKontrak);
+        TextView vendor = findViewById(R.id.namaVendor);
+        TextView date = findViewById(R.id.tglKontrak);
+        number.setText(performancePreference.getNumber(this));
+        title.setText(performancePreference.getTitle(this));
+        vendor.setText(performancePreference.getVendor(this));
+        date.setText(performancePreference.getDate(this));
         // Create an instance of the tab layout from the view.
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         // Set the text for each tab.
@@ -47,5 +55,12 @@ public class Indicator extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        overridePendingTransition(0,0);
+        finish();
+        super.onBackPressed();
     }
 }
