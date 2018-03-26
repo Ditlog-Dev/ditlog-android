@@ -212,7 +212,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
     public class indicatorGetter extends AsyncTask<Void, Void, ArrayList<IndicatorEntity>>{
 
         public String auth = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZXAiLCJyb2xlSWQiOjQyMiwiZXhwIjoxNTIyMzM2Mzg1fQ.3nai_tQNWLObap18t8YjZ-RrtisOhlPLq7kI_zDgy1Gq99VNdWTicQ5o-c8BPTh2ZPRxBOhIqumAaCc-8F9-2A";
-        public static final String SERVER_URL = "159.65.131.168:8080";
+        public static final String SERVER_URL = BuildConfig.WEBSERVICE_URL;
         public static final int READ_TIMEOUT = 15000;
         public static final int CONNECTION_TIMEOUT = 15000;
 
@@ -231,7 +231,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         protected ArrayList<IndicatorEntity> doInBackground(Void... voids) {
             String method = "GET";
             try {
-                String rawUrl = "http://" + SERVER_URL + "/indicators";
+                String rawUrl = SERVER_URL + "/indicators";
                 rawUrl += "?page=" + String.valueOf(pageNumber);
                 rawUrl += "&limit=" + String.valueOf(itemLimit);
                 rawUrl +="&dir=" + direction;

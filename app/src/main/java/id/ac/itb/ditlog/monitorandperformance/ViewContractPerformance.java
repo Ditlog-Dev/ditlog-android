@@ -277,7 +277,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
 
     public class AsyncGetContracts extends AsyncTask<Void, Void, ArrayList<ContractEntity>>{
         public String auth = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZXAiLCJyb2xlSWQiOjQyMiwiZXhwIjoxNTIyMzM2Mzg1fQ.3nai_tQNWLObap18t8YjZ-RrtisOhlPLq7kI_zDgy1Gq99VNdWTicQ5o-c8BPTh2ZPRxBOhIqumAaCc-8F9-2A";
-        private static final String SERVER_URL = "159.65.131.168:8080";
+        private static final String SERVER_URL = BuildConfig.WEBSERVICE_URL;
         private static final int READ_TIMEOUT = 15000;
         private static final int CONNECTION_TIMEOUT = 15000;
         private String year;
@@ -295,7 +295,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         protected ArrayList<ContractEntity> doInBackground(Void... voids) {
             String method = "GET";
             try {
-                String rawUrl = "http://" + SERVER_URL + "/contracts?tahun=" + year;
+                String rawUrl = SERVER_URL + "/contracts?tahun=" + year;
                 URL url = new URL(rawUrl);
 
                 connection = (HttpURLConnection) url.openConnection();
