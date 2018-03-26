@@ -143,7 +143,7 @@ public class Login extends AppCompatActivity {
           if (statusCode == 200) {
             JSONObject payload = response.getJSONObject("payload");
             long userid = payload.getLong("idUser");
-            long roleid = payload.getLong("roleId");
+            long roleid = payload.getLong("idResponsibility");
             String token = payload.getString("jwtToken");
             UserPayload userpayload = new UserPayload(userid, roleid, token);
             return new LoginWrapper(logininfo, userpayload);
