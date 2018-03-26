@@ -29,7 +29,9 @@ public class Rencana extends AppCompatActivity {
     private RencanaListAdapter mAdapter;
     private JSONArray mMilestoneList = new JSONArray();
     private LayoutInflater inflater;
-    private LinearLayout linearLayoutRencana = (LinearLayout) findViewById(R.id.activity_rencana);
+
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,11 +40,11 @@ public class Rencana extends AppCompatActivity {
 
 
         // Create recycler view.
-        loadData();
+        //loadData();
+        dummyData();
+
         inflater = LayoutInflater.from(getApplicationContext());
         inflateKeterangan();
-        LinearLayout subActivityRencana = (LinearLayout) inflater.inflate(R.layout.sub_activity_rencana, null);
-        linearLayoutRencana.addView(subActivityRencana);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerviewRencana);
         // Create an adapter and supply the data to be displayed.
         mAdapter = new RencanaListAdapter(this, mMilestoneList);
@@ -74,7 +76,7 @@ public class Rencana extends AppCompatActivity {
 
         //URL url = new URL(BuildConfig.WEBSERVICE_URL+"/rencana/" + spmkid);
         try {
-            URL url = new URL("http://192.168.43.51:8080" +"/rencana/" + "632");
+            URL url = new URL("http://localhost:8080" +"/rencana/" + "632");
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -127,9 +129,9 @@ public class Rencana extends AppCompatActivity {
                 LinearLayout layoutKeterangan = (LinearLayout) inflater.inflate(R.layout.keterangan_rencana, null);
                 TextView textKeterangan = (TextView) layoutKeterangan.findViewById(R.id.textKeterangan);
                 //textKeterangan.setText(sample.getInt("keterangan"));
-
+                LinearLayout linearLayoutRencana;
                 textKeterangan.setText("ada keterangan");
-
+                linearLayoutRencana = (LinearLayout) findViewById(R.id.keteranganRencanaContainer);
                 linearLayoutRencana.addView(layoutKeterangan);
             }
         } catch (JSONException e) {
@@ -138,4 +140,26 @@ public class Rencana extends AppCompatActivity {
 
     }
 
+    private void dummyData(){
+
+        try {
+            JSONObject itemA = new JSONObject();
+            itemA.put("tglRencana", "1510041600000");
+            itemA.put("persentaseRencana", "20");
+            itemA.put("keteranganRencana", "ket1");
+            itemA.put("statusRencana", "0");
+
+            JSONObject itemB = new JSONObject();
+            itemB.put("tglRencana", "1510042600000");
+            itemB.put("persentaseRencana", "40");
+            itemB.put("keteranganRencana", "ket2");
+
+            mMilestoneList.put(itemA);
+            mMilestoneList.put(itemB);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

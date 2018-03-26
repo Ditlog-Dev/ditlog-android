@@ -103,7 +103,8 @@ public class RencanaListAdapter extends RecyclerView.Adapter<RencanaListAdapter.
         try {
             mCurrent = mMilestoneList.getJSONObject(position);
             holder.dateItemView.setText(mCurrent.getString("tglRencana"));
-            holder.percentageItemView.setText(mCurrent.getInt("persentaseRencana"));
+            Integer persentaseRencana = mCurrent.getInt("persentaseRencana");
+            holder.percentageItemView.setText(persentaseRencana.toString());
             holder.keteranganItemView.setText(mCurrent.getString("keteranganRencana"));
 
         } catch (JSONException e) {
