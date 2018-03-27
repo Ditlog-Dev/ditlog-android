@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -75,7 +76,8 @@ public class Approval extends AppCompatActivity {
         keterangan2.setText("-");
         linearLayoutRencana.addView(linearLayout2);
         */
-
+        //loadData();
+        dummyData();
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerviewApproval);
         // Create an adapter and supply the data to be displayed.
         mAdapter = new ApprovalListAdapter(this, mMilestoneList);
@@ -258,54 +260,79 @@ public class Approval extends AppCompatActivity {
         }
 
 
-        private void loadData(){
 
-            try {
-                String spmkid = "632";
-                URL url = new URL(BuildConfig.WEBSERVICE_URL+"/rencana/" + spmkid);
 
-                //URL url = new URL("http://localhost:8080" +"/rencana/" + "632");
+    }
 
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.setReadTimeout(1500);
-                urlConnection.setConnectTimeout(1500);
-                urlConnection.setDoOutput(true);
-                urlConnection.setDoInput(true);
-                urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJva2kiLCJpZFVzZXIiOjEwNDAyLCJpZFJlc3BvbnNpYmlsaXR5Ijo3OSwiaWRWZW5kb3IiOjAsImV4cCI6MTUyMjc2OTU4N30.p_5dMPljD493mkqOrz6IFg5QDpwyjDikP241dsI5cuyuTQHHeg6G6KR3l9ALL7hpR0Gh7ArunvzC1k2TiQL94A";
-                urlConnection.setRequestProperty("Authorization", "Bearer "+token);
+    private void loadData(){
 
-                int responseStatusCode = urlConnection.getResponseCode();
-                if (responseStatusCode == HttpURLConnection.HTTP_OK) {
-                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                    String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
-                    JSONObject response = new JSONObject(result);
+        try {
+            String spmkid = "632";
+            URL url = new URL(BuildConfig.WEBSERVICE_URL+"/rencana/" + spmkid);
 
-                    int statusCode = response.getInt("code");
+            //URL url = new URL("http://localhost:8080" +"/rencana/" + "632");
 
-                    if (statusCode == 200) {
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setReadTimeout(1500);
+            urlConnection.setConnectTimeout(1500);
+            urlConnection.setDoOutput(true);
+            urlConnection.setDoInput(true);
+            urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJva2kiLCJpZFVzZXIiOjEwNDAyLCJpZFJlc3BvbnNpYmlsaXR5Ijo3OSwiaWRWZW5kb3IiOjAsImV4cCI6MTUyMjc2OTU4N30.p_5dMPljD493mkqOrz6IFg5QDpwyjDikP241dsI5cuyuTQHHeg6G6KR3l9ALL7hpR0Gh7ArunvzC1k2TiQL94A";
+            urlConnection.setRequestProperty("Authorization", "Bearer "+token);
 
-                        mMilestoneList = response.getJSONArray("payload");
+            int responseStatusCode = urlConnection.getResponseCode();
+            if (responseStatusCode == HttpURLConnection.HTTP_OK) {
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+                JSONObject response = new JSONObject(result);
 
-                    } else {
+                int statusCode = response.getInt("code");
 
-                    }
+                if (statusCode == 200) {
+
+                    mMilestoneList = response.getJSONArray("payload");
+
                 } else {
-                    System.out.println("WEBSERVICE_ERROR : " + urlConnection.getResponseCode());
-                    InputStream in = new BufferedInputStream(urlConnection.getErrorStream());
-                    String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
-                    System.out.println("WEBSERVICE_ERROR : " + result);
 
                 }
+            } else {
+                System.out.println("WEBSERVICE_ERROR : " + urlConnection.getResponseCode());
+                InputStream in = new BufferedInputStream(urlConnection.getErrorStream());
+                String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+                System.out.println("WEBSERVICE_ERROR : " + result);
 
-
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
             }
 
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void dummyData(){
+
+        try {
+            JSONObject itemA = new JSONObject();
+            itemA.put("tglRencana", "23/3/2018");
+            itemA.put("persentaseRencana", "20");
+            itemA.put("keteranganRencana", "ket1");
+            itemA.put("statusRencana", "0");
+
+            JSONObject itemB = new JSONObject();
+            itemB.put("tglRencana", "23/4/2018");
+            itemB.put("persentaseRencana", "40");
+            itemB.put("keteranganRencana", "ket2");
+
+            mMilestoneList.put(itemA);
+            mMilestoneList.put(itemB);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
     }
