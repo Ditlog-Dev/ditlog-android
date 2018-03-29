@@ -16,8 +16,6 @@
 
         <activity android:name=".MainActivity"/>
         <activity android:name=".Indicator">
-            android:label="@string/title_activity_indicator"
-            android:parentActivityName="id.ac.itb.ditlog.monitorandperformance.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ViewContractPerformance" />

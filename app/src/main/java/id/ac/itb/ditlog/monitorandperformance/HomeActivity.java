@@ -7,6 +7,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -32,8 +33,16 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-
+        ContractPerformancePreference preference = new ContractPerformancePreference();
+        long responsibility = preference.getResponsibility(this);
+        Log.d("udah", "udah res" + responsibility);
+        if (responsibility == 118) {
+            setContentView(R.layout.vendor_home);
+        } else {
+            setContentView(R.layout.activity_home);
+        }
+        String auth = preference.getToken(this);
+        Log.d("udah", "udah " + auth);
         // load toolbar titles from string resources
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

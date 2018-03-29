@@ -46,6 +46,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
     private SwipeRefreshLayout swipeContainer;
     protected ContractAdapter contractAdapter;
     private String chosenYear="2018";
+    private String auth = "";
     Context context = this;
     Activity act = this;
 
@@ -68,6 +69,8 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_contract_performance);
 
+        ContractPerformancePreference preference = new ContractPerformancePreference();
+        auth = preference.getToken(context);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         toolbar = findViewById(R.id.toolbar);
@@ -95,7 +98,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         swipeContainer.post(new Runnable() {
             @Override
             public void run() {
-                new AsyncGetContracts(chosenYear, getParent(), getParent()).execute();
+                new AsyncGetContracts(chosenYear, getParent(), getParent(), auth).execute();
             }
         });
 
@@ -228,7 +231,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
 
     @Override
     public void onRefresh() {
-        new AsyncGetContracts(chosenYear, this, this).execute();
+        new AsyncGetContracts(chosenYear, this, this, auth).execute();
     }
 
     @Override
@@ -264,7 +267,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
                         chosenYear = (parent.getItemAtPosition(position)).toString();
-                        new AsyncGetContracts(chosenYear, context, act).execute();
+                        new AsyncGetContracts(chosenYear, context, act, auth).execute();
                         //spinner.setOnItemSelectedListener(this);
                     }
 
@@ -276,7 +279,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
     }
 
     public class AsyncGetContracts extends AsyncTask<Void, Void, ArrayList<ContractEntity>>{
-        public String auth = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZXAiLCJyb2xlSWQiOjQyMiwiZXhwIjoxNTIyMzM2Mzg1fQ.3nai_tQNWLObap18t8YjZ-RrtisOhlPLq7kI_zDgy1Gq99VNdWTicQ5o-c8BPTh2ZPRxBOhIqumAaCc-8F9-2A";
+        public String auth = "";
         private static final String SERVER_URL = BuildConfig.WEBSERVICE_URL;
         private static final int READ_TIMEOUT = 15000;
         private static final int CONNECTION_TIMEOUT = 15000;
@@ -285,10 +288,11 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
         Context context;
         Activity act;
 
-        public AsyncGetContracts(String year, Context context, Activity act) {
+        public AsyncGetContracts(String year, Context context, Activity act, String auth) {
             this.year = year;
             this.context = context;
             this.act = act;
+            this.auth = auth;
         }
 
         @Override
@@ -299,7 +303,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
                 URL url = new URL(rawUrl);
 
                 connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestProperty("Authorization", auth);
+                connection.setRequestProperty("Authorization", "Bearer "+auth);
                 connection.setRequestMethod(method);
                 connection.setReadTimeout(READ_TIMEOUT);
                 connection.setConnectTimeout(CONNECTION_TIMEOUT);

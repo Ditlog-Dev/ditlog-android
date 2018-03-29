@@ -2,6 +2,7 @@ package id.ac.itb.ditlog.monitorandperformance;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 /**
  * Created by User on 18/03/2018.
@@ -14,6 +15,8 @@ public class ContractPerformancePreference {
     public static final String vendor = "vendor_performance";
     public static final String date = "date_performance";
     public static final String eval = "eval_performance";
+    public static final String responsibility = "roleid";
+    public static final String token = "token";
 
     public void setNumber(Context context, String contractNumber) {
         SharedPreferences sharedPref;
@@ -98,5 +101,21 @@ public class ContractPerformancePreference {
         sharedPref = context.getSharedPreferences(contractPerformance, Context.MODE_PRIVATE);
         contractEval = sharedPref.getFloat(eval, 0);
         return contractEval;
+    }
+
+    public long getResponsibility(Context context) {
+        SharedPreferences sharedPref = PreferenceManager
+                .getDefaultSharedPreferences(context);;
+        long roleId;
+        roleId = sharedPref.getLong(responsibility, 0);
+        return roleId;
+    }
+
+    public String getToken(Context context) {
+        SharedPreferences sharedPref = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        String tokenJwt;
+        tokenJwt = sharedPref.getString(token, "");
+        return tokenJwt;
     }
 }

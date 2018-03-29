@@ -8,6 +8,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -33,7 +34,14 @@ public class MonitorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_monitor);
+        ContractPerformancePreference preference = new ContractPerformancePreference();
+        long responsibility = preference.getResponsibility(this);
+        Log.d("udah", "udah " + responsibility);
+        if (responsibility == 118) {
+            setContentView(R.layout.vendor_monitor);
+        } else {
+            setContentView(R.layout.activity_monitor);
+        }
 
         // load toolbar titles from string resources
         toolbar = (Toolbar) findViewById(R.id.toolbar);

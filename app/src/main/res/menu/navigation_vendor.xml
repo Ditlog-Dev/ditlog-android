@@ -5,8 +5,5 @@
 
     <item android:id="@+id/realisasi"
         android:title="Monitor"></item>
-        <!--android:icon="@drawable/ic_menu_slideshow" (for icon) -->
-
-    <item android:id="@+id/penilaian"
-        android:title="Penilaian Kontrak Kerja Rekanan"></item>
+    <!--android:icon="@drawable/ic_menu_slideshow" (for icon) -->
 </menu>

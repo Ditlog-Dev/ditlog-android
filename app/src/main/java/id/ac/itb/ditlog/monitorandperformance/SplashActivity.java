@@ -44,7 +44,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 /* Create an Intent that will start the Nav-Drawer. */
-                Intent mainIntent = new Intent(SplashActivity.this, HomeActivity.class);
+                Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
                 SplashActivity.this.startActivity(mainIntent);
                 overridePendingTransition(0,0);
                 SplashActivity.this.finish();

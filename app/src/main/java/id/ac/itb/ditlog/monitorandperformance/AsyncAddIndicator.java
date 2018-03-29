@@ -17,7 +17,7 @@ import java.net.URL;
  */
 
 public class AsyncAddIndicator extends AsyncTask<String,Void,String> {
-    public String auth = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZXAiLCJyb2xlSWQiOjQyMiwiZXhwIjoxNTIyMzM2Mzg1fQ.3nai_tQNWLObap18t8YjZ-RrtisOhlPLq7kI_zDgy1Gq99VNdWTicQ5o-c8BPTh2ZPRxBOhIqumAaCc-8F9-2A";
+    public String auth = "";
     public static final String SERVER_URL = BuildConfig.WEBSERVICE_URL;
     public static final int READ_TIMEOUT = 1500;
     public static final int CONNECTION_TIMEOUT = 1500;
@@ -26,10 +26,11 @@ public class AsyncAddIndicator extends AsyncTask<String,Void,String> {
     private Context mContext;
     private Activity act;
 
-    public AsyncAddIndicator(String indicator, final Context context, Activity act) {
+    public AsyncAddIndicator(String indicator, final Context context, Activity act, String auth) {
         mContext = context;
         this.indicator = indicator;
         this.act = act;
+        this.auth = auth;
     }
 
     @Override
@@ -46,7 +47,7 @@ public class AsyncAddIndicator extends AsyncTask<String,Void,String> {
 
                 URL url = new URL(SERVER_URL + "/indicators");
                 urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestProperty("Authorization", auth);
+                urlConnection.setRequestProperty("Authorization", "Bearer "+auth);
                 // read response
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setReadTimeout(READ_TIMEOUT);

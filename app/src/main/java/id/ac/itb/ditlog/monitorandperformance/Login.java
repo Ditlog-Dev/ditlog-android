@@ -188,9 +188,10 @@ public class Login extends AppCompatActivity {
         editor.putString("token", p.jwtToken);
         editor.putString("username", loginresponse.getLoginInfo().getUsername());
         editor.apply();
+        editor.commit();
 
         Intent intent_name = new Intent();
-        intent_name.setClass(getApplicationContext(), MainActivity.class);
+        intent_name.setClass(getApplicationContext(), HomeActivity.class);
         startActivity(intent_name);
         finish();
       } else {

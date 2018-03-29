@@ -12,11 +12,11 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField "String", 'WEBSERVICE_URL', '"http://159.65.131.168:8080"'
+            buildConfigField "String", 'WEBSERVICE_URL', '"http://pplk1g.if.itb.ac.id"'
         }
 
         release {
-            buildConfigField "String", 'WEBSERVICE_URL', '"http://159.65.131.168:8080"'
+            buildConfigField "String", 'WEBSERVICE_URL', '"http://pplk1g.if.itb.ac.id"'
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

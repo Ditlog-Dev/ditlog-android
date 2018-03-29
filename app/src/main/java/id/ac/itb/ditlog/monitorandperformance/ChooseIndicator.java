@@ -14,7 +14,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.JsonReader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,10 +38,12 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
     private static final int SPAN_COUNT = 2;
     private FloatingActionButton fab;
     private HttpURLConnection connection = null;
+    public String token = "";
+    public Indicator indicator;
 
     @Override
     public void onRefresh() {
-        new indicatorGetter().execute();
+        new indicatorGetter(token).execute();
     }
 
     private enum LayoutManagerType {
@@ -79,14 +80,14 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
                         String indicator = editText.getText().toString();
                         String status = "fail";
                         try {
-                            status = new AsyncAddIndicator(indicator, getContext(), getActivity()).execute(indicator).get();
+                            status = new AsyncAddIndicator(indicator, getContext(), getActivity(), token).execute(indicator).get();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (ExecutionException e) {
                             e.printStackTrace();
                         }
                         if (status.equals("Indikator berhasil ditambahkan")) {
-                            new indicatorGetter().execute();
+                            new indicatorGetter(token).execute();
                         }
                     }
                 })
@@ -109,6 +110,8 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         View rootView = inflater.inflate(R.layout.fragment_choose_indicator, container, false);
 
         rootView.setTag(TAG);
+        indicator = (Indicator) getActivity();
+        token = indicator.auth;
 
         //fab tambah indikator baru
         fab = (FloatingActionButton) rootView.findViewById(R.id.tambah);
@@ -143,7 +146,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         swipeContainer.post(new Runnable() {
             @Override
             public void run() {
-                new indicatorGetter().execute();
+                new indicatorGetter(token).execute();
             }
         });
 
@@ -211,7 +214,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
 
     public class indicatorGetter extends AsyncTask<Void, Void, ArrayList<IndicatorEntity>>{
 
-        public String auth = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZXAiLCJyb2xlSWQiOjQyMiwiZXhwIjoxNTIyMzM2Mzg1fQ.3nai_tQNWLObap18t8YjZ-RrtisOhlPLq7kI_zDgy1Gq99VNdWTicQ5o-c8BPTh2ZPRxBOhIqumAaCc-8F9-2A";
+        public String auth = "";
         public static final String SERVER_URL = BuildConfig.WEBSERVICE_URL;
         public static final int READ_TIMEOUT = 15000;
         public static final int CONNECTION_TIMEOUT = 15000;
@@ -227,6 +230,10 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         int numberOfElements=-1;
         int number=-1;
 
+        public indicatorGetter(String auth) {
+            this.auth = auth;
+        }
+
         @Override
         protected ArrayList<IndicatorEntity> doInBackground(Void... voids) {
             String method = "GET";
@@ -239,7 +246,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
                 URL url = new URL(rawUrl);
 
                 connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestProperty("Authorization", auth);
+                connection.setRequestProperty("Authorization", "Bearer "+auth);
                 connection.setRequestMethod(method);
                 connection.setReadTimeout(READ_TIMEOUT);
                 connection.setConnectTimeout(CONNECTION_TIMEOUT);
@@ -301,11 +308,6 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
                 }
             }
             jsReader.endObject();
-
-            Log.d("totalPages", String.valueOf(totalPages));
-            Log.d("totalElements", String.valueOf(totalElements));
-            Log.d("numberOfElements", String.valueOf(numberOfElements));
-            Log.d("number", String.valueOf(number));
         }
 
         protected void parseContent(JsonReader jsReader)throws IOException{
