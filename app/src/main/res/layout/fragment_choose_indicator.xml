@@ -53,4 +53,15 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#141515"
         tools:ignore="NotSibling" />
+
+    <Button
+        android:enabled="true"
+        android:layout_margin="16dp"
+        android:padding="4dp"
+        style="@style/saveIndicatorButtonStyle"
+        android:id="@+id/btnSaveIndicator"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="SAVE" />
 </RelativeLayout>
