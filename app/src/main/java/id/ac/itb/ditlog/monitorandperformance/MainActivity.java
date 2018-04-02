@@ -41,7 +41,16 @@ public class MainActivity extends AppCompatActivity {
       });
     }
 
+    Button buttonRencana = findViewById(R.id.buttonRencana);
 
+    buttonRencana.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        Intent intent_name = new Intent();
+        intent_name.setClass(getApplicationContext(), Rencana.class);
+        startActivity(intent_name);
+      }
+    });
   }
 
   //Logout setiap keluar dari aplikasi

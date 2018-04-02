@@ -16,11 +16,13 @@
 
 package id.ac.itb.ditlog.monitorandperformance;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -28,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.LinkedList;
 
 /**
@@ -55,6 +58,35 @@ public class RencanaListAdapter extends RecyclerView.Adapter<RencanaListAdapter.
         public RencanaViewHolder(View itemView, RencanaListAdapter adapter) {
             super(itemView);
             dateItemView = (EditText) itemView.findViewById(R.id.editDate);
+            final Date date = new Date();
+
+            final DatePickerDialog.OnDateSetListener datePick = new DatePickerDialog.OnDateSetListener() {
+
+                @Override
+                public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                      int dayOfMonth) {
+                    // TODO Auto-generated method stub
+                    date.setYear(year);
+                    date.setMonth(monthOfYear);
+                    date.setDate(dayOfMonth);
+
+                }
+
+            };
+
+            dateItemView.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    new DatePickerDialog(null, datePick,
+                            date.getYear(), date.getMonth(), date.getDay() ).show();
+
+
+                }
+            });
+
+
             percentageItemView = (EditText) itemView.findViewById(R.id.editPercentage);
             keteranganItemView = (EditText) itemView.findViewById(R.id.editKeterangan);
             this.mAdapter = adapter;
