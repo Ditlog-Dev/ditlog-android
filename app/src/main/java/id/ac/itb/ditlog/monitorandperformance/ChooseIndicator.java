@@ -211,13 +211,14 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
 
     public class indicatorGetter extends AsyncTask<Void, Void, ArrayList<IndicatorEntity>>{
 
-        public static final String SERVER_URL = "159.65.131.168:8080";
+        public String auth = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZXAiLCJyb2xlSWQiOjQyMiwiZXhwIjoxNTIyMzM2Mzg1fQ.3nai_tQNWLObap18t8YjZ-RrtisOhlPLq7kI_zDgy1Gq99VNdWTicQ5o-c8BPTh2ZPRxBOhIqumAaCc-8F9-2A";
+        public static final String SERVER_URL = BuildConfig.WEBSERVICE_URL;
         public static final int READ_TIMEOUT = 15000;
         public static final int CONNECTION_TIMEOUT = 15000;
 
         public int pageNumber=0;
         public int itemLimit=20;
-        public String direction="asc";
+        public String direction="dsc";
         public String sortingKey="id";
 
         ArrayList<IndicatorEntity> params = new ArrayList<>();
@@ -230,7 +231,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         protected ArrayList<IndicatorEntity> doInBackground(Void... voids) {
             String method = "GET";
             try {
-                String rawUrl = "http://" + SERVER_URL + "/indicators";
+                String rawUrl = SERVER_URL + "/indicators";
                 rawUrl += "?page=" + String.valueOf(pageNumber);
                 rawUrl += "&limit=" + String.valueOf(itemLimit);
                 rawUrl +="&dir=" + direction;
@@ -238,6 +239,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
                 URL url = new URL(rawUrl);
 
                 connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestProperty("Authorization", auth);
                 connection.setRequestMethod(method);
                 connection.setReadTimeout(READ_TIMEOUT);
                 connection.setConnectTimeout(CONNECTION_TIMEOUT);
