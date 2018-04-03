@@ -61,41 +61,6 @@ public class Rencana extends AppCompatActivity {
         // Give the recycler view a default layout manager.
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        //final Calendar myCalendar = Calendar.getInstance();
-        final Date date = new Date();
-
-        EditText edittext= (EditText) findViewById(R.id.editDate);
-        final DatePickerDialog.OnDateSetListener datePick = new DatePickerDialog.OnDateSetListener() {
-
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                // TODO Auto-generated method stub
-                date.setYear(year);
-                date.setMonth(monthOfYear);
-                date.setDate(dayOfMonth);
-                mRecyclerView.getAdapter().notifyItemInserted(mMilestoneList.length());
-
-            }
-
-        };
-
-        edittext.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                new DatePickerDialog(Rencana.this, datePick,
-                        date.getYear(), date.getMonth(), date.getDay() ).show();
-
-
-            }
-        });
-
-
-
-
-
         // Add a floating action click handler for creating new entries.
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -207,13 +172,13 @@ public class Rencana extends AppCompatActivity {
 
         try {
             JSONObject itemA = new JSONObject();
-            itemA.put("tglRencana", "23/3/2018");
+            itemA.put("tglRencana", "1522755911593");
             itemA.put("persentaseRencana", "20");
             itemA.put("keteranganRencana", "servis mesin");
             itemA.put("statusRencana", "0");
 
             JSONObject itemB = new JSONObject();
-            itemB.put("tglRencana", "23/4/2018");
+            itemB.put("tglRencana", "0");
             itemB.put("persentaseRencana", "40");
             itemB.put("keteranganRencana", "ganti ban");
 

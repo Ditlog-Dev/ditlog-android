@@ -18,8 +18,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rencana"
-            android:textSize="20dp"
+            android:text="@string/rencana"
+            android:textSize="20sp"
             android:textStyle="bold"
             />
     </android.support.v7.widget.Toolbar>
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000000"
-            android:text="Tanggal"
+            android:text="@string/tanggal"
             android:textAlignment="center"
             android:layout_weight="0.3"
             />
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000000"
-            android:text="Persentase"
+            android:text="@string/persentase"
             android:textAlignment="center"
             android:layout_weight="0.001"
             />
@@ -63,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000000"
-            android:text="Keterangan"
+            android:text="@string/keterangan"
             android:textAlignment="center"
             android:layout_weight="0.5"
             />
@@ -91,7 +91,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="#3793cd"
-        android:text="Submit"
+        android:text="@string/text_kirim"
         android:fontFamily="Helvatica"
         android:textColor="#ffffff"
         android:layout_marginTop="30dp"

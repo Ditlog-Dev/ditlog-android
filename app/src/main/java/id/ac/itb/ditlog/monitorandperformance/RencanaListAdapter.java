@@ -17,21 +17,28 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.nfc.Tag;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.TimeZone;
 
 /**
  * Shows how to implement a simple Adapter for a RecyclerView.
@@ -41,12 +48,15 @@ public class RencanaListAdapter extends RecyclerView.Adapter<RencanaListAdapter.
 
     private final JSONArray mMilestoneList;
     private final LayoutInflater mInflater;
+    private Context context;
 
     class RencanaViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public final EditText dateItemView;
         public final EditText percentageItemView;
         public final EditText keteranganItemView;
+        Tanggal tanggal = new Tanggal();
+
         final RencanaListAdapter mAdapter;
 
         /**
@@ -58,17 +68,17 @@ public class RencanaListAdapter extends RecyclerView.Adapter<RencanaListAdapter.
         public RencanaViewHolder(View itemView, RencanaListAdapter adapter) {
             super(itemView);
             dateItemView = (EditText) itemView.findViewById(R.id.editDate);
-            final Date date = new Date();
-
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+7"));
+            tanggal.setTanggal(cal);
             final DatePickerDialog.OnDateSetListener datePick = new DatePickerDialog.OnDateSetListener() {
 
                 @Override
                 public void onDateSet(DatePicker view, int year, int monthOfYear,
                                       int dayOfMonth) {
                     // TODO Auto-generated method stub
-                    date.setYear(year);
-                    date.setMonth(monthOfYear);
-                    date.setDate(dayOfMonth);
+                    tanggal.setTanggal(dayOfMonth,monthOfYear,year);
+
+
 
                 }
 
@@ -79,15 +89,14 @@ public class RencanaListAdapter extends RecyclerView.Adapter<RencanaListAdapter.
                 @Override
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
-                    new DatePickerDialog(null, datePick,
-                            date.getYear(), date.getMonth(), date.getDay() ).show();
-
-
+                    new DatePickerDialog(context, datePick,
+                            tanggal.getYear(), tanggal.getMonth(), tanggal.getDate() ).show();
                 }
             });
 
 
             percentageItemView = (EditText) itemView.findViewById(R.id.editPercentage);
+            percentageItemView.setFilters(new InputFilter[]{ new InputFilterMinMax("0", "100")});
             keteranganItemView = (EditText) itemView.findViewById(R.id.editKeterangan);
             this.mAdapter = adapter;
             itemView.setOnClickListener(this);
@@ -99,11 +108,23 @@ public class RencanaListAdapter extends RecyclerView.Adapter<RencanaListAdapter.
             // the correct item was clicked. The underlying data does not change.
 
         }
+
+
+        public  Tanggal getTanggal(){
+            return tanggal;
+        }
+
+        public void setDateItem(String inputTanggal){
+            tanggal.setTanggal(inputTanggal);
+            dateItemView.setText(tanggal.getTanggal());
+
+        }
     }
-    // insert CONSTRUCTOR here
-    public RencanaListAdapter(Context context, JSONArray milestoneList) {
-        mInflater = LayoutInflater.from(context);
+        // insert CONSTRUCTOR here
+    public RencanaListAdapter(Context _context, JSONArray milestoneList) {
+        mInflater = LayoutInflater.from(_context);
         this.mMilestoneList = milestoneList;
+        context = _context;
     }
 
     /**
@@ -134,7 +155,7 @@ public class RencanaListAdapter extends RecyclerView.Adapter<RencanaListAdapter.
         JSONObject mCurrent = null;
         try {
             mCurrent = mMilestoneList.getJSONObject(position);
-            holder.dateItemView.setText(mCurrent.getString("tglRencana"));
+            holder.setDateItem(mCurrent.getString("tglRencana"));
             Integer persentaseRencana = mCurrent.getInt("persentaseRencana");
             holder.percentageItemView.setText(persentaseRencana.toString());
             holder.keteranganItemView.setText(mCurrent.getString("keteranganRencana"));
@@ -156,5 +177,4 @@ public class RencanaListAdapter extends RecyclerView.Adapter<RencanaListAdapter.
         return mMilestoneList.length();
     }
 }
-
 

@@ -15,4 +15,9 @@
     <string name="login">Login</string>
     <string name="logo_password">Logo Password</string>
     <string name="logo_username">Logo Username</string>
+    <string name="rencana">Rencana</string>
+    <string name="tanggal">Tanggal</string>
+    <string name="persentase">Persentase</string>
+    <string name="keterangan">Keterangan</string>
+    <string name="text_kirim">Kirim</string>
 </resources>
