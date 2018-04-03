@@ -32,6 +32,16 @@
               app:layout_constraintTop_toTopOf="parent" />
 
             <Button
+                android:id="@+id/viewrealisasi_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View Realisasi"
+                app:layout_constraintBottom_toBottomOf="@id/approval_button"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/hello" />
+
+            <Button
               android:id="@+id/approval_button"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
@@ -39,7 +49,7 @@
               app:layout_constraintBottom_toBottomOf="@id/rencana_button"
               app:layout_constraintLeft_toLeftOf="parent"
               app:layout_constraintRight_toRightOf="parent"
-              app:layout_constraintTop_toTopOf="@id/hello" />
+              app:layout_constraintTop_toTopOf="@id/viewrealisasi_button" />
 
           <Button
             android:id="@+id/rencana_button"

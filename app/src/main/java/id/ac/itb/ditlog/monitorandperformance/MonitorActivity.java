@@ -64,6 +64,17 @@ public class MonitorActivity extends AppCompatActivity {
             }
           });
 
+            Button viewrealisasi = findViewById(R.id.viewrealisasi_button);
+
+            viewrealisasi.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent_name = new Intent();
+                    intent_name.setClass(getApplicationContext(), ViewRealisasi.class);
+                    startActivity(intent_name);
+                }
+            });
+
           Button approval = findViewById(R.id.approval_button);
 
           approval.setOnClickListener(new View.OnClickListener() {

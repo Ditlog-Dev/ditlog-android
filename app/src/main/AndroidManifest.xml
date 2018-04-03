@@ -38,6 +38,11 @@
             android:name="android.support.PARENT_ACTIVITY"
             android:value=".MonitorActivity" />
         </activity>
+        <activity android:name=".ViewRealisasi">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MonitorActivity" />
+        </activity>
       <activity android:name=".Login"/>
 
     </application>
