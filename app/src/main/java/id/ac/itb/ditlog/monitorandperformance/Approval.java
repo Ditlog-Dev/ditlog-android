@@ -50,7 +50,7 @@ public class Approval extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext());
         token = sharedPreferences.getString("token", "");
-        
+
         dummyData();
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerviewApproval);
         // Create an adapter and supply the data to be displayed.
@@ -151,7 +151,6 @@ public class Approval extends AppCompatActivity {
                 String spmkid = "632";
 
                 URL url = new URL(BuildConfig.WEBSERVICE_URL + "/rencana/" + spmkid +"/" + status);
-//                URL url = new URL("http://192.168.43.51:8080" + "/rencana/" + spmkid +"/" + status);
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("PUT");

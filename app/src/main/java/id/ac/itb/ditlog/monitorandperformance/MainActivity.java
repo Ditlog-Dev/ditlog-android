@@ -18,11 +18,11 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(getApplicationContext());
     Long userID = sharedPreferences.getLong("userid", -1);
-//    if (userID == -1) {
-//      Intent myIntent = new Intent(this, Login.class);
-//      startActivity(myIntent);
-//      finish();
-//    } else {
+    if (userID == -1) {
+      Intent myIntent = new Intent(this, Login.class);
+      startActivity(myIntent);
+      finish();
+    } else {
       TextView hello = findViewById(R.id.hello);
       hello.setText("Hello " + sharedPreferences.getString("username", "-1"));
       Button logout = findViewById(R.id.logout);
@@ -52,4 +52,4 @@ public class MainActivity extends AppCompatActivity {
       });
     }
   }
-//}
+}
