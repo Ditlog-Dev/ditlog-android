@@ -42,7 +42,7 @@ public class MonitorActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager
             .getDefaultSharedPreferences(getApplicationContext());
         Long userID = sharedPreferences.getLong("userid", -1);
-        if (false && userID == -1) {
+        if (false && userID == -1) { //TODO Remove false to check the user after webservice is backup/ mock db ready
           Intent myIntent = new Intent(this, Login.class);
           startActivity(myIntent);
           finish();
@@ -64,7 +64,7 @@ public class MonitorActivity extends AppCompatActivity {
             }
           });
 
-          Button approval = findViewById(R.id.button);
+          Button approval = findViewById(R.id.approval_button);
 
           approval.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +73,17 @@ public class MonitorActivity extends AppCompatActivity {
               intent_name.setClass(getApplicationContext(), Approval.class);
               startActivity(intent_name);
             }
+          });
+
+          Button rencana = findViewById(R.id.rencana_button);
+
+          rencana.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View view) {
+              Intent intent_name = new Intent();
+              intent_name.setClass(getApplicationContext(), Rencana.class);
+              startActivity(intent_name);
+              }
           });
         }
 

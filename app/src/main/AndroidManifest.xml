@@ -19,7 +19,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ViewContractPerformance" />
         </activity>
-        <activity android:name=".ViewContractPerformance"></activity>
+        <activity android:name=".ViewContractPerformance"/>
         <activity android:name=".MonitorActivity"/>
         <activity android:name=".HomeActivity" android:noHistory="true"/>
         <activity android:name=".SplashActivity" android:theme="@style/SplashTheme">
@@ -28,8 +28,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Approval"></activity>
-        <activity android:name=".Login"></activity>
+        <activity android:name=".Approval">
+          <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MonitorActivity" />
+        </activity>
+        <activity android:name=".Rencana">
+          <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MonitorActivity" />
+        </activity>
+      <activity android:name=".Login"/>
 
     </application>
 

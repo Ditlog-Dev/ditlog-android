@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-//TODO STUB kelompok I-6 untuk integrasi Approval dan View Rencana
+@Deprecated
 public class MainActivity extends AppCompatActivity {
 
   @Override
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         }
       });
 
-      Button approval = findViewById(R.id.button);
+      Button approval = findViewById(R.id.approval_button);
 
       approval.setOnClickListener(new View.OnClickListener() {
         @Override

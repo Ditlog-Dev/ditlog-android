@@ -32,14 +32,25 @@
               app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-              android:id="@+id/button"
+              android:id="@+id/approval_button"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:text="Approval"
-              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintBottom_toBottomOf="@id/rencana_button"
               app:layout_constraintLeft_toLeftOf="parent"
               app:layout_constraintRight_toRightOf="parent"
               app:layout_constraintTop_toTopOf="@id/hello" />
+
+          <Button
+            android:id="@+id/rencana_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rencana"
+            app:layout_constraintBottom_toBottomOf="@id/logout"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/approval_button"
+            app:layout_constraintVertical_bias="0.51"/>
 
             <Button
               android:id="@+id/logout"
@@ -49,7 +60,7 @@
               app:layout_constraintBottom_toBottomOf="parent"
               app:layout_constraintLeft_toLeftOf="parent"
               app:layout_constraintRight_toRightOf="parent"
-              app:layout_constraintTop_toTopOf="@id/button" />
+              app:layout_constraintTop_toTopOf="@id/rencana_button" />
 
         </android.support.constraint.ConstraintLayout>
 
@@ -65,14 +76,6 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/header_navigation_menu"
         app:menu="@menu/navigation_menu" >
-        <TextView
-          android:id="@+id/hello"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintLeft_toLeftOf="parent"
-          app:layout_constraintRight_toRightOf="parent"
-          app:layout_constraintTop_toTopOf="parent"/>
     </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>

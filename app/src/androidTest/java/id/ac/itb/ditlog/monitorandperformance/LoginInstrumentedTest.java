@@ -73,6 +73,6 @@ public class LoginInstrumentedTest {
     onView(withId(R.id.username)).perform(typeText(username),closeSoftKeyboard());
     onView(withId(R.id.password)).perform(typeText(password),closeSoftKeyboard());
 
-    onView(withId(R.id.button)).perform(click());
+    onView(withId(R.id.approval_button)).perform(click());
   }
 }

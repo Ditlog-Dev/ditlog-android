@@ -43,7 +43,7 @@ public class Login extends AppCompatActivity {
       e.printStackTrace();
     }
     setContentView(R.layout.activity_login);
-    button = findViewById(R.id.button);
+    button = findViewById(R.id.approval_button);
     password = findViewById(R.id.password);
 
     password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
