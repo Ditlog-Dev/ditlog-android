@@ -1,7 +1,9 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -10,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class MonitorActivity extends AppCompatActivity {
     private NavigationView navigationView;
@@ -35,12 +39,49 @@ public class MonitorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor);
 
+        SharedPreferences sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(getApplicationContext());
+        Long userID = sharedPreferences.getLong("userid", -1);
+        if (false && userID == -1) {
+          Intent myIntent = new Intent(this, Login.class);
+          startActivity(myIntent);
+          finish();
+        } else {
+          TextView hello = findViewById(R.id.hello);
+          hello.setText("Hello " + sharedPreferences.getString("username", "-1"));
+          Button logout = findViewById(R.id.logout);
+          logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              SharedPreferences sharedPreferences = PreferenceManager
+                  .getDefaultSharedPreferences(getApplicationContext());
+              SharedPreferences.Editor editor = sharedPreferences.edit();
+              editor.clear();
+              editor.apply();
+              Intent myIntent = new Intent(getApplicationContext(), Login.class);
+              startActivity(myIntent);
+              finish();
+            }
+          });
+
+          Button approval = findViewById(R.id.button);
+
+          approval.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              Intent intent_name = new Intent();
+              intent_name.setClass(getApplicationContext(), Approval.class);
+              startActivity(intent_name);
+            }
+          });
+        }
+
         // load toolbar titles from string resources
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.navigation);
+        drawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.navigation);
 
         // initializing navigation menu
         setUpNavigationView();

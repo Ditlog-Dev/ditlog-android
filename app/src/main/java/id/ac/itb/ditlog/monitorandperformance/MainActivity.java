@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+//TODO STUB kelompok I-6 untuk integrasi Approval dan View Rencana
 public class MainActivity extends AppCompatActivity {
 
   @Override

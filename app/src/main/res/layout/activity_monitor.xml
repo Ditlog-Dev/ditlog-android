@@ -15,10 +15,45 @@
         android:orientation="vertical">
 
         <include
-            android:id="@+id/top_bar"
-            layout="@layout/app_bar_main"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+          android:id="@+id/top_bar"
+          layout="@layout/app_bar_main"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"/>
+        <android.support.constraint.ConstraintLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+            <TextView
+              android:id="@+id/hello"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintLeft_toLeftOf="parent"
+              app:layout_constraintRight_toRightOf="parent"
+              app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+              android:id="@+id/button"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Approval"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintLeft_toLeftOf="parent"
+              app:layout_constraintRight_toRightOf="parent"
+              app:layout_constraintTop_toTopOf="@id/hello" />
+
+            <Button
+              android:id="@+id/logout"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Logout"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintLeft_toLeftOf="parent"
+              app:layout_constraintRight_toRightOf="parent"
+              app:layout_constraintTop_toTopOf="@id/button" />
+
+        </android.support.constraint.ConstraintLayout>
+
+
     </RelativeLayout>
 
     <!-- Container for contents of drawer -->
@@ -29,6 +64,15 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/header_navigation_menu"
-        app:menu="@menu/navigation_menu" />
+        app:menu="@menu/navigation_menu" >
+        <TextView
+          android:id="@+id/hello"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintRight_toRightOf="parent"
+          app:layout_constraintTop_toTopOf="parent"/>
+    </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>
