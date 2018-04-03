@@ -50,33 +50,7 @@ public class Approval extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext());
         token = sharedPreferences.getString("token", "");
-
-        /*----------------------
-
-        inflater = LayoutInflater.from(getApplicationContext());
-
-        LinearLayout linearLayoutRencana = (LinearLayout) findViewById(R.id.layoutApproval);
-        LinearLayout linearLayout1 = (LinearLayout) inflater.inflate(R.layout.date_percentage_approval, null);
-        TextView date1 = (TextView) linearLayout1.findViewById(R.id.dateApproval);
-        date1.setText("25/3/2018");
-
-        TextView percentage1 = (TextView) linearLayout1.findViewById(R.id.percentageApproval);
-        percentage1.setText("10%");
-        final TextView keterangan1 = (TextView) linearLayout1.findViewById(R.id.keteranganApproval);
-        keterangan1.setText("-");
-        linearLayoutRencana.addView(linearLayout1);
-
-        LinearLayout linearLayout2 = (LinearLayout) inflater.inflate(R.layout.date_percentage_approval, null);
-        TextView date2 = (TextView) linearLayout2.findViewById(R.id.dateApproval);
-        date2.setText("27/3/2018");
-
-        TextView percentage2 = (TextView) linearLayout2.findViewById(R.id.percentageApproval);
-        percentage2.setText("50%");
-        TextView keterangan2 = (TextView) linearLayout1.findViewById(R.id.keteranganApproval);
-        keterangan2.setText("-");
-        linearLayoutRencana.addView(linearLayout2);
-        */
-        //loadData();
+        
         dummyData();
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerviewApproval);
         // Create an adapter and supply the data to be displayed.
