@@ -36,16 +36,23 @@ public class ViewRealisasi extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private RealisasiListAdapter mAdapter;
+    private EditRealisasiListAdapter mEditAdapter;
     private JSONArray mMilestoneList = new JSONArray();
+    Button submit;
     //private LayoutInflater inflater;
     String keterangan = "";
 
     String token;
 
+    //dummy role
+    Integer role = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_realisasi);
+
+        submit = findViewById(R.id.submit);
 
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext());
@@ -54,9 +61,15 @@ public class ViewRealisasi extends AppCompatActivity {
         dummyData();
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerviewRealisasi);
         // Create an adapter and supply the data to be displayed.
-        mAdapter = new RealisasiListAdapter(this, mMilestoneList);
-        // Connect the adapter with the recycler view.
-        mRecyclerView.setAdapter(mAdapter);
+        if (role == 1) {
+            submit.setVisibility(View.GONE);
+            mAdapter = new RealisasiListAdapter(this, mMilestoneList);
+            mRecyclerView.setAdapter(mAdapter);
+        }
+        else {
+            mEditAdapter = new EditRealisasiListAdapter(this, mMilestoneList);
+            mRecyclerView.setAdapter(mEditAdapter);
+        }
         // Give the recycler view a default layout manager.
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -115,13 +128,13 @@ public class ViewRealisasi extends AppCompatActivity {
 
         try {
             JSONObject itemA = new JSONObject();
-            itemA.put("tglRencana", "23/3/2018");
+            itemA.put("tglRencana", "1/3/2018");
             itemA.put("persentaseRencana", "10");
             itemA.put("keteranganRencana", "ket1");
             itemA.put("statusRencana", "0");
 
             JSONObject itemB = new JSONObject();
-            itemB.put("tglRencana", "23/4/2018");
+            itemB.put("tglRencana", "3/4/2018");
             itemB.put("persentaseRencana", "");
             itemB.put("keteranganRencana", "");
 

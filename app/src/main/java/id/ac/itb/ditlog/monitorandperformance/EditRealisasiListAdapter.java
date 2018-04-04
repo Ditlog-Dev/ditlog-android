@@ -17,31 +17,38 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Shows how to implement a simple Adapter for a RecyclerView.
  * Demonstrates how to add a click handler for each item in the ViewHolder.
  */
-public class RealisasiListAdapter extends RecyclerView.Adapter<RealisasiListAdapter.RealisasiViewHolder> {
+public class EditRealisasiListAdapter extends RecyclerView.Adapter<EditRealisasiListAdapter.EditRealisasiViewHolder> {
 
     private final JSONArray mMilestoneList;
     private final LayoutInflater mInflater;
 
-    class RealisasiViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class EditRealisasiViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public final TextView dateItemView;
-        public final TextView percentageItemView;
-        public final TextView keteranganItemView;
-        final RealisasiListAdapter mAdapter;
+        public final EditText percentageItemView;
+        public final EditText keteranganItemView;
+        final EditRealisasiListAdapter mAdapter;
 
         /**
          * Creates a new custom view holder to hold the view to display in the RecyclerView.
@@ -49,11 +56,11 @@ public class RealisasiListAdapter extends RecyclerView.Adapter<RealisasiListAdap
          * @param itemView The view in which to display the data.
          * @param adapter The adapter that manages the the data and views for the RecyclerView.
          */
-        public RealisasiViewHolder(View itemView, RealisasiListAdapter adapter) {
+        public EditRealisasiViewHolder(View itemView, EditRealisasiListAdapter adapter) {
             super(itemView);
             dateItemView = (TextView) itemView.findViewById(R.id.dateApproval);
-            percentageItemView = (TextView) itemView.findViewById(R.id.percentageApproval);
-            keteranganItemView = (TextView) itemView.findViewById(R.id.keteranganApproval);
+            percentageItemView = (EditText) itemView.findViewById(R.id.percentageApproval);
+            keteranganItemView = (EditText) itemView.findViewById(R.id.keteranganApproval);
             this.mAdapter = adapter;
             itemView.setOnClickListener(this);
         }
@@ -66,7 +73,7 @@ public class RealisasiListAdapter extends RecyclerView.Adapter<RealisasiListAdap
         }
     }
     // insert CONSTRUCTOR here
-    public RealisasiListAdapter(Context context, JSONArray milestoneList) {
+    public EditRealisasiListAdapter(Context context, JSONArray milestoneList) {
         mInflater = LayoutInflater.from(context);
         this.mMilestoneList = milestoneList;
     }
@@ -80,10 +87,10 @@ public class RealisasiListAdapter extends RecyclerView.Adapter<RealisasiListAdap
      * @return a view holder.
      */
     @Override
-    public RealisasiViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public EditRealisasiViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Inflate an item view.
-        View mItemView = mInflater.inflate(R.layout.date_percentage_approval, parent, false);
-        return new RealisasiViewHolder(mItemView, this);
+        View mItemView = mInflater.inflate(R.layout.date_percentage_edit_realisasi, parent, false);
+        return new EditRealisasiViewHolder(mItemView, this);
     }
 
     /**
@@ -94,7 +101,7 @@ public class RealisasiListAdapter extends RecyclerView.Adapter<RealisasiListAdap
      * @param position The position of the item in the RecycerView.
      */
     @Override
-    public void onBindViewHolder(RealisasiViewHolder holder, int position) {
+    public void onBindViewHolder(EditRealisasiViewHolder holder, int position) {
         // Retrieve the data for that position.
         JSONObject mCurrent = null;
         try {
@@ -103,10 +110,28 @@ public class RealisasiListAdapter extends RecyclerView.Adapter<RealisasiListAdap
             Integer persentaseRencana = mCurrent.getInt("persentaseRencana");
             holder.percentageItemView.setText(persentaseRencana.toString());
             holder.keteranganItemView.setText(mCurrent.getString("keteranganRencana"));
+            if (persentaseRencana != null) {
+                holder.percentageItemView.setFocusable(false);
+                holder.percentageItemView.setBackgroundColor(Color.TRANSPARENT);
+                holder.keteranganItemView.setFocusable(false);
+                holder.keteranganItemView.setBackgroundColor(Color.TRANSPARENT);
+            }
+
+//            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+//            Date strDate = sdf.parse(mCurrent.getString("tglRencana"));
+//            if (new Date().before(strDate)) {
+//                holder.percentageItemView.setFocusable(false);
+//                holder.percentageItemView.setBackgroundColor(Color.TRANSPARENT);
+//                holder.keteranganItemView.setFocusable(false);
+//                holder.keteranganItemView.setBackgroundColor(Color.TRANSPARENT);
+//            }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+//        catch (ParseException e) {
+//            e.printStackTrace();
+//        }
         // Add the data to the view holder.
 
     }
