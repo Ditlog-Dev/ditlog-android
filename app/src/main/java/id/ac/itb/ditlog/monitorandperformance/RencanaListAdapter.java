@@ -18,16 +18,20 @@ package id.ac.itb.ditlog.monitorandperformance;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.nfc.Tag;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -49,12 +53,32 @@ public class RencanaListAdapter extends RecyclerView.Adapter<RencanaListAdapter.
     private final JSONArray mMilestoneList;
     private final LayoutInflater mInflater;
     private Context context;
+    private RencanaListAdapter rencanaListAdapter = this;
+
+
+    private void  deleteItem(int index) {
+        mMilestoneList.remove(index);
+        notifyItemRemoved(index);
+
+        for (int i=0; i < mMilestoneList.length(); i++){
+            try {
+                JSONObject temp = mMilestoneList.getJSONObject(i);
+                temp.put("id", i);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
 
     class RencanaViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public final EditText dateItemView;
         public final EditText percentageItemView;
         public final EditText keteranganItemView;
+        int index;
+        JSONObject jsonObject;
         Tanggal tanggal = new Tanggal();
 
         final RencanaListAdapter mAdapter;
@@ -77,7 +101,7 @@ public class RencanaListAdapter extends RecyclerView.Adapter<RencanaListAdapter.
                                       int dayOfMonth) {
                     // TODO Auto-generated method stub
                     tanggal.setTanggal(dayOfMonth,monthOfYear,year);
-
+                    dateItemView.setText(tanggal.getTanggal());
 
 
                 }
@@ -95,9 +119,33 @@ public class RencanaListAdapter extends RecyclerView.Adapter<RencanaListAdapter.
             });
 
 
+
+
             percentageItemView = (EditText) itemView.findViewById(R.id.editPercentage);
             percentageItemView.setFilters(new InputFilter[]{ new InputFilterMinMax("0", "100")});
             keteranganItemView = (EditText) itemView.findViewById(R.id.editKeterangan);
+
+            ImageButton deleteButton = itemView.findViewById(R.id.deleteMilestone);
+
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    try {
+
+                        Integer _index =  Integer.parseInt(jsonObject.get("id").toString());
+                        Log.d("Cek", "remove Index" + _index);
+
+                        rencanaListAdapter.deleteItem(_index);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                        // Scroll to the bottom.
+                }
+            });
+
+
             this.mAdapter = adapter;
             itemView.setOnClickListener(this);
         }
@@ -118,6 +166,20 @@ public class RencanaListAdapter extends RecyclerView.Adapter<RencanaListAdapter.
             tanggal.setTanggal(inputTanggal);
             dateItemView.setText(tanggal.getTanggal());
 
+        }
+
+        public void setDateItem(Tanggal inputTanggal){
+            tanggal= inputTanggal;
+            dateItemView.setText(tanggal.getTanggal());
+
+        }
+
+        public void setIndex(int _index){
+            index = _index;
+        }
+
+        public void setJSONObject(JSONObject _jsonObject){
+            jsonObject =_jsonObject;
         }
     }
         // insert CONSTRUCTOR here
@@ -155,11 +217,15 @@ public class RencanaListAdapter extends RecyclerView.Adapter<RencanaListAdapter.
         JSONObject mCurrent = null;
         try {
             mCurrent = mMilestoneList.getJSONObject(position);
+            mCurrent.put("id", position);
+            holder.setIndex(position);
+            holder.setJSONObject(mCurrent);
             holder.setDateItem(mCurrent.getString("tglRencana"));
             Integer persentaseRencana = mCurrent.getInt("persentaseRencana");
             holder.percentageItemView.setText(persentaseRencana.toString());
-            holder.keteranganItemView.setText(mCurrent.getString("keteranganRencana"));
-
+            //holder.keteranganItemView.setText(mCurrent.getString("keteranganRencana"));
+            Integer pos = position;
+            holder.keteranganItemView.setText(pos.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
