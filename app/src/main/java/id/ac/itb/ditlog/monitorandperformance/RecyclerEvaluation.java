@@ -1,6 +1,8 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
 import android.content.Context;
+import android.os.Handler;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,23 +25,29 @@ public class RecyclerEvaluation extends RecyclerView.Adapter<RecyclerEvaluation.
 
     private Context mContext;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView evalIndicator;
+private OnArtikelClickListener mOnArtikelClickListener;
 
-        private TextView grade;
+public RecyclerEvaluation(Context context) {
+        mContext = context;
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public View mViewContainer;
+	    public CardView mCardViewContainer;
+
+	    public TextView evalIndicator;
+        public TextView grade;
         //private LinearLayout mParent;
 
         public ViewHolder(View v) {
             super(v);
-            // Define click listener for the ViewHolder's View.
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d(TAG, "Element " + getPosition() + " clicked.");
-                }
-            });
+            mViewContainer = v;
+            mCardViewContainer = (CardView) itemView.findViewById(R.id.penilaian_container);
             evalIndicator = (TextView) v.findViewById(R.id.param_indicator_evaluation);
             grade = (TextView) v.findViewById(R.id.grade_indicator_evaluation);
+            // Define click listener for the ViewHolder's View.
+            
+            
         }
 
         public TextView getEvalIndicator() {
@@ -78,20 +86,59 @@ public class RecyclerEvaluation extends RecyclerView.Adapter<RecyclerEvaluation.
     // BEGIN_INCLUDE(recyclerViewOnBindViewHolder)
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(RecyclerEvaluation.ViewHolder viewHolder, final int position) {
-        Log.d(TAG, "Element " + position + " set.");
+    public void onBindViewHolder(RecyclerEvaluation.ViewHolder holder, final int position) {
+        //Log.d(TAG, "Element " + position + " set.");
 
-        // Get element from your dataset at this position and replace the contents of the view
-        // with that element
-        viewHolder.getEvalIndicator().setText(mParam[position]);
+        final int posisi = getItemViewType(position);
+        final ViewHolder viewHolderArticle1 = (ViewHolder) holder;
+            final int posisiAdapter2 = holder.getAdapterPosition();
+            // Get element from your dataset at this position and replace the contents of the view
+            // with that element
 
-        viewHolder.getGradeIndicator().setText(mParam2[position]);
+        switch (posisi) {
+            case 0:
+                viewHolderArticle1.getEvalIndicator().setText(mParam[position]);
+
+                viewHolderArticle1.getGradeIndicator().setText(mParam2[position]);
+                break;
+            case 1:
+                viewHolderArticle1.getEvalIndicator().setText(mParam[position]);
+
+                viewHolderArticle1.getGradeIndicator().setText(mParam2[position]);
+                break;
+            case 2:
+                viewHolderArticle1.getEvalIndicator().setText(mParam[position]);
+
+                viewHolderArticle1.getGradeIndicator().setText(mParam2[position]);
+                break;
+
+        }
+        viewHolderArticle1.mViewContainer.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            if (mOnArtikelClickListener != null) {
+
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (mOnArtikelClickListener != null)
+                                            mOnArtikelClickListener.onClick(posisiAdapter2);
+                                    }
+                                }, 250);
+                            }
+                        }
+                    }
+            );
 
 
-        //final ObjectIncome objIncome = myItems.get(position);
 
-        //if true, your checkbox will be selected, else unselected
-        //viewHolder.mCheckBox.setChecked(viewHolder.getParamIndicator().setText(mParam[position]).isSelected());
+            //final ObjectIncome objIncome = myItems.get(position);
+
+            //if true, your checkbox will be selected, else unselected
+            //viewHolder.mCheckBox.setChecked(viewHolder.getParamIndicator().setText(mParam[position]).isSelected());
 
     }
     // END_INCLUDE(recyclerViewOnBindViewHolder)
@@ -100,5 +147,18 @@ public class RecyclerEvaluation extends RecyclerView.Adapter<RecyclerEvaluation.
     @Override
     public int getItemCount() {
         return mParam.length;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+	//JIKA CONTAINER DI KLIK
+    public interface OnArtikelClickListener {
+        void onClick(int posisi);
+    }
+	public void setOnArtikelClickListener(OnArtikelClickListener onArtikelClickListener) {
+        mOnArtikelClickListener = onArtikelClickListener;
     }
 }
