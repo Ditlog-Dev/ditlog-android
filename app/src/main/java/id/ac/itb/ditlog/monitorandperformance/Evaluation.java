@@ -5,13 +5,16 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.concurrent.ExecutionException;
 
@@ -21,7 +24,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class Evaluation extends Fragment {
 
-
+    private Toast toast;
     private static final String TAG = "RecyclerViewFragment";
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
@@ -33,14 +36,15 @@ public class Evaluation extends Fragment {
     }
 
     protected LayoutManagerType mCurrentLayoutManagerType;
+	private RecyclerEvaluation.OnArtikelClickListener mOnArtikelClickListener;
 
     protected RecyclerView evaluationRecyclerView;
     protected RecyclerEvaluation evaluationAdapter;
     protected RecyclerView.LayoutManager evaluationLayoutManager;
     protected String[] mDataset, mDataset2;
 
-    String [] indicatorEvaluation = {"Kampus Mahasiswa Indicator Test","Kampus Mahasiswa Indicator Test","Kampus Mahasiswa Indicator Test"};
-    String [] grade = {"80","60","90"};
+    String [] indicatorEvaluation = {"Kampus Mahasiswa Indicator Test Yang Panjang Apakah Hilang Tenggelam YA Ku Ga Tahu Lah Yaw","Kampus Mahasiswa Indicator Test","Kampus Mahasiswa Indicator Test"};
+    String [] grade = {"80","100","90"};
 
 
     @Override
@@ -64,6 +68,8 @@ public class Evaluation extends Fragment {
 
         // BEGIN_INCLUDE(initializeRecyclerView)
         evaluationRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerViewEvaluation);
+	
+	inisialisasiListener();	
 
         // LinearLayoutManager is used here, this will layout the elements in a similar fashion
         // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
@@ -80,6 +86,7 @@ public class Evaluation extends Fragment {
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
         evaluationAdapter = new RecyclerEvaluation(mDataset,mDataset2);
+	evaluationAdapter.setOnArtikelClickListener(mOnArtikelClickListener);
 
         // Set CustomAdapter as the adapter for RecyclerView.
         evaluationRecyclerView.setAdapter(evaluationAdapter);
@@ -178,6 +185,39 @@ public class Evaluation extends Fragment {
             mDataset[i] = indicatorEvaluation[i];
             mDataset2[i] = grade[i];
         }
+    }
+
+	private void inisialisasiListener() {
+        mOnArtikelClickListener = new RecyclerEvaluation.OnArtikelClickListener() {
+            @Override
+            public void onClick(int posisi) {
+                try {
+                    if (toast != null) {
+                        toast.cancel();
+                    }
+
+                    Log.d("KLIK Posisi : ",posisi + "");
+
+                    switch (posisi) {
+                        case 0:
+                            showInputDialog();
+                            break;
+
+                        case 1:
+                            showInputDialog();
+                            break;
+
+                        case 2:
+                            showInputDialog();
+                            break;
+
+                     }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
     }
 
 }
