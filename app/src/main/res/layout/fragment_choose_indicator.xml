@@ -20,7 +20,7 @@
                 <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerViewIndicator"
                 android:layout_width="match_parent"
-                android:layout_height="486dp"
+                android:layout_height="wrap_content"
                 android:paddingBottom="125dp"
                 android:clipToPadding="false"/>
         </android.support.v4.widget.SwipeRefreshLayout>
@@ -53,4 +53,15 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#141515"
         tools:ignore="NotSibling" />
+
+    <Button
+        android:enabled="true"
+        android:layout_margin="16dp"
+        android:padding="4dp"
+        style="@style/saveIndicatorButtonStyle"
+        android:id="@+id/btnSaveIndicator"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="SIMPAN" />
 </RelativeLayout>
