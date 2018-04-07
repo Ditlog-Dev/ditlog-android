@@ -1,14 +1,19 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -82,6 +87,45 @@ public class Evaluation extends Fragment {
         // END_INCLUDE(initializeRecyclerView)
 
         return rootView;
+    }
+
+    protected void showInputDialog() {
+
+        // get prompts.xml view
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        View promptView = layoutInflater.inflate(R.layout.input_evaluation_dialog, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setView(promptView);
+
+        final EditText editText = (EditText) promptView.findViewById(R.id.edittext);
+        // setup a dialog window
+        alertDialogBuilder.setCancelable(false)
+                .setPositiveButton("SIMPAN", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+//                        String indicator = editText.getText().toString();
+//                        String status = "fail";
+//                        try {
+//                            status = new AsyncAddIndicator(indicator, getContext(), getActivity(), token).execute(indicator).get();
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        } catch (ExecutionException e) {
+//                            e.printStackTrace();
+//                        }
+//                        if (status.equals("Indikator berhasil ditambahkan")) {
+//                            new ChooseIndicator.indicatorGetter(token).execute();
+//                        }
+                    }
+                })
+                .setNegativeButton("BATAL",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create an alert dialog
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
     }
 
     /**
