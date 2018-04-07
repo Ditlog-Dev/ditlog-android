@@ -17,6 +17,7 @@ import android.util.JsonReader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -155,6 +156,25 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         if (!haveNetworkConnection()) {
             Toast.makeText(getContext(), "Tidak ada koneksi internet", Toast.LENGTH_LONG).show();
         }
+
+        //Button OnClick
+        Button button = (Button)rootView.findViewById(R.id.btnSaveIndicator);
+        button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view){
+                switch(view.getId()){
+
+                    case R.id.btnSaveIndicator:
+                    /*Log.e("DEBUGG", "BUTTON PRESSED");
+                    break;*/
+                        Toast.makeText(getActivity(), "Indicator saved!", Toast.LENGTH_SHORT).show();
+                        break;
+
+                }
+
+            }
+        });
 
         return rootView;
     }
