@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(getApplicationContext());
     Long userID = sharedPreferences.getLong("userid", -1);
-    if (userID == -1) {
+    if (false && userID == -1) {
       Intent myIntent = new Intent(this, Login.class);
       startActivity(myIntent);
       finish();

@@ -2,6 +2,8 @@ package id.ac.itb.ditlog.monitorandperformance;
 
 import android.app.DatePickerDialog;
 import java.text.SimpleDateFormat;
+
+import android.content.Intent;
 import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,10 +13,12 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,8 +53,7 @@ public class Rencana extends AppCompatActivity {
 
         // Create recycler view.
         //loadData();
-        dummyData();
-
+        //dummyData();
         inflater = LayoutInflater.from(getApplicationContext());
         inflateKeterangan();
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerviewRencana);
@@ -68,16 +71,46 @@ public class Rencana extends AppCompatActivity {
             public void onClick(View view) {
                 // Add a new word to the wordList.
 
-                JSONObject addBlank = new JSONObject();
 
-                mMilestoneList.put(addBlank);
+                JSONObject itemA = new JSONObject();
+
+                mMilestoneList.put(itemA);
+
                 // Notify the adapter, that the data has changed.
                 mRecyclerView.getAdapter().notifyItemInserted(mMilestoneList.length());
                 // Scroll to the bottom.
                 mRecyclerView.smoothScrollToPosition(mMilestoneList.length());
 
+                /*
+                for (int i=0; i < mMilestoneList.length(); i++){
+                    try {
+                        JSONObject temp = mMilestoneList.getJSONObject(i);
+                        temp.put("id", i);
+                        Log.d("test", "FAB:" + temp.getString("tglRencana"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                */
+
             }
         });
+
+
+        Button submitButton =  findViewById(R.id.submitButtonRencana);
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Berhasil Kirim",Toast.LENGTH_SHORT).show();
+                Intent intent_name = new Intent();
+                intent_name.setClass(getApplicationContext(), MainActivity.class);
+                startActivity(intent_name);
+                finish();
+            }
+        });
+
     }
 
     private void loadData(){
@@ -150,22 +183,23 @@ public class Rencana extends AppCompatActivity {
 
     private void inflateKeterangan(){
 
-        try {
-            JSONObject sample = mMilestoneList.getJSONObject(0);
+        if (mMilestoneList.length()!= 0) {
+            try {
+                JSONObject sample = mMilestoneList.getJSONObject(0);
 
-            if (sample.getInt("statusRencana") ==0 ){
-                LinearLayout layoutKeterangan = (LinearLayout) inflater.inflate(R.layout.keterangan_rencana, null);
-                TextView textKeterangan = (TextView) layoutKeterangan.findViewById(R.id.textKeterangan);
-                //textKeterangan.setText(sample.getInt("keterangan"));
-                LinearLayout linearLayoutRencana;
-                textKeterangan.setText("Belum sampai 100 %");
-                linearLayoutRencana = (LinearLayout) findViewById(R.id.keteranganRencanaContainer);
-                linearLayoutRencana.addView(layoutKeterangan);
+                if (sample.getInt("statusRencana") == 0) {
+                    LinearLayout layoutKeterangan = (LinearLayout) inflater.inflate(R.layout.keterangan_rencana, null);
+                    TextView textKeterangan = (TextView) layoutKeterangan.findViewById(R.id.textKeterangan);
+                    //textKeterangan.setText(sample.getInt("keterangan"));
+                    LinearLayout linearLayoutRencana;
+                    textKeterangan.setText("Belum sampai 100 %");
+                    linearLayoutRencana = (LinearLayout) findViewById(R.id.keteranganRencanaContainer);
+                    linearLayoutRencana.addView(layoutKeterangan);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
-
     }
 
     private void dummyData(){
@@ -190,4 +224,7 @@ public class Rencana extends AppCompatActivity {
         }
 
     }
+
+
+
 }

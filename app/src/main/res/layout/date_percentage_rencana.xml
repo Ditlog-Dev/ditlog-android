@@ -7,7 +7,7 @@
 
     <EditText
         android:id="@+id/editDate"
-        android:layout_width="wrap_content"
+        android:layout_width="30pt"
         android:layout_height="wrap_content"
         android:textColor="#000000"
         android:textAlignment="center"
@@ -18,7 +18,7 @@
 
     <EditText
         android:id="@+id/editPercentage"
-        android:layout_width="wrap_content"
+        android:layout_width="15pt"
         android:layout_height="wrap_content"
         android:textColor="#000000"
         android:textAlignment="center"
@@ -28,7 +28,7 @@
 
     <EditText
         android:id="@+id/editKeterangan"
-        android:layout_width="wrap_content"
+        android:layout_width="30pt"
         android:layout_height="wrap_content"
         android:textColor="#000000"
         android:textAlignment="center"
