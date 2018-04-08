@@ -20,8 +20,7 @@ import java.util.ArrayList;
 
 public class RecyclerEvaluation extends RecyclerView.Adapter<RecyclerEvaluation.ViewHolder> {
     private static final String TAG = "RecyclerEvaluation";
-
-    private String[] mParam, mParam2;
+    private ArrayList<EvaluationEntity> param;
 
     private Context mContext;
 
@@ -57,8 +56,6 @@ public RecyclerEvaluation(Context context) {
         public TextView getGradeIndicator() {
             return grade;
         }
-
-
     }
 
     /**
@@ -66,9 +63,8 @@ public RecyclerEvaluation(Context context) {
      *
      * @param dataSet String[] containing the data to populate views to be used by RecyclerView.
      */
-    public RecyclerEvaluation(String[] dataSet, String[] dataSet2) {
-        this.mParam = dataSet;
-        this.mParam2 = dataSet2;
+    public RecyclerEvaluation(ArrayList<EvaluationEntity> dataSet) {
+        this.param = dataSet;
     }
 
     // BEGIN_INCLUDE(recyclerViewOnCreateViewHolder)
@@ -86,34 +82,15 @@ public RecyclerEvaluation(Context context) {
     // BEGIN_INCLUDE(recyclerViewOnBindViewHolder)
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(RecyclerEvaluation.ViewHolder holder, final int position) {
-        //Log.d(TAG, "Element " + position + " set.");
+    public void onBindViewHolder(ViewHolder holder, final int position) {
 
-        final int posisi = getItemViewType(position);
-        final ViewHolder viewHolderArticle1 = (ViewHolder) holder;
-            final int posisiAdapter2 = holder.getAdapterPosition();
+        final int posisiAdapter = holder.getAdapterPosition();
             // Get element from your dataset at this position and replace the contents of the view
             // with that element
+        holder.getEvalIndicator().setText(param.get(position).name);
+        holder.getGradeIndicator().setText(param.get(position).eval);
 
-        switch (posisi) {
-            case 0:
-                viewHolderArticle1.getEvalIndicator().setText(mParam[position]);
-
-                viewHolderArticle1.getGradeIndicator().setText(mParam2[position]);
-                break;
-            case 1:
-                viewHolderArticle1.getEvalIndicator().setText(mParam[position]);
-
-                viewHolderArticle1.getGradeIndicator().setText(mParam2[position]);
-                break;
-            case 2:
-                viewHolderArticle1.getEvalIndicator().setText(mParam[position]);
-
-                viewHolderArticle1.getGradeIndicator().setText(mParam2[position]);
-                break;
-
-        }
-        viewHolderArticle1.mViewContainer.setOnClickListener(
+        holder.mViewContainer.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -125,28 +102,19 @@ public RecyclerEvaluation(Context context) {
                                     @Override
                                     public void run() {
                                         if (mOnArtikelClickListener != null)
-                                            mOnArtikelClickListener.onClick(posisiAdapter2);
+                                            mOnArtikelClickListener.onClick(posisiAdapter);
                                     }
                                 }, 250);
                             }
                         }
                     }
             );
-
-
-
-            //final ObjectIncome objIncome = myItems.get(position);
-
-            //if true, your checkbox will be selected, else unselected
-            //viewHolder.mCheckBox.setChecked(viewHolder.getParamIndicator().setText(mParam[position]).isSelected());
-
     }
-    // END_INCLUDE(recyclerViewOnBindViewHolder)
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mParam.length;
+        return param.size();
     }
 
     @Override

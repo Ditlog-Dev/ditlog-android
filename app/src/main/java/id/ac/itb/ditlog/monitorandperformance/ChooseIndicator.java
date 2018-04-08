@@ -1,6 +1,8 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -22,6 +24,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import org.json.JSONObject;
+
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,23 +52,22 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
     private int[] chosenId = new int[30];
     private int nChosen = 0;
 
-    @Override
-    public void onRefresh() {
-        new choosenIndicators(token, contractId).execute();
-    }
+
+    protected LayoutManagerType mCurrentLayoutManagerType;
+    protected RecyclerView recyclerViewIndicator;
+    protected RecyclerChooseIndicator indicatorAdapter;
+    protected RecyclerView.LayoutManager indicatorLayoutManager;
+    protected SwipeRefreshLayout swipeContainer;
 
     private enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,
         LINEAR_LAYOUT_MANAGER
     }
 
-    protected LayoutManagerType mCurrentLayoutManagerType;
-
-    protected RecyclerView recyclerViewIndicator;
-    protected RecyclerChooseIndicator indicatorAdapter;
-    protected RecyclerView.LayoutManager indicatorLayoutManager;
-    protected ArrayList<IndicatorEntity> mParam = new ArrayList<>();
-    protected SwipeRefreshLayout swipeContainer;
+    @Override
+    public void onRefresh() {
+        new choosenIndicators(token, contractId).execute();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -146,6 +151,34 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         }
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
+        //Button OnClick
+        Button save = (Button)rootView.findViewById(R.id.btnSaveIndicator);
+        save.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view){
+                switch(view.getId()){
+
+                    case R.id.btnSaveIndicator:
+                        Toast.makeText(getActivity(), "Menyimpan...", Toast.LENGTH_SHORT).show();
+                        String indicator = indicatorAdapter.getCheck();
+                        String status = "fail";
+                        try {
+                            status = new chooseIndicator(indicator, token, contractId).execute(indicator).get();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                        if (status.equals("Indikator berhasil disimpan")) {
+                            new choosenIndicators(token, contractId).execute();
+                        }
+                        break;
+                }
+
+            }
+        });
+
         swipeContainer = rootView.findViewById(R.id.Swipe_container);
         swipeContainer.setOnRefreshListener(this);
         swipeContainer.setColorSchemeResources(R.color.colorPrimary,R.color.colorPrimaryDark,R.color.colorAccent,R.color.colorPrimary);
@@ -161,25 +194,6 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         if (!haveNetworkConnection()) {
             Toast.makeText(getContext(), "Tidak ada koneksi internet", Toast.LENGTH_LONG).show();
         }
-
-        //Button OnClick
-        Button button = (Button)rootView.findViewById(R.id.btnSaveIndicator);
-        button.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view){
-                switch(view.getId()){
-
-                    case R.id.btnSaveIndicator:
-                    /*Log.e("DEBUGG", "BUTTON PRESSED");
-                    break;*/
-                        Toast.makeText(getActivity(), "Indicator saved!", Toast.LENGTH_SHORT).show();
-                        break;
-
-                }
-
-            }
-        });
 
         return rootView;
     }
@@ -219,24 +233,6 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    public void onCheckboxClicked(View view) {
-        // Is the view now checked?
-        boolean checked = ((CheckBox) view).isChecked();
-
-        // Check which checkbox was clicked
-        switch (view.getId()) {
-            case R.id.checkbox_indicator:
-                if (checked) {
-
-                }
-                else {
-
-                }
-                break;
-
-        }
-    }
-
     public class indicatorGetter extends AsyncTask<Void, Void, ArrayList<IndicatorEntity>>{
 
         public String auth = "";
@@ -250,9 +246,6 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         public String sortingKey="id";
 
         ArrayList<IndicatorEntity> params = new ArrayList<>();
-        int totalPages=-1;
-        int totalElements=-1;
-        int numberOfElements=-1;
         int number=-1;
 
         public indicatorGetter(String auth) {
@@ -425,39 +418,22 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
             jsReader.beginArray();
             while (jsReader.hasNext()) {
                 jsReader.beginObject();
+                int id=-1;
                 while (jsReader.hasNext()) {
                     name = jsReader.nextName();
                     switch (name){
-                        case "penilaianIdentity":
-                            parseContent(jsReader);
+                        case "idIndicator":
+                            id = jsReader.nextInt();
                             break;
                         default:
                             jsReader.skipValue();
                     }
                 }
+                chosenId[nChosen] = id;
+                nChosen++;
                 jsReader.endObject();
             }
             jsReader.endArray();
-        }
-
-        protected void parseContent(JsonReader jsReader)throws IOException{
-            String name;
-            jsReader.beginObject();
-            int id=-1;
-
-            while (jsReader.hasNext()) {
-                name = jsReader.nextName();
-                switch (name){
-                    case "idIndikator":
-                        id = jsReader.nextInt();
-                        break;
-                    default:
-                        jsReader.skipValue();
-                }
-            }
-            chosenId[nChosen] = id;
-            nChosen++;
-            jsReader.endObject();
         }
 
         @Override
@@ -470,6 +446,74 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         protected void onPostExecute(ArrayList<IndicatorEntity> mParam) {
             super.onPostExecute(mParam);
             new indicatorGetter(token).execute();
+        }
+    }
+
+    public class chooseIndicator extends AsyncTask<String,Void,String> {
+        public String auth = "";
+        public int contractId = 0;
+        public static final String SERVER_URL = BuildConfig.WEBSERVICE_URL;
+        public static final int READ_TIMEOUT = 10000;
+        public static final int CONNECTION_TIMEOUT = 10000;
+        private String indicator;
+        private String status = "init";
+
+        public chooseIndicator(String indicator, String auth, int contractId) {
+            this.indicator = indicator;
+            this.auth = auth;
+            this.contractId = contractId;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            HttpURLConnection urlConnection = null;
+            if (!haveNetworkConnection()) {
+                status = "Tidak ada koneksi internet";
+                return "Tidak ada koneksi internet";
+            } else {
+                try {
+                    URL url = new URL(SERVER_URL + "/contracts/" + contractId + "/indicators");
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestProperty("Authorization", "Bearer " + auth);
+                    // read response
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setReadTimeout(READ_TIMEOUT);
+                    urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setDoInput(true);
+                    urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+                    DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
+                    wr.writeBytes(indicator);
+                    wr.flush();
+                    wr.close();
+                    // try to get response
+                    int statusCode = urlConnection.getResponseCode();
+                    if (String.valueOf(urlConnection.getResponseCode()).startsWith("2")) {
+                        status = "Indikator berhasil disimpan";
+                    } else if (String.valueOf(urlConnection.getResponseCode()).startsWith("4")) {
+                        status = "Akses tidak diotorisasi";
+                    } else {
+                        status = "Server tidak tersedia";
+                    }
+                } catch (Exception e) {
+                    status = "Server tidak tersedia";
+                    e.printStackTrace();
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                    return status;
+                }
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (!status.equals("init")) {
+                Toast.makeText(getActivity(), status, Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -488,5 +532,11 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
                     haveConnectedMobile = true;
         }
         return haveConnectedWifi || haveConnectedMobile;
+    }
+
+    public int[] getChosenId() {
+        int[] arrId = new int[30];
+
+        return arrId;
     }
 }

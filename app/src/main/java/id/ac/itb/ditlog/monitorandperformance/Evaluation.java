@@ -2,13 +2,18 @@ package id.ac.itb.ditlog.monitorandperformance;
 
 
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,19 +21,28 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Evaluation extends Fragment {
+public class Evaluation extends Fragment{
 
     private Toast toast;
     private static final String TAG = "RecyclerViewFragment";
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
-    private static final int DATASET_COUNT = 60; // menampilkan data sebanyak value
+    private HttpURLConnection connection = null;
+    public String token = "";
+    public int contractId = 0;
+    public Indicator indicator;
 
     private enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,
@@ -37,39 +51,32 @@ public class Evaluation extends Fragment {
 
     protected LayoutManagerType mCurrentLayoutManagerType;
 	private RecyclerEvaluation.OnArtikelClickListener mOnArtikelClickListener;
-
     protected RecyclerView evaluationRecyclerView;
     protected RecyclerEvaluation evaluationAdapter;
     protected RecyclerView.LayoutManager evaluationLayoutManager;
-    protected String[] mDataset, mDataset2;
+    protected SwipeRefreshLayout swipeContainer;
 
-    String [] indicatorEvaluation = {"Kampus Mahasiswa Indicator Test Yang Panjang Apakah Hilang Tenggelam YA Ku Ga Tahu Lah Yaw","Kampus Mahasiswa Indicator Test","Kampus Mahasiswa Indicator Test"};
-    String [] grade = {"80","100","90"};
-
+    ArrayList<EvaluationEntity> param = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Initialize dataset, this data would usually come from a local content provider or
-        // remote server.
-        initDataset();
     }
-    /*
-        public DaftarProdukFragment() {
-            // Required empty public constructor
-        }
-    */
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_evaluation, container, false);
+
         rootView.setTag(TAG);
+        indicator = (Indicator) getActivity();
+        token = indicator.auth;
+        contractId = indicator.contractId;
 
         // BEGIN_INCLUDE(initializeRecyclerView)
         evaluationRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerViewEvaluation);
 	
-	inisialisasiListener();	
+	    evaluationListener();
 
         // LinearLayoutManager is used here, this will layout the elements in a similar fashion
         // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
@@ -85,13 +92,16 @@ public class Evaluation extends Fragment {
         }
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
-        evaluationAdapter = new RecyclerEvaluation(mDataset,mDataset2);
-	evaluationAdapter.setOnArtikelClickListener(mOnArtikelClickListener);
+        //param.add(new EvaluationEntity(2, "test1", 10));
+        //param.add(new EvaluationEntity(22, "test2", 15));
 
-        // Set CustomAdapter as the adapter for RecyclerView.
+        evaluationAdapter = new RecyclerEvaluation(param);
+        evaluationAdapter.setOnArtikelClickListener(mOnArtikelClickListener);
         evaluationRecyclerView.setAdapter(evaluationAdapter);
 
-        // END_INCLUDE(initializeRecyclerView)
+        if (!haveNetworkConnection()) {
+            Toast.makeText(getContext(), "Tidak ada koneksi internet", Toast.LENGTH_LONG).show();
+        }
 
         return rootView;
     }
@@ -174,20 +184,8 @@ public class Evaluation extends Fragment {
         savedInstanceState.putSerializable(KEY_LAYOUT_MANAGER, mCurrentLayoutManagerType);
         super.onSaveInstanceState(savedInstanceState);
     }
-    /**
-     * Generates Strings for RecyclerView's adapter. This data would usually come
-     * from a local content provider or remote server.
-     */
-    private void initDataset() {
-        mDataset = new String[indicatorEvaluation.length];
-        mDataset2 = new String[grade.length];
-        for (int i = 0; i < indicatorEvaluation.length; i++) {
-            mDataset[i] = indicatorEvaluation[i];
-            mDataset2[i] = grade[i];
-        }
-    }
 
-	private void inisialisasiListener() {
+	private void evaluationListener() {
         mOnArtikelClickListener = new RecyclerEvaluation.OnArtikelClickListener() {
             @Override
             public void onClick(int posisi) {
@@ -195,23 +193,7 @@ public class Evaluation extends Fragment {
                     if (toast != null) {
                         toast.cancel();
                     }
-
-                    Log.d("KLIK Posisi : ",posisi + "");
-
-                    switch (posisi) {
-                        case 0:
-                            showInputDialog();
-                            break;
-
-                        case 1:
-                            showInputDialog();
-                            break;
-
-                        case 2:
-                            showInputDialog();
-                            break;
-
-                     }
+                    showInputDialog();
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -220,4 +202,141 @@ public class Evaluation extends Fragment {
         };
     }
 
+    public class evaluationGetter extends AsyncTask<Void, Void, ArrayList<EvaluationEntity>> {
+
+        public String auth = "";
+        public int contractId = 0;
+        public static final String SERVER_URL = BuildConfig.WEBSERVICE_URL;
+        public static final int READ_TIMEOUT = 10000;
+        public static final int CONNECTION_TIMEOUT = 10000;
+
+        int indicator_id = 0;
+        String indicator_name = "default test";
+        int indicator_eval = 0;
+
+        ArrayList<EvaluationEntity> params = new ArrayList<>();
+
+        public evaluationGetter(String auth, int contractId) {
+            this.auth = auth;
+            this.contractId = contractId;
+        }
+
+        @Override
+        protected ArrayList<EvaluationEntity> doInBackground(Void... voids) {
+            String method = "GET";
+
+            try {
+                String rawUrl = SERVER_URL + "/contracts/"+ contractId +"/indicators";
+                URL url = new URL(rawUrl);
+
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestProperty("Authorization", "Bearer "+auth);
+                connection.setRequestMethod(method);
+                connection.setReadTimeout(READ_TIMEOUT);
+                connection.setConnectTimeout(CONNECTION_TIMEOUT);
+
+                connection.connect();
+
+                InputStream is = connection.getInputStream();
+                if(String.valueOf(connection.getResponseCode()).startsWith("2")){
+                    InputStreamReader isReader = new InputStreamReader(is,"UTF-8");
+
+                    JsonReader jsReader = new JsonReader(isReader);
+
+                    jsReader.beginObject();
+                    while(jsReader.hasNext()){
+                        String name = jsReader.nextName();
+                        if(name.equals("payload")){
+                            parsePayload(jsReader);
+                        }
+                        else{
+                            jsReader.skipValue();
+                        }
+                    }
+                    jsReader.endObject();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getContext(), "Server tidak tersedia", Toast.LENGTH_LONG).show();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                return params;
+            }
+        }
+
+        protected void parsePayload(JsonReader jsReader) throws IOException{
+            String name;
+            jsReader.beginArray();
+            while (jsReader.hasNext()) {
+                jsReader.beginObject();
+                while (jsReader.hasNext()) {
+                    name = jsReader.nextName();
+                    switch (name){
+                        case "penilaianIdentity":
+                            parseContent(jsReader);
+                            break;
+                        case "nilai":
+                            indicator_eval = jsReader.nextInt();
+                            break;
+                        default:
+                            jsReader.skipValue();
+                    }
+                }
+                params.add(new EvaluationEntity(indicator_id,indicator_name,indicator_eval));
+                jsReader.endObject();
+            }
+            jsReader.endArray();
+        }
+
+        protected void parseContent(JsonReader jsReader)throws IOException{
+            String name;
+            jsReader.beginObject();
+
+            while (jsReader.hasNext()) {
+                name = jsReader.nextName();
+                switch (name){
+                    case "idIndikator":
+                        indicator_id = jsReader.nextInt();
+                        break;
+                    default:
+                        jsReader.skipValue();
+                }
+            }
+            jsReader.endObject();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //swipeContainer.setRefreshing(true);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<EvaluationEntity> mParam) {
+            super.onPostExecute(mParam);
+            evaluationAdapter = new RecyclerEvaluation(param);
+            evaluationAdapter.setOnArtikelClickListener(mOnArtikelClickListener);
+            evaluationRecyclerView.setAdapter(evaluationAdapter);
+            //swipeContainer.setRefreshing(false);
+        }
+    }
+
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(getContext().CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
+    }
 }

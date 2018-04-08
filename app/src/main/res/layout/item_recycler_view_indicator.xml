@@ -26,8 +26,7 @@
             android:layout_centerVertical="true"
             android:id="@+id/checkbox_indicator"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onCheckboxClicked"/>
+            android:layout_height="wrap_content"/>
 
     </RelativeLayout>
 

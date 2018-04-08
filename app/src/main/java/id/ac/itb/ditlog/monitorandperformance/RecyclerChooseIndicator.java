@@ -22,6 +22,10 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
     private Context mContext;
     private int[] chosenId = new int[30];
     private int nChosen = 0;
+    private int[] checkUpdate = new int[30];
+    private int checkLength = 0;
+    private int[] uncheckUpdate = new int[30];
+    private int uncheckLength = 0;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView paramIndicator;
@@ -46,8 +50,6 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
         public TextView getParamIndicator() {
             return paramIndicator;
         }
-
-
     }
 
     /**
@@ -59,6 +61,8 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
         this.mParam = dataSet;
         this.chosenId = chosenId;
         this.nChosen = nChosen;
+        this.checkUpdate = chosenId;
+        this.checkLength = nChosen;
     }
 
     // BEGIN_INCLUDE(recyclerViewOnCreateViewHolder)
@@ -77,7 +81,6 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        Log.d(TAG, "Element " + position + " set.");
 
         // Get element from your dataset at this position and replace the contents of the view
         // with that element
@@ -102,10 +105,18 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
                 switch (buttonView.getId()) {
                     case R.id.checkbox_indicator:
                         if (checked) {
-
+                            Log.d("cekbox", "cekbox " + mParam.get(position).id + "dicheck");
+                            check(mParam.get(position).id);
+                            for (int i=0; i<checkLength; i++) {
+                                Log.d("cekbox", "cekbox " + checkUpdate[i]);
+                            }
                         }
                         else {
-
+                            Log.d("cekbox", "cekbox " + mParam.get(position).id + "diuncheck");
+                            uncheck(mParam.get(position).id);
+                            for (int i=0; i<checkLength; i++) {
+                                Log.d("cekbox", "cekbox " + checkUpdate[i]);
+                            }
                         }
                         break;
 
@@ -132,7 +143,6 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
         });
 
     }
-    // END_INCLUDE(recyclerViewOnBindViewHolder)
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
@@ -151,5 +161,52 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
             }
         }
         return choose;
+    }
+
+    public void check(int id) {
+        checkUpdate[checkLength] = id;
+        checkLength++;
+    }
+
+    public void uncheck(int id) {
+        boolean deleteId = false;
+        int i = 0;
+
+        while (!deleteId && (i < checkLength)) {
+            if (checkUpdate[i] == id) {
+                deleteId = true;
+            } else {
+                i++;
+            }
+        }
+
+        for (int j = i; j < (checkLength-1); j++) {
+            checkUpdate[j] = checkUpdate[j+1];
+        }
+        checkLength--;
+    }
+
+    public String getCheck() {
+        String ind = "[";
+        if (checkLength != 0) {
+            ind = ind + Integer.toString(checkUpdate[0]);
+        }
+        for (int i = 1; i < checkLength; i++) {
+            ind = ind + ", " + Integer.toString(checkUpdate[i]);
+        }
+        ind = ind + "]";
+        return ind;
+    }
+
+    public int[] getUncheck() {
+        return uncheckUpdate;
+    }
+
+    public int getCheckLength() {
+        return checkLength;
+    }
+
+    public int getUncheckLength() {
+        return uncheckLength;
     }
 }
