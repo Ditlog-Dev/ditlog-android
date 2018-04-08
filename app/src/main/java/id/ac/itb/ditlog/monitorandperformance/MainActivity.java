@@ -2,13 +2,14 @@ package id.ac.itb.ditlog.monitorandperformance;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+@Deprecated
 public class MainActivity extends AppCompatActivity {
 
   @Override
@@ -18,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(getApplicationContext());
     Long userID = sharedPreferences.getLong("userid", -1);
-    if (false && userID == -1) {
+    if (userID == -1) {
       Intent myIntent = new Intent(this, Login.class);
       startActivity(myIntent);
       finish();
@@ -39,10 +40,19 @@ public class MainActivity extends AppCompatActivity {
           finish();
         }
       });
-    }
 
+      Button approval = findViewById(R.id.approval_button);
     Button buttonRencana = findViewById(R.id.buttonRencana);
 
+      approval.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent_name = new Intent();
+            intent_name.setClass(getApplicationContext(), Approval.class);
+            startActivity(intent_name);
+        }
+      });
+    }
     buttonRencana.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -52,15 +62,4 @@ public class MainActivity extends AppCompatActivity {
       }
     });
   }
-
-  //Logout setiap keluar dari aplikasi
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.clear();
-//        editor.apply();
-//    }
-
 }

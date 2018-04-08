@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/splash"
+    tools:context="id.ac.itb.ditlog.monitorandperformance.SplashActivity">
+
+    <ImageView
+        android:id="@+id/logoITB"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="160dp"
+        app:srcCompat="@drawable/itb_logo" />
+
+    <TextView
+        android:id="@+id/ditlog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logoITB"
+        android:layout_centerVertical="true"
+        android:gravity="center_horizontal"
+        android:text="@string/division"
+        android:textColor="@color/white"
+        android:textSize="28sp" />
+
+    <TextView
+        android:id="@+id/itb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/ditlog"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:text="@string/company"
+        android:textColor="@color/white"
+        android:textSize="28sp" />
+
+    <com.hanks.htextview.typer.TyperTextView
+        android:id="@+id/preparing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:layout_marginBottom="40dp"
+        app:charIncrease="1"
+        app:typerSpeed="80" />
+
+</RelativeLayout>

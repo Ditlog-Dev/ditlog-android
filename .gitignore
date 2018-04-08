@@ -67,3 +67,11 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
+
+# OS Dependent
+.DS_Store
+.project
+.settings/
+.classpath
+.sts4-cache
+

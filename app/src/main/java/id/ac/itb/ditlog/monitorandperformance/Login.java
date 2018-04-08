@@ -43,7 +43,7 @@ public class Login extends AppCompatActivity {
       e.printStackTrace();
     }
     setContentView(R.layout.activity_login);
-    button = findViewById(R.id.button);
+    button = findViewById(R.id.approval_button);
     password = findViewById(R.id.password);
 
     password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -140,24 +140,24 @@ public class Login extends AppCompatActivity {
 
           int statusCode = response.getInt("code");
 
-          if (statusCode == 200) {
+          if (statusCode == HttpURLConnection.HTTP_OK) {
             JSONObject payload = response.getJSONObject("payload");
             long userid = payload.getLong("idUser");
-            long roleid = payload.getLong("roleId");
+            long roleid = payload.getLong("idResponsibility");
             String token = payload.getString("jwtToken");
             UserPayload userpayload = new UserPayload(userid, roleid, token);
             return new LoginWrapper(logininfo, userpayload);
-          } else if (statusCode == 400) {
-            return new LoginWrapper();
           } else {
-            return null;
+            return new LoginWrapper();
           }
+        } else if (responseStatusCode == HttpURLConnection.HTTP_FORBIDDEN) {
+          return new LoginWrapper();
         } else {
           System.out.println("WEBSERVICE_ERROR : " + urlConnection.getResponseCode());
           InputStream in = new BufferedInputStream(urlConnection.getErrorStream());
           String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
           System.out.println("WEBSERVICE_ERROR : " + result);
-          return new LoginWrapper();
+          return null;
         }
 
       } catch (Exception e) {
@@ -193,7 +193,6 @@ public class Login extends AppCompatActivity {
         intent_name.setClass(getApplicationContext(), MainActivity.class);
         startActivity(intent_name);
         finish();
-//                }
       } else {
         AlertDialog.Builder dlgAlert = new AlertDialog.Builder(Login.this);
 

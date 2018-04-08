@@ -12,23 +12,34 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+
+        <activity android:name=".MainActivity"/>
+        <activity android:name=".Indicator">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ViewContractPerformance" />
+        </activity>
+        <activity android:name=".ViewContractPerformance"/>
+        <activity android:name=".MonitorActivity"/>
+        <activity android:name=".HomeActivity" android:noHistory="true"/>
+        <activity android:name=".SplashActivity" android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Indicator">
-            android:label="@string/title_activity_indicator"
-            android:parentActivityName="id.ac.itb.ditlog.monitorandperformance.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+        <activity android:name=".Approval">
+          <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MonitorActivity" />
         </activity>
-        <activity android:name=".Rencana"></activity>
-        <activity android:name=".Login"></activity>
+        <activity android:name=".Rencana">
+          <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MonitorActivity" />
+        </activity>
+      <activity android:name=".Login"/>
 
     </application>
 
-    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
