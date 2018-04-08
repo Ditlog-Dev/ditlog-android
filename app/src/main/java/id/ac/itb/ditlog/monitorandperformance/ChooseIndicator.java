@@ -14,6 +14,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.JsonReader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,11 +41,14 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
     private FloatingActionButton fab;
     private HttpURLConnection connection = null;
     public String token = "";
+    public int contractId = 0;
     public Indicator indicator;
+    private int[] chosenId = new int[30];
+    private int nChosen = 0;
 
     @Override
     public void onRefresh() {
-        new indicatorGetter(token).execute();
+        new choosenIndicators(token, contractId).execute();
     }
 
     private enum LayoutManagerType {
@@ -88,7 +92,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
                             e.printStackTrace();
                         }
                         if (status.equals("Indikator berhasil ditambahkan")) {
-                            new indicatorGetter(token).execute();
+                            new choosenIndicators(token, contractId).execute();
                         }
                     }
                 })
@@ -113,6 +117,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         rootView.setTag(TAG);
         indicator = (Indicator) getActivity();
         token = indicator.auth;
+        contractId = indicator.contractId;
 
         //fab tambah indikator baru
         fab = (FloatingActionButton) rootView.findViewById(R.id.tambah);
@@ -147,7 +152,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         swipeContainer.post(new Runnable() {
             @Override
             public void run() {
-                new indicatorGetter(token).execute();
+                new choosenIndicators(token, contractId).execute();
             }
         });
 
@@ -236,8 +241,8 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
 
         public String auth = "";
         public static final String SERVER_URL = BuildConfig.WEBSERVICE_URL;
-        public static final int READ_TIMEOUT = 15000;
-        public static final int CONNECTION_TIMEOUT = 15000;
+        public static final int READ_TIMEOUT = 10000;
+        public static final int CONNECTION_TIMEOUT = 10000;
 
         public int pageNumber=0;
         public int itemLimit=20;
@@ -283,7 +288,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
                     while(jsReader.hasNext()){
                         String name = jsReader.nextName();
                         if(name.equals("payload")){
-                            parsePayload(jsReader);
+                            parseContent(jsReader);
                         }
                         else{
                             jsReader.skipValue();
@@ -300,34 +305,6 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
                 }
                 return params;
             }
-        }
-
-        protected void parsePayload(JsonReader jsReader) throws IOException{
-
-            String name;
-            jsReader.beginObject();
-            while(jsReader.hasNext()) {
-                name = jsReader.nextName();
-                if(name.equals("content")) {
-                    parseContent(jsReader);
-                }
-                else if(name.equals("totalPages")){
-                    totalPages = jsReader.nextInt();
-                }
-                else if(name.equals("totalElements")){
-                    totalElements = jsReader.nextInt();
-                }
-                else if(name.equals("numberOfElements")){
-                    numberOfElements = jsReader.nextInt();
-                }
-                else if(name.equals("number")){
-                    number = jsReader.nextInt();
-                }
-                else{
-                    jsReader.skipValue();
-                }
-            }
-            jsReader.endObject();
         }
 
         protected void parseContent(JsonReader jsReader)throws IOException{
@@ -376,11 +353,123 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         protected void onPostExecute(ArrayList<IndicatorEntity> mParam) {
             super.onPostExecute(mParam);
 
-            indicatorAdapter = new RecyclerChooseIndicator(mParam);
+            indicatorAdapter = new RecyclerChooseIndicator(mParam, chosenId, nChosen);
 
             // Set CustomAdapter as the adapter for RecyclerView.
             recyclerViewIndicator.setAdapter(indicatorAdapter);
             swipeContainer.setRefreshing(false);
+        }
+    }
+
+    public class choosenIndicators extends AsyncTask<Void, Void, ArrayList<IndicatorEntity>>{
+
+        public String auth = "";
+        public int contractId = 0;
+        public static final String SERVER_URL = BuildConfig.WEBSERVICE_URL;
+        public static final int READ_TIMEOUT = 10000;
+        public static final int CONNECTION_TIMEOUT = 10000;
+
+        ArrayList<IndicatorEntity> params = new ArrayList<>();
+
+        public choosenIndicators(String auth, int contractId) {
+            this.auth = auth;
+            this.contractId = contractId;
+        }
+
+        @Override
+        protected ArrayList<IndicatorEntity> doInBackground(Void... voids) {
+            String method = "GET";
+            try {
+                String rawUrl = SERVER_URL + "/contracts/"+ contractId +"/indicators";
+                URL url = new URL(rawUrl);
+
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestProperty("Authorization", "Bearer "+auth);
+                connection.setRequestMethod(method);
+                connection.setReadTimeout(READ_TIMEOUT);
+                connection.setConnectTimeout(CONNECTION_TIMEOUT);
+
+                connection.connect();
+
+                InputStream is = connection.getInputStream();
+                if(String.valueOf(connection.getResponseCode()).startsWith("2")){
+                    InputStreamReader isReader = new InputStreamReader(is,"UTF-8");
+
+                    JsonReader jsReader = new JsonReader(isReader);
+
+                    jsReader.beginObject();
+                    while(jsReader.hasNext()){
+                        String name = jsReader.nextName();
+                        if(name.equals("payload")){
+                            parsePayload(jsReader);
+                        }
+                        else{
+                            jsReader.skipValue();
+                        }
+                    }
+                    jsReader.endObject();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getContext(), "Server tidak tersedia", Toast.LENGTH_LONG).show();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                return params;
+            }
+        }
+
+        protected void parsePayload(JsonReader jsReader) throws IOException{
+            String name;
+            jsReader.beginArray();
+            while (jsReader.hasNext()) {
+                jsReader.beginObject();
+                while (jsReader.hasNext()) {
+                    name = jsReader.nextName();
+                    switch (name){
+                        case "penilaianIdentity":
+                            parseContent(jsReader);
+                            break;
+                        default:
+                            jsReader.skipValue();
+                    }
+                }
+                jsReader.endObject();
+            }
+            jsReader.endArray();
+        }
+
+        protected void parseContent(JsonReader jsReader)throws IOException{
+            String name;
+            jsReader.beginObject();
+            int id=-1;
+
+            while (jsReader.hasNext()) {
+                name = jsReader.nextName();
+                switch (name){
+                    case "idIndikator":
+                        id = jsReader.nextInt();
+                        break;
+                    default:
+                        jsReader.skipValue();
+                }
+            }
+            chosenId[nChosen] = id;
+            nChosen++;
+            jsReader.endObject();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            swipeContainer.setRefreshing(true);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<IndicatorEntity> mParam) {
+            super.onPostExecute(mParam);
+            new indicatorGetter(token).execute();
         }
     }
 

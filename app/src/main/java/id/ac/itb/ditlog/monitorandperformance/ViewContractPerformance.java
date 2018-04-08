@@ -71,6 +71,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
 
         ContractPerformancePreference preference = new ContractPerformancePreference();
         auth = preference.getToken(context);
+        Log.d("tok", "tok: " + auth);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         toolbar = findViewById(R.id.toolbar);
@@ -343,6 +344,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
             jsReader.beginArray();
             while(jsReader.hasNext()) {
                 jsReader.beginObject();
+                int id = 0;
                 String number = "";
                 String name_contract = "";
                 String vendor = "";
@@ -352,6 +354,9 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
                 while (jsReader.hasNext()) {
                     name = jsReader.nextName();
                     switch (name){
+                        case "idKontrak":
+                            id = jsReader.nextInt();
+                            break;
                         case "noKontrak":
                             number = jsReader.nextString();
                             break;
@@ -371,7 +376,7 @@ public class ViewContractPerformance extends AppCompatActivity implements SwipeR
                             jsReader.skipValue();
                     }
                 }
-                params.add(new ContractEntity(number,name_contract,vendor,date,eval));
+                params.add(new ContractEntity(id, number,name_contract,vendor,date,eval));
                 jsReader.endObject();
             }
             jsReader.endArray();

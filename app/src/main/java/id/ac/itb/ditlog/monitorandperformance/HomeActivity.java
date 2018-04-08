@@ -1,7 +1,9 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -33,16 +35,14 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         ContractPerformancePreference preference = new ContractPerformancePreference();
         long responsibility = preference.getResponsibility(this);
-        Log.d("udah", "udah res" + responsibility);
         if (responsibility == 118) {
             setContentView(R.layout.vendor_home);
         } else {
             setContentView(R.layout.activity_home);
         }
-        String auth = preference.getToken(this);
-        Log.d("udah", "udah " + auth);
         // load toolbar titles from string resources
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

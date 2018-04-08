@@ -12,13 +12,15 @@ import android.widget.TextView;
  */
 
 public class ContractEntity {
+    public int id;
     public String number;
     public String name;
     public String vendor;
     public String date;
     public float grade;
 
-    public ContractEntity(String number, String name, String vendor, String date, float grade){
+    public ContractEntity(int id, String number, String name, String vendor, String date, float grade){
+        this.id = id;
         this.number = number;
         this.name = name;
         this.vendor = vendor;

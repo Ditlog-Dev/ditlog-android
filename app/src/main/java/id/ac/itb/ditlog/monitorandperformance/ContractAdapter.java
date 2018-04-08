@@ -70,6 +70,7 @@ public class ContractAdapter extends RecyclerView.Adapter<ContractAdapter.ViewHo
             performancePreference.setVendor(view.getContext(), contracts.get(pos).vendor);
             performancePreference.setDate(view.getContext(), contracts.get(pos).date);
             performancePreference.setEval(view.getContext(), contracts.get(pos).grade);
+            performancePreference.setContractId(view.getContext(), contracts.get(pos).id);
             Intent evaluation = new Intent(view.getContext(), Indicator.class);
             view.getContext().startActivity(evaluation);
             act.overridePendingTransition(0,0);

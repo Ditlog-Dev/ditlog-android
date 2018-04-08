@@ -4,12 +4,19 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * Created by User on 18/03/2018.
  */
 
 public class ContractPerformancePreference {
     public static final String contractPerformance = "contract_performance";
+    public static final String id = "id_performance";
     public static final String number = "number_performance";
     public static final String title = "title_performance";
     public static final String vendor = "vendor_performance";
@@ -17,6 +24,23 @@ public class ContractPerformancePreference {
     public static final String eval = "eval_performance";
     public static final String responsibility = "roleid";
     public static final String token = "token";
+
+    public void setContractId(Context context, int contractId) {
+        SharedPreferences sharedPref;
+        SharedPreferences.Editor editor;
+        sharedPref = context.getSharedPreferences(contractPerformance, Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
+        editor.putInt(id,contractId);
+        editor.commit();
+    }
+
+    public int getContractId(Context context) {
+        SharedPreferences sharedPref;
+        int contractId;
+        sharedPref = context.getSharedPreferences(contractPerformance, Context.MODE_PRIVATE);
+        contractId = sharedPref.getInt(id, 0);
+        return contractId;
+    }
 
     public void setNumber(Context context, String contractNumber) {
         SharedPreferences sharedPref;
@@ -80,10 +104,25 @@ public class ContractPerformancePreference {
 
     public String getDate(Context context) {
         SharedPreferences sharedPref;
-        String contractDate;
+        long contractDate;
         sharedPref = context.getSharedPreferences(contractPerformance, Context.MODE_PRIVATE);
-        contractDate = sharedPref.getString(date, "-");
-        return contractDate;
+        contractDate = (long )Long.parseLong(sharedPref.getString(date, "0"));
+
+        Calendar cal = Calendar.getInstance();
+        TimeZone tz = cal.getTimeZone();//get your local time zone.
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        sdf.setTimeZone(tz);//set time zone.
+        String localTime = sdf.format(new Date(contractDate));
+        Date date = new Date();
+        try {
+            date = sdf.parse(localTime);//get local date
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        SimpleDateFormat simpleDate =  new SimpleDateFormat("dd/MM/yyyy");
+        String strDt = simpleDate.format(date);
+        return strDt;
     }
 
     public void setEval(Context context, float contractEval) {

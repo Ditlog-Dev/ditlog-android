@@ -11,6 +11,7 @@ import android.widget.TextView;
 public class Indicator extends AppCompatActivity {
     private ContractPerformancePreference performancePreference = new ContractPerformancePreference();
     public String auth = "";
+    public int contractId = 0;
     public Activity act = this;
     public Context context = this;
     @Override
@@ -18,6 +19,7 @@ public class Indicator extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_indicator);
         auth = performancePreference.getToken(context);
+        contractId = performancePreference.getContractId(context);
         TextView number = findViewById(R.id.noKontrak);
         TextView title = findViewById(R.id.judulKontrak);
         TextView vendor = findViewById(R.id.namaVendor);

@@ -18,10 +18,10 @@ import java.util.ArrayList;
 
 public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChooseIndicator.ViewHolder> {
     private static final String TAG = "RecyclerChooseIndicator";
-
     private ArrayList<IndicatorEntity> mParam;
-
     private Context mContext;
+    private int[] chosenId = new int[30];
+    private int nChosen = 0;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView paramIndicator;
@@ -35,11 +35,12 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "Element " + getPosition() + " clicked.");
+                    //Log.d(TAG, "Element " + getPosition() + " clicked.");
                 }
             });
             paramIndicator = (TextView) v.findViewById(R.id.param_indicator);
             mCheckBox = (CheckBox) v.findViewById(R.id.checkbox_indicator);
+
         }
 
         public TextView getParamIndicator() {
@@ -54,8 +55,10 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
      *
      * @param dataSet String[] containing the data to populate views to be used by RecyclerView.
      */
-    public RecyclerChooseIndicator(ArrayList<IndicatorEntity> dataSet) {
+    public RecyclerChooseIndicator(ArrayList<IndicatorEntity> dataSet, int[] chosenId, int nChosen) {
         this.mParam = dataSet;
+        this.chosenId = chosenId;
+        this.nChosen = nChosen;
     }
 
     // BEGIN_INCLUDE(recyclerViewOnCreateViewHolder)
@@ -79,6 +82,13 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
         // Get element from your dataset at this position and replace the contents of the view
         // with that element
         viewHolder.getParamIndicator().setText(mParam.get(position).name);
+
+        int idIndicator = mParam.get(position).id;
+        boolean checked = false;
+        if (isChoosen(idIndicator)) {
+            checked = true;
+        }
+        viewHolder.mCheckBox.setChecked(checked);
 
         //in some cases, it will prevent unwanted situations
         viewHolder.mCheckBox.setOnCheckedChangeListener(null);
@@ -128,5 +138,18 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
     @Override
     public int getItemCount() {
         return mParam.size();
+    }
+
+    public boolean isChoosen(int id) {
+        int i = 0;
+        boolean choose = false;
+        while (!choose && (i < nChosen)) {
+            if (chosenId[i] == id) {
+                choose = true;
+            } else {
+                i++;
+            }
+        }
+        return choose;
     }
 }
