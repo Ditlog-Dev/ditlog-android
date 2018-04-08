@@ -190,7 +190,7 @@ public class Login extends AppCompatActivity {
         editor.apply();
 
         Intent intent_name = new Intent();
-        intent_name.setClass(getApplicationContext(), MainActivity.class);
+        intent_name.setClass(getApplicationContext(), MonitorActivity.class);
         startActivity(intent_name);
         finish();
       } else {

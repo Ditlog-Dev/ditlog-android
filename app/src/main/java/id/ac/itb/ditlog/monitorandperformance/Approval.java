@@ -1,5 +1,6 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,7 +38,6 @@ public class Approval extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private ApprovalListAdapter mAdapter;
     private JSONArray mMilestoneList = new JSONArray();
-    //private LayoutInflater inflater;
     String keterangan = "";
 
     String token;
@@ -51,33 +51,8 @@ public class Approval extends AppCompatActivity {
                 .getDefaultSharedPreferences(getApplicationContext());
         token = sharedPreferences.getString("token", "");
 
-        /*----------------------
-
-        inflater = LayoutInflater.from(getApplicationContext());
-
-        LinearLayout linearLayoutRencana = (LinearLayout) findViewById(R.id.layoutApproval);
-        LinearLayout linearLayout1 = (LinearLayout) inflater.inflate(R.layout.date_percentage_approval, null);
-        TextView date1 = (TextView) linearLayout1.findViewById(R.id.dateApproval);
-        date1.setText("25/3/2018");
-
-        TextView percentage1 = (TextView) linearLayout1.findViewById(R.id.percentageApproval);
-        percentage1.setText("10%");
-        final TextView keterangan1 = (TextView) linearLayout1.findViewById(R.id.keteranganApproval);
-        keterangan1.setText("-");
-        linearLayoutRencana.addView(linearLayout1);
-
-        LinearLayout linearLayout2 = (LinearLayout) inflater.inflate(R.layout.date_percentage_approval, null);
-        TextView date2 = (TextView) linearLayout2.findViewById(R.id.dateApproval);
-        date2.setText("27/3/2018");
-
-        TextView percentage2 = (TextView) linearLayout2.findViewById(R.id.percentageApproval);
-        percentage2.setText("50%");
-        TextView keterangan2 = (TextView) linearLayout1.findViewById(R.id.keteranganApproval);
-        keterangan2.setText("-");
-        linearLayoutRencana.addView(linearLayout2);
-        */
-        //loadData();
-        dummyData();
+        loadData();
+        //dummyData();
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerviewApproval);
         // Create an adapter and supply the data to be displayed.
         mAdapter = new ApprovalListAdapter(this, mMilestoneList);
@@ -85,9 +60,6 @@ public class Approval extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         // Give the recycler view a default layout manager.
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        //-----------------------------------------------------
-        //Click Button
 
         Button approve = findViewById(R.id.acceptButtonApproval);
         Button reject = findViewById(R.id.rejectButtonApproval);
@@ -116,10 +88,11 @@ public class Approval extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("RestrictedApi")
     void reject(){
         final EditText inputketerangan = new EditText(this);
         final AlertDialog.Builder dlgAlert = new AlertDialog.Builder(Approval.this);
-        dlgAlert.setView(inputketerangan);
+        dlgAlert.setView(inputketerangan , 50 ,0, 50 , 0);
         dlgAlert.setTitle("Enter Keterangan");
         dlgAlert.setPositiveButton("Submit", null);
         dlgAlert.setCancelable(true);
@@ -171,13 +144,13 @@ public class Approval extends AppCompatActivity {
                 }
                 else{
                     status ="0";
+                    request.put("keteranganReject", keterangan);
                 }
 
                 //dummy spmk
                 String spmkid = "632";
 
                 URL url = new URL(BuildConfig.WEBSERVICE_URL + "/rencana/" + spmkid +"/" + status);
-//                URL url = new URL("http://192.168.43.51:8080" + "/rencana/" + spmkid +"/" + status);
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("PUT");
@@ -187,6 +160,11 @@ public class Approval extends AppCompatActivity {
                 urlConnection.setDoInput(true);
                 urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 urlConnection.setRequestProperty("Authorization", "Bearer "+token);
+
+                DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
+                wr.writeBytes(request.toString());
+                wr.flush();
+                wr.close();
 
                 final int responseStatusCode = urlConnection.getResponseCode();
 
@@ -228,8 +206,6 @@ public class Approval extends AppCompatActivity {
                 });
                 return;
             } else {
-//                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(Approval.this);
-
                 if (approved) {
                     Handler toast = new Handler(getApplicationContext().getMainLooper());
                     toast.post(new Runnable() {
@@ -237,7 +213,6 @@ public class Approval extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "SPMK is approved", Toast.LENGTH_SHORT).show();
                         }
                     });
-//                    dlgAlert.setMessage("SPMK is approved");
                 } else {
                     Handler toast = new Handler(getApplicationContext().getMainLooper());
                     toast.post(new Runnable() {
@@ -245,16 +220,7 @@ public class Approval extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "SPMK is rejected", Toast.LENGTH_SHORT).show();
                         }
                     });
-//                    dlgAlert.setMessage("SPMK is rejected");
                 }
-//                dlgAlert.setPositiveButton("OK", null);
-//                dlgAlert.setCancelable(false);
-//                dlgAlert.create().show();
-//                dlgAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        finish();
-//                    }
-//                });
                 finish();
             }
         }
@@ -270,8 +236,6 @@ public class Approval extends AppCompatActivity {
             String spmkid = "632";
             URL url = new URL(BuildConfig.WEBSERVICE_URL+"/rencana/" + spmkid);
 
-            //URL url = new URL("http://localhost:8080" +"/rencana/" + "632");
-
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setReadTimeout(1500);
@@ -279,7 +243,6 @@ public class Approval extends AppCompatActivity {
             urlConnection.setDoOutput(true);
             urlConnection.setDoInput(true);
             urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJva2kiLCJpZFVzZXIiOjEwNDAyLCJpZFJlc3BvbnNpYmlsaXR5Ijo3OSwiaWRWZW5kb3IiOjAsImV4cCI6MTUyMjc2OTU4N30.p_5dMPljD493mkqOrz6IFg5QDpwyjDikP241dsI5cuyuTQHHeg6G6KR3l9ALL7hpR0Gh7ArunvzC1k2TiQL94A";
             urlConnection.setRequestProperty("Authorization", "Bearer "+token);
 
             int responseStatusCode = urlConnection.getResponseCode();

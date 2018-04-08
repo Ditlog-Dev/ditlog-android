@@ -19,6 +19,7 @@ package id.ac.itb.ditlog.monitorandperformance;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +61,7 @@ public class EditRealisasiListAdapter extends RecyclerView.Adapter<EditRealisasi
             super(itemView);
             dateItemView = (TextView) itemView.findViewById(R.id.dateApproval);
             percentageItemView = (EditText) itemView.findViewById(R.id.percentageApproval);
+            percentageItemView.setFilters(new InputFilter[]{ new InputFilterMinMax("0", "100")});
             keteranganItemView = (EditText) itemView.findViewById(R.id.keteranganApproval);
             this.mAdapter = adapter;
             itemView.setOnClickListener(this);
@@ -117,6 +119,9 @@ public class EditRealisasiListAdapter extends RecyclerView.Adapter<EditRealisasi
                 holder.keteranganItemView.setBackgroundColor(Color.TRANSPARENT);
             }
 
+            setOnFocusChangeListener(holder.percentageItemView, position, true);
+            setOnFocusChangeListener(holder.keteranganItemView, position, false);
+
 //            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 //            Date strDate = sdf.parse(mCurrent.getString("tglRencana"));
 //            if (new Date().before(strDate)) {
@@ -134,6 +139,32 @@ public class EditRealisasiListAdapter extends RecyclerView.Adapter<EditRealisasi
 //        }
         // Add the data to the view holder.
 
+    }
+
+    public void setOnFocusChangeListener(final EditText editText, final int position, final boolean persentase){
+
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus) {
+                    if (persentase) {
+                        if (Integer.parseInt(editText.getText().toString()) > 100)
+                            editText.setText("0");
+                        try {
+                            mMilestoneList.getJSONObject(position).put("persentaseRencana", editText.getText().toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else{
+                        try {
+                            mMilestoneList.getJSONObject(position).put("keteranganRencana", editText.getText().toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
     }
 
     /**

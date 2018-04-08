@@ -39,13 +39,9 @@ public class ViewRealisasi extends AppCompatActivity {
     private EditRealisasiListAdapter mEditAdapter;
     private JSONArray mMilestoneList = new JSONArray();
     Button submit;
-    //private LayoutInflater inflater;
-    String keterangan = "";
 
     String token;
-
-    //dummy role
-    Integer role = 0;
+    Long role;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +53,12 @@ public class ViewRealisasi extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext());
         token = sharedPreferences.getString("token", "");
+        role = sharedPreferences.getLong("roleid", 0);
 
         dummyData();
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerviewRealisasi);
         // Create an adapter and supply the data to be displayed.
-        if (role == 1) {
+        if (role != 118) {
             submit.setVisibility(View.GONE);
             mAdapter = new RealisasiListAdapter(this, mMilestoneList);
             mRecyclerView.setAdapter(mAdapter);
@@ -72,6 +69,22 @@ public class ViewRealisasi extends AppCompatActivity {
         }
         // Give the recycler view a default layout manager.
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int x = 0;
+                for (int i=0; i < mMilestoneList.length(); i++){
+                    try {
+                        x = x + mMilestoneList.getJSONObject(i).getInt("persentaseRencana");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (x > 100)
+                    Toast.makeText(getApplicationContext(), "Invalid percentage", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void loadData(){
@@ -80,8 +93,6 @@ public class ViewRealisasi extends AppCompatActivity {
             String spmkid = "632";
             URL url = new URL(BuildConfig.WEBSERVICE_URL+"/realisasi/" + spmkid);
 
-            //URL url = new URL("http://localhost:8080" +"/rencana/" + "632");
-
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setReadTimeout(1500);
@@ -89,7 +100,6 @@ public class ViewRealisasi extends AppCompatActivity {
             urlConnection.setDoOutput(true);
             urlConnection.setDoInput(true);
             urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            //String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJva2kiLCJpZFVzZXIiOjEwNDAyLCJpZFJlc3BvbnNpYmlsaXR5Ijo3OSwiaWRWZW5kb3IiOjAsImV4cCI6MTUyMjc2OTU4N30.p_5dMPljD493mkqOrz6IFg5QDpwyjDikP241dsI5cuyuTQHHeg6G6KR3l9ALL7hpR0Gh7ArunvzC1k2TiQL94A";
             urlConnection.setRequestProperty("Authorization", "Bearer "+token);
 
             int responseStatusCode = urlConnection.getResponseCode();

@@ -42,7 +42,7 @@ public class MonitorActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager
             .getDefaultSharedPreferences(getApplicationContext());
         Long userID = sharedPreferences.getLong("userid", -1);
-        if (false && userID == -1) { //TODO Remove false to check the user after webservice is backup/ mock db ready
+        if (userID == -1) {
           Intent myIntent = new Intent(this, Login.class);
           startActivity(myIntent);
           finish();

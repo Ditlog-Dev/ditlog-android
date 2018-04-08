@@ -25,7 +25,6 @@
         android:layout_weight="0.5"
 
         android:inputType="number"
-        android:maxLength="3"
         />
 
     <EditText
