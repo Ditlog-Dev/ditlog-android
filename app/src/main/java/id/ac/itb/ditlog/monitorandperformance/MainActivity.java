@@ -42,24 +42,24 @@ public class MainActivity extends AppCompatActivity {
       });
 
       Button approval = findViewById(R.id.approval_button);
-    Button buttonRencana = findViewById(R.id.buttonRencana);
+      Button buttonRencana = findViewById(R.id.buttonRencana);
 
       approval.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent intent_name = new Intent();
-            intent_name.setClass(getApplicationContext(), Approval.class);
-            startActivity(intent_name);
+          Intent intent_name = new Intent();
+          intent_name.setClass(getApplicationContext(), Approval.class);
+          startActivity(intent_name);
+        }
+      });
+      buttonRencana.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Intent intent_name = new Intent();
+          intent_name.setClass(getApplicationContext(), Rencana.class);
+          startActivity(intent_name);
         }
       });
     }
-    buttonRencana.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Intent intent_name = new Intent();
-        intent_name.setClass(getApplicationContext(), Rencana.class);
-        startActivity(intent_name);
-      }
-    });
   }
 }
