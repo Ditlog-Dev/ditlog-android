@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -60,15 +61,10 @@ public class Evaluation extends Fragment{
     protected SwipeRefreshLayout swipeContainer;
 
     ArrayList<EvaluationEntity> param;
-
-    private String[] evalList = new String[]{"Indikator test 1", "Indikator test 2",
-            "Indikator test 3","Indikator test 4"
-            ,"Indikator test 5","Indikator test 6",
-            "Indikator test 7","Indikator test 8"};
-    private String[] gradeList = new String[]{"35", "80",
-            "100","75"
-            ,"60","85",
-            "100","10"};
+    int nEvaluation = 0;
+    private String[] evalList = new String[30];
+    private String[] gradeList = new String[30];
+    private int[] idList = new int[30];
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,7 +86,6 @@ public class Evaluation extends Fragment{
 	
 	    evaluationListener();
 
-	    //param = populateList();
         // LinearLayoutManager is used here, this will layout the elements in a similar fashion
         // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
         // elements are laid out.
@@ -104,13 +99,6 @@ public class Evaluation extends Fragment{
                     .getSerializable(KEY_LAYOUT_MANAGER);
         }
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
-
-        param.add(new EvaluationEntity(2, "test1", 10));
-        param.add(new EvaluationEntity(22, "test2", 15));
-
-        evaluationAdapter = new RecyclerEvaluation(getContext(), param);
-        evaluationAdapter.setOnArtikelClickListener(mOnArtikelClickListener);
-        evaluationRecyclerView.setAdapter(evaluationAdapter);
 
         evaluationRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(this.getContext(), evaluationRecyclerView, new ClickListener() {
 
@@ -127,7 +115,7 @@ public class Evaluation extends Fragment{
         if (!haveNetworkConnection()) {
             Toast.makeText(getContext(), "Tidak ada koneksi internet", Toast.LENGTH_LONG).show();
         }
-
+        new evaluationGetter(token, contractId).execute();
         return rootView;
     }
 
@@ -135,13 +123,13 @@ public class Evaluation extends Fragment{
 
         ArrayList<EvaluationEntity> list = new ArrayList<>();
 
-        for(int i = 0; i < 8; i++){
+        for(int i = 0; i < nEvaluation; i++){
             EvaluationEntity paramModel = new EvaluationEntity();
             paramModel.setParamEvaluation(evalList[i]);
-            //paramModel.setGradeEvaluation(gradeList[i]);
+            paramModel.setGradeEvaluation(gradeList[i]);
+            paramModel.setParamId(idList[i]);
             list.add(paramModel);
         }
-
         return list;
     }
 
@@ -248,28 +236,23 @@ public class Evaluation extends Fragment{
     }
 
     public class evaluationGetter extends AsyncTask<Void, Void, ArrayList<EvaluationEntity>> {
-
         public String auth = "";
         public int contractId = 0;
         public static final String SERVER_URL = BuildConfig.WEBSERVICE_URL;
         public static final int READ_TIMEOUT = 10000;
         public static final int CONNECTION_TIMEOUT = 10000;
 
-        int indicator_id = 0;
-        String indicator_name = "default test";
-        int indicator_eval = 0;
-
         ArrayList<EvaluationEntity> params = new ArrayList<>();
 
         public evaluationGetter(String auth, int contractId) {
             this.auth = auth;
             this.contractId = contractId;
+            nEvaluation = 0;
         }
 
         @Override
         protected ArrayList<EvaluationEntity> doInBackground(Void... voids) {
             String method = "GET";
-
             try {
                 String rawUrl = SERVER_URL + "/contracts/"+ contractId +"/indicators";
                 URL url = new URL(rawUrl);
@@ -320,19 +303,19 @@ public class Evaluation extends Fragment{
                     name = jsReader.nextName();
                     switch (name){
                         case "idIndicator":
-                            indicator_id = jsReader.nextInt();
+                            idList[nEvaluation] = jsReader.nextInt();
                             break;
                         case "nilai":
-                            indicator_eval = jsReader.nextInt();
+                            gradeList[nEvaluation] = jsReader.nextString();
                             break;
                         case "namaIndikator":
-                            indicator_name = jsReader.nextString();
+                            evalList[nEvaluation] = jsReader.nextString();
                             break;
                         default:
                             jsReader.skipValue();
                     }
                 }
-                params.add(new EvaluationEntity(indicator_id,indicator_name,indicator_eval));
+                nEvaluation++;
                 jsReader.endObject();
             }
             jsReader.endArray();
@@ -347,10 +330,78 @@ public class Evaluation extends Fragment{
         @Override
         protected void onPostExecute(ArrayList<EvaluationEntity> mParam) {
             super.onPostExecute(mParam);
-            evaluationAdapter = new RecyclerEvaluation(getContext(), mParam);
+            param = populateList();
+            evaluationAdapter = new RecyclerEvaluation(getContext(), param);
             evaluationAdapter.setOnArtikelClickListener(mOnArtikelClickListener);
             evaluationRecyclerView.setAdapter(evaluationAdapter);
-            //swipeContainer.setRefreshing(false);
+        }
+    }
+
+    public class chooseIndicator extends AsyncTask<String,Void,String> {
+        public String auth = "";
+        public int contractId = 0;
+        public static final String SERVER_URL = BuildConfig.WEBSERVICE_URL;
+        public static final int READ_TIMEOUT = 10000;
+        public static final int CONNECTION_TIMEOUT = 10000;
+        private String indicator;
+        private String status = "init";
+
+        public chooseIndicator(String indicator, String auth, int contractId) {
+            this.indicator = indicator;
+            this.auth = auth;
+            this.contractId = contractId;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            HttpURLConnection urlConnection = null;
+            if (!haveNetworkConnection()) {
+                status = "Tidak ada koneksi internet";
+                return "Tidak ada koneksi internet";
+            } else {
+                try {
+                    URL url = new URL(SERVER_URL + "/contracts/" + contractId + "/indicators");
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestProperty("Authorization", "Bearer " + auth);
+                    // read response
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setReadTimeout(READ_TIMEOUT);
+                    urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setDoInput(true);
+                    urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+                    DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
+                    wr.writeBytes(indicator);
+                    wr.flush();
+                    wr.close();
+                    // try to get response
+                    int statusCode = urlConnection.getResponseCode();
+                    if (String.valueOf(urlConnection.getResponseCode()).startsWith("2")) {
+                        status = "Indikator berhasil disimpan";
+                    } else if (String.valueOf(urlConnection.getResponseCode()).startsWith("4")) {
+                        status = "Akses tidak diotorisasi";
+                    } else {
+                        status = "Server tidak tersedia";
+                    }
+                } catch (Exception e) {
+                    status = "Server tidak tersedia";
+                    e.printStackTrace();
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                    return status;
+                }
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (!status.equals("init")) {
+                Toast.makeText(getActivity(), status, Toast.LENGTH_LONG).show();
+            }
         }
     }
 

@@ -5,15 +5,15 @@ package id.ac.itb.ditlog.monitorandperformance;
  */
 
 public class EvaluationEntity {
-    private String paramEvaluation;
-    private String gradeEvaluation;
+    public String paramEvaluation;
+    public String gradeEvaluation;
 
     public int id;
 
     public EvaluationEntity(){
         id=-1;
         paramEvaluation="";
-        gradeEvaluation="100";
+        gradeEvaluation= "100";
     }
     public EvaluationEntity(int id, String name, String grade){
         this.id = id;
@@ -23,6 +23,10 @@ public class EvaluationEntity {
 
     public String getParamEvaluation() {
         return paramEvaluation;
+    }
+
+    public void setParamId(int id) {
+        this.id = id;
     }
 
     public void setParamEvaluation(String paramEvaluation) {
