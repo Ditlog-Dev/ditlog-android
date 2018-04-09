@@ -64,7 +64,6 @@ public class Evaluation extends Fragment{
     protected RecyclerView evaluationRecyclerView;
     protected RecyclerEvaluation evaluationAdapter;
     protected RecyclerView.LayoutManager evaluationLayoutManager;
-    protected SwipeRefreshLayout swipeContainer;
 
     ArrayList<EvaluationEntity> param;
     int nEvaluation = 0;
@@ -106,6 +105,8 @@ public class Evaluation extends Fragment{
         }
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
+        new evaluationGetter(token, contractId).execute();
+
         evaluationRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(this.getContext(), evaluationRecyclerView, new ClickListener() {
 
             @Override
@@ -121,7 +122,6 @@ public class Evaluation extends Fragment{
         if (!haveNetworkConnection()) {
             Toast.makeText(getContext(), "Tidak ada koneksi internet", Toast.LENGTH_LONG).show();
         }
-        new evaluationGetter(token, contractId).execute();
         return rootView;
     }
 
@@ -161,14 +161,11 @@ public class Evaluation extends Fragment{
                         String eval = editText.getText().toString();
                         String status = "fail";
                         try {
-                            status = new giveEvaluation(token, contractId, id_indicator, eval).execute().get();
+                            new giveEvaluation(token, contractId, id_indicator, eval).execute().get();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (ExecutionException e) {
                             e.printStackTrace();
-                        }
-                        if (status.equals("Penilaian disimpan")) {
-                            new evaluationGetter(token, contractId).execute();
                         }
                     }
                 })
@@ -416,6 +413,7 @@ public class Evaluation extends Fragment{
             if (!status.equals("init")) {
                 Toast.makeText(getActivity(), status, Toast.LENGTH_LONG).show();
             }
+            new evaluationGetter(token, contractId).execute();
         }
     }
 
@@ -435,7 +433,6 @@ public class Evaluation extends Fragment{
         }
         return haveConnectedWifi || haveConnectedMobile;
     }
-
 
     static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 

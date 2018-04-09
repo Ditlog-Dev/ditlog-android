@@ -1,6 +1,10 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
+import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +14,9 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import java.io.DataOutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -19,7 +26,6 @@ import java.util.ArrayList;
 public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChooseIndicator.ViewHolder> {
     private static final String TAG = "RecyclerChooseIndicator";
     private ArrayList<IndicatorEntity> mParam;
-    private Context mContext;
     private int[] chosenId = new int[30];
     private int nChosen = 0;
     private int[] checkUpdate = new int[30];

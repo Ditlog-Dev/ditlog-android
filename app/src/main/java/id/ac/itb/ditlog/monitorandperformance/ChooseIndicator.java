@@ -51,7 +51,8 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
     public Indicator indicator;
     private int[] chosenId = new int[30];
     private int nChosen = 0;
-
+    private Context context = getContext();
+    private Activity act = getActivity();
 
     protected LayoutManagerType mCurrentLayoutManagerType;
     protected RecyclerView recyclerViewIndicator;
@@ -165,11 +166,8 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
                         }
                         String indicator = indicatorAdapter.getCheck();
                         Log.d("a", "zzz add " + indicator);
-                        String delete = indicatorAdapter.getUncheck();
-                        Log.d("a", "zzz delete " + delete);
                         String status = "fail";
                         try {
-                            new deleteIndicator(delete, token, contractId).execute(delete).get();
                             new chooseIndicator(indicator, token, contractId).execute(indicator).get();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
