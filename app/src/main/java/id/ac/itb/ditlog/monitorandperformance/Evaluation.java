@@ -1,6 +1,7 @@
 package id.ac.itb.ditlog.monitorandperformance;
 
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -15,7 +16,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.JsonReader;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -56,7 +59,16 @@ public class Evaluation extends Fragment{
     protected RecyclerView.LayoutManager evaluationLayoutManager;
     protected SwipeRefreshLayout swipeContainer;
 
-    ArrayList<EvaluationEntity> param = new ArrayList<>();
+    ArrayList<EvaluationEntity> param;
+
+    private String[] evalList = new String[]{"Indikator test 1", "Indikator test 2",
+            "Indikator test 3","Indikator test 4"
+            ,"Indikator test 5","Indikator test 6",
+            "Indikator test 7","Indikator test 8"};
+    private String[] gradeList = new String[]{"35", "80",
+            "100","75"
+            ,"60","85",
+            "100","10"};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +90,7 @@ public class Evaluation extends Fragment{
 	
 	    evaluationListener();
 
+	    param = populateList();
         // LinearLayoutManager is used here, this will layout the elements in a similar fashion
         // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
         // elements are laid out.
@@ -95,15 +108,47 @@ public class Evaluation extends Fragment{
         //param.add(new EvaluationEntity(2, "test1", 10));
         //param.add(new EvaluationEntity(22, "test2", 15));
 
-        evaluationAdapter = new RecyclerEvaluation(param);
+        evaluationAdapter = new RecyclerEvaluation(getContext(), param);
         evaluationAdapter.setOnArtikelClickListener(mOnArtikelClickListener);
         evaluationRecyclerView.setAdapter(evaluationAdapter);
+
+        evaluationRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(this.getContext(), evaluationRecyclerView, new ClickListener() {
+
+            @Override
+            public void onClick(View view, int position) {
+                Toast.makeText(Evaluation.this.getContext(), param.get(position).getParamEvaluation(), Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
 
         if (!haveNetworkConnection()) {
             Toast.makeText(getContext(), "Tidak ada koneksi internet", Toast.LENGTH_LONG).show();
         }
 
         return rootView;
+    }
+
+    private ArrayList<EvaluationEntity> populateList(){
+
+        ArrayList<EvaluationEntity> list = new ArrayList<>();
+
+        for(int i = 0; i < 8; i++){
+            EvaluationEntity paramModel = new EvaluationEntity();
+            paramModel.setParamEvaluation(evalList[i]);
+            paramModel.setGradeEvaluation(gradeList[i]);
+            list.add(paramModel);
+        }
+
+        return list;
+    }
+
+    public interface ClickListener {
+        void onClick(View view, int position);
+
+        void onLongClick(View view, int position);
     }
 
     protected void showInputDialog() {
@@ -212,7 +257,7 @@ public class Evaluation extends Fragment{
 
         int indicator_id = 0;
         String indicator_name = "default test";
-        int indicator_eval = 0;
+        String indicator_eval = "100";
 
         ArrayList<EvaluationEntity> params = new ArrayList<>();
 
@@ -278,7 +323,8 @@ public class Evaluation extends Fragment{
                             parseContent(jsReader);
                             break;
                         case "nilai":
-                            indicator_eval = jsReader.nextInt();
+                            //indicator_eval = jsReader.nextInt();
+                            parseContent(jsReader);
                             break;
                         default:
                             jsReader.skipValue();
@@ -316,7 +362,7 @@ public class Evaluation extends Fragment{
         @Override
         protected void onPostExecute(ArrayList<EvaluationEntity> mParam) {
             super.onPostExecute(mParam);
-            evaluationAdapter = new RecyclerEvaluation(param);
+            evaluationAdapter = new RecyclerEvaluation(getContext(), mParam);
             evaluationAdapter.setOnArtikelClickListener(mOnArtikelClickListener);
             evaluationRecyclerView.setAdapter(evaluationAdapter);
             //swipeContainer.setRefreshing(false);
@@ -338,5 +384,49 @@ public class Evaluation extends Fragment{
                     haveConnectedMobile = true;
         }
         return haveConnectedWifi || haveConnectedMobile;
+    }
+
+
+    static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+
+        private GestureDetector gestureDetector;
+        private ClickListener clickListener;
+
+        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ClickListener clickListener) {
+            this.clickListener = clickListener;
+            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                    if (child != null && clickListener != null) {
+                        clickListener.onLongClick(child, recyclerView.getChildPosition(child));
+                    }
+                }
+            });
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            View child = rv.findChildViewUnder(e.getX(), e.getY());
+            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
+                clickListener.onClick(child, rv.getChildPosition(child));
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+        }
     }
 }
