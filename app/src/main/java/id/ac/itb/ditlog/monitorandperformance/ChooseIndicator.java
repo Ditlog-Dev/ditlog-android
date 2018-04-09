@@ -160,8 +160,26 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
                 switch(view.getId()){
                     case R.id.btnSaveIndicator:
                         Toast.makeText(getActivity(), "Menyimpan...", Toast.LENGTH_SHORT).show();
-                        String indicator = indicatorAdapter.getUncheck();
-                        new deleteIndicator(indicator, token, contractId).execute();
+                        for (int i = 0; i < nChosen; i ++) {
+                            Log.d("a", "zzz choosen " + chosenId[i]);
+                        }
+                        String indicator = indicatorAdapter.getCheck();
+                        Log.d("a", "zzz add " + indicator);
+                        String delete = indicatorAdapter.getUncheck();
+                        Log.d("a", "zzz delete " + delete);
+                        String status = "fail";
+                        try {
+                            new deleteIndicator(delete, token, contractId).execute(delete).get();
+                            new chooseIndicator(indicator, token, contractId).execute(indicator).get();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (status.equals("Indikator berhasil disimpan")) {
+                            new choosenIndicators(token, contractId).execute();
+                        }
                         break;
                 }
 
@@ -356,6 +374,7 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         public choosenIndicators(String auth, int contractId) {
             this.auth = auth;
             this.contractId = contractId;
+            nChosen = 0;
         }
 
         @Override
@@ -567,18 +586,6 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            String ind = indicatorAdapter.getCheck();
-            String status = "fail";
-            try {
-                status = new chooseIndicator(ind, token, contractId).execute(ind).get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-            if (status.equals("Indikator berhasil disimpan")) {
-                new choosenIndicators(token, contractId).execute();
-            }
         }
     }
 
@@ -597,11 +604,5 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
                     haveConnectedMobile = true;
         }
         return haveConnectedWifi || haveConnectedMobile;
-    }
-
-    public int[] getChosenId() {
-        int[] arrId = new int[30];
-
-        return arrId;
     }
 }
