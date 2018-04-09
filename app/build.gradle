@@ -60,6 +60,8 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
+    compile 'de.hdodenhof:circleimageview:2.2.0'
+
 }
 
 repositories {
