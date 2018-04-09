@@ -198,15 +198,34 @@ public class RecyclerChooseIndicator extends RecyclerView.Adapter<RecyclerChoose
         return ind;
     }
 
-    public int[] getUncheck() {
-        return uncheckUpdate;
-    }
+    public String getUncheck() {
+        boolean deleteId;
+        int i;
 
-    public int getCheckLength() {
-        return checkLength;
-    }
+        for (int a = 0; a < nChosen; a++) {
+            deleteId = false;
+            i = 0;
+            while (!deleteId && (i < checkLength)) {
+                if (chosenId[a] == checkUpdate[i]) {
+                    deleteId = true;
+                } else {
+                    i++;
+                }
+            }
+            if (!deleteId) {
+                uncheckUpdate[uncheckLength] = chosenId[a];
+                uncheckLength++;
+            }
+        }
 
-    public int getUncheckLength() {
-        return uncheckLength;
+        String ind = "[";
+        if (uncheckLength != 0) {
+            ind = ind + Integer.toString(uncheckUpdate[0]);
+        }
+        for (int k = 1; k < uncheckLength; k++) {
+            ind = ind + ", " + Integer.toString(uncheckUpdate[k]);
+        }
+        ind = ind + "]";
+        return ind;
     }
 }

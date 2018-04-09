@@ -158,21 +158,10 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
             @Override
             public void onClick(View view){
                 switch(view.getId()){
-
                     case R.id.btnSaveIndicator:
                         Toast.makeText(getActivity(), "Menyimpan...", Toast.LENGTH_SHORT).show();
-                        String indicator = indicatorAdapter.getCheck();
-                        String status = "fail";
-                        try {
-                            status = new chooseIndicator(indicator, token, contractId).execute(indicator).get();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                        if (status.equals("Indikator berhasil disimpan")) {
-                            new choosenIndicators(token, contractId).execute();
-                        }
+                        String indicator = indicatorAdapter.getUncheck();
+                        new deleteIndicator(indicator, token, contractId).execute();
                         break;
                 }
 
@@ -513,6 +502,82 @@ public class ChooseIndicator extends Fragment implements SwipeRefreshLayout.OnRe
             super.onPostExecute(result);
             if (!status.equals("init")) {
                 Toast.makeText(getActivity(), status, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    public class deleteIndicator extends AsyncTask<String,Void,String> {
+        public String auth = "";
+        public int contractId = 0;
+        public static final String SERVER_URL = BuildConfig.WEBSERVICE_URL;
+        public static final int READ_TIMEOUT = 10000;
+        public static final int CONNECTION_TIMEOUT = 10000;
+        private String indicator;
+        private String status = "init";
+
+        public deleteIndicator(String indicator, String auth, int contractId) {
+            this.indicator = indicator;
+            this.auth = auth;
+            this.contractId = contractId;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            HttpURLConnection urlConnection = null;
+            if (!haveNetworkConnection()) {
+                return "Tidak ada koneksi internet";
+            } else {
+                try {
+                    URL url = new URL(SERVER_URL + "/contracts/" + contractId + "/indicators");
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestProperty("Authorization", "Bearer " + auth);
+                    // read response
+                    urlConnection.setRequestMethod("DELETE");
+                    urlConnection.setReadTimeout(READ_TIMEOUT);
+                    urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setDoInput(true);
+                    urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+                    DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
+                    wr.writeBytes(indicator);
+                    wr.flush();
+                    wr.close();
+                    // try to get response
+                    int statusCode = urlConnection.getResponseCode();
+                    if (String.valueOf(urlConnection.getResponseCode()).startsWith("2")) {
+                        status = "Indikator berhasil disimpan";
+                    } else if (String.valueOf(urlConnection.getResponseCode()).startsWith("4")) {
+                        status = "Akses tidak diotorisasi";
+                    } else {
+                        status = "Server tidak tersedia";
+                    }
+                } catch (Exception e) {
+                    status = "Server tidak tersedia";
+                    e.printStackTrace();
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                    return status;
+                }
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            String ind = indicatorAdapter.getCheck();
+            String status = "fail";
+            try {
+                status = new chooseIndicator(ind, token, contractId).execute(ind).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            if (status.equals("Indikator berhasil disimpan")) {
+                new choosenIndicators(token, contractId).execute();
             }
         }
     }

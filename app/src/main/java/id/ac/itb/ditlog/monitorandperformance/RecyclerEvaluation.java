@@ -24,11 +24,7 @@ public class RecyclerEvaluation extends RecyclerView.Adapter<RecyclerEvaluation.
 
     private Context mContext;
 
-private OnArtikelClickListener mOnArtikelClickListener;
-
-public RecyclerEvaluation(Context context) {
-        mContext = context;
-    }
+    private OnArtikelClickListener mOnArtikelClickListener;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public View mViewContainer;

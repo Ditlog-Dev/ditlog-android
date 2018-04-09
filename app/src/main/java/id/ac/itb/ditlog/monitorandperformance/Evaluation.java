@@ -211,7 +211,7 @@ public class Evaluation extends Fragment{
         public static final int CONNECTION_TIMEOUT = 10000;
 
         int indicator_id = 0;
-        String indicator_name = "default test";
+        String indicator_name = "default";
         int indicator_eval = 0;
 
         ArrayList<EvaluationEntity> params = new ArrayList<>();
@@ -274,11 +274,14 @@ public class Evaluation extends Fragment{
                 while (jsReader.hasNext()) {
                     name = jsReader.nextName();
                     switch (name){
-                        case "penilaianIdentity":
-                            parseContent(jsReader);
+                        case "idIndicator":
+                            indicator_id = jsReader.nextInt();
                             break;
                         case "nilai":
                             indicator_eval = jsReader.nextInt();
+                            break;
+                        case "namaIndikator":
+                            indicator_name = jsReader.nextString();
                             break;
                         default:
                             jsReader.skipValue();
@@ -288,23 +291,6 @@ public class Evaluation extends Fragment{
                 jsReader.endObject();
             }
             jsReader.endArray();
-        }
-
-        protected void parseContent(JsonReader jsReader)throws IOException{
-            String name;
-            jsReader.beginObject();
-
-            while (jsReader.hasNext()) {
-                name = jsReader.nextName();
-                switch (name){
-                    case "idIndikator":
-                        indicator_id = jsReader.nextInt();
-                        break;
-                    default:
-                        jsReader.skipValue();
-                }
-            }
-            jsReader.endObject();
         }
 
         @Override
