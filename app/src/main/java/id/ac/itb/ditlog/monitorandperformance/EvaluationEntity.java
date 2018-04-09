@@ -29,6 +29,10 @@ public class EvaluationEntity {
         this.id = id;
     }
 
+    public int getParamId() {
+        return id;
+    }
+
     public void setParamEvaluation(String paramEvaluation) {
         this.paramEvaluation = paramEvaluation;
     }

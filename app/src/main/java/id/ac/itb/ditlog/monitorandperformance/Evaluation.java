@@ -24,6 +24,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,6 +52,7 @@ public class Evaluation extends Fragment{
     public String token = "";
     public int contractId = 0;
     public Indicator indicator;
+    public int id_indicator = 0;
 
     private enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,
@@ -104,7 +110,7 @@ public class Evaluation extends Fragment{
 
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(Evaluation.this.getContext(), param.get(position).getParamEvaluation(), Toast.LENGTH_SHORT).show();
+                id_indicator = param.get(position).getParamId();
             }
             @Override
             public void onLongClick(View view, int position) {
@@ -152,18 +158,18 @@ public class Evaluation extends Fragment{
         alertDialogBuilder.setCancelable(false)
                 .setPositiveButton("SIMPAN", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-//                        String indicator = editText.getText().toString();
-//                        String status = "fail";
-//                        try {
-//                            status = new AsyncAddIndicator(indicator, getContext(), getActivity(), token).execute(indicator).get();
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        } catch (ExecutionException e) {
-//                            e.printStackTrace();
-//                        }
-//                        if (status.equals("Indikator berhasil ditambahkan")) {
-//                            new ChooseIndicator.indicatorGetter(token).execute();
-//                        }
+                        String eval = editText.getText().toString();
+                        String status = "fail";
+                        try {
+                            status = new giveEvaluation(token, contractId, id_indicator, eval).execute().get();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                        if (status.equals("Penilaian disimpan")) {
+                            new evaluationGetter(token, contractId).execute();
+                        }
                     }
                 })
                 .setNegativeButton("BATAL",
@@ -337,19 +343,21 @@ public class Evaluation extends Fragment{
         }
     }
 
-    public class chooseIndicator extends AsyncTask<String,Void,String> {
+    public class giveEvaluation extends AsyncTask<String,Void,String> {
         public String auth = "";
         public int contractId = 0;
         public static final String SERVER_URL = BuildConfig.WEBSERVICE_URL;
         public static final int READ_TIMEOUT = 10000;
         public static final int CONNECTION_TIMEOUT = 10000;
-        private String indicator;
         private String status = "init";
+        int id = 0;
+        String eval = "0";
 
-        public chooseIndicator(String indicator, String auth, int contractId) {
-            this.indicator = indicator;
+        public giveEvaluation(String auth, int contractId, int id, String eval) {
             this.auth = auth;
             this.contractId = contractId;
+            this.id = id;
+            this.eval = eval;
         }
 
         @Override
@@ -364,21 +372,27 @@ public class Evaluation extends Fragment{
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setRequestProperty("Authorization", "Bearer " + auth);
                     // read response
-                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setRequestMethod("PUT");
                     urlConnection.setReadTimeout(READ_TIMEOUT);
                     urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
                     urlConnection.setDoOutput(true);
                     urlConnection.setDoInput(true);
                     urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 
+                    JSONArray arrJ = new JSONArray();
+                    JSONObject ind = new JSONObject();
+                    ind.put("idIndikator", id);
+                    ind.put("nilai", eval);
+                    arrJ.put(ind);
+
                     DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
-                    wr.writeBytes(indicator);
+                    wr.writeBytes(arrJ.toString());
                     wr.flush();
                     wr.close();
                     // try to get response
                     int statusCode = urlConnection.getResponseCode();
                     if (String.valueOf(urlConnection.getResponseCode()).startsWith("2")) {
-                        status = "Indikator berhasil disimpan";
+                        status = "Penilaian disimpan";
                     } else if (String.valueOf(urlConnection.getResponseCode()).startsWith("4")) {
                         status = "Akses tidak diotorisasi";
                     } else {
