@@ -24,11 +24,7 @@ public class RecyclerEvaluation extends RecyclerView.Adapter<RecyclerEvaluation.
 
     private Context mContext;
 
-private OnArtikelClickListener mOnArtikelClickListener;
-
-public RecyclerEvaluation(Context context) {
-        mContext = context;
-    }
+    private OnArtikelClickListener mOnArtikelClickListener;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public View mViewContainer;
@@ -63,7 +59,8 @@ public RecyclerEvaluation(Context context) {
      *
      * @param dataSet String[] containing the data to populate views to be used by RecyclerView.
      */
-    public RecyclerEvaluation(ArrayList<EvaluationEntity> dataSet) {
+    public RecyclerEvaluation(Context ctx, ArrayList<EvaluationEntity> dataSet) {
+        this.mContext = ctx;
         this.param = dataSet;
     }
 
@@ -87,8 +84,8 @@ public RecyclerEvaluation(Context context) {
         final int posisiAdapter = holder.getAdapterPosition();
             // Get element from your dataset at this position and replace the contents of the view
             // with that element
-        holder.getEvalIndicator().setText(param.get(position).name);
-        holder.getGradeIndicator().setText(param.get(position).eval);
+        holder.getEvalIndicator().setText(param.get(position).getParamEvaluation());
+        holder.getGradeIndicator().setText(param.get(position).getGradeEvaluation());
 
         holder.mViewContainer.setOnClickListener(
                     new View.OnClickListener() {
